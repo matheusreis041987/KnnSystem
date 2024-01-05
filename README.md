@@ -11,3 +11,6 @@ Repositório do back-end para o sistema KnnSystem, desenvolvido como trabalho fi
 
 Utilizaremos o *framework* Spring Boot, com Postgres como SGBD.
 
+# 🗓️ Resumo Desenvolvimento
+
+* Como metodologia de trabalho, usamos variação simplificado do [git flow](https://www.atlassian.com/br/git/tutorials/comparing-workflows/gitflow-workflow), com a *branch* *develop* sendo utilizada como ramificação a partir da qual *branchs* de *features* são criadas e para a qual as *pull requests* são direcionadas (a ramificação *main* só recebe *merges* a partir da *develop*);
