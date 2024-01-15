@@ -15,7 +15,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tbl_pagamento", schema = "sch_financeiro" )
+@Table(name = "pagamento", schema = "sch_financeiro" )
 public class PagamentoDeposito extends Pagamento {
 
 	

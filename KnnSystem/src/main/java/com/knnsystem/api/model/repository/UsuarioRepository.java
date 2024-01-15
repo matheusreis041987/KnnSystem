@@ -9,6 +9,8 @@ import com.knnsystem.api.model.entity.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
 	Optional<Usuario> findByEmail(String email);
+
+	Optional<Usuario> findByCpf(String cpf);
 	
 	boolean existsByEmail(String email);
 	

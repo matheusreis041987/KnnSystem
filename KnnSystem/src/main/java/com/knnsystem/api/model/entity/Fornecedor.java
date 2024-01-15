@@ -1,27 +1,15 @@
 package com.knnsystem.api.model.entity;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.Objects;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tbl_fornecedor", schema = "sch_contratos")
+@Table(name = "fornecedor", schema = "sch_contratos")
+@SecondaryTable(name = "responsavel", schema = "sch_contratos")
 public class Fornecedor {
 	
 	@Id
-	@Column(name = "pk_id")
+	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idFornecedor;
 	
@@ -37,10 +25,10 @@ public class Fornecedor {
 	@Column(name = "fk_cpf_responsavel")
 	private String cpfResponsavel;
 	
-	@Column(name = "nome", table = "tbl_responsavel")
+	@Column(name = "nome", table = "responsavel")
 	private String nomeResponsavel;
 	
-	@Column(name = "email", table = "tbl_responsavel")	
+	@Column(name = "email", table = "responsavel")
 	private String emailResponsavel;
 	
 	@Column(name = "email_corporativo")
@@ -56,6 +44,7 @@ public class Fornecedor {
 	@Enumerated(EnumType.STRING)
 	private StatusGeral StatusFornecedor;
 
+	@OneToOne
 	private DomicilioBancario domicilioBancario;
 
 	public int getIdFornecedor() {

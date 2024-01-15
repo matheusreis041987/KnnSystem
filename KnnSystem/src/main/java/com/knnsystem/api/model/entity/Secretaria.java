@@ -4,8 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
-@Table (name = "tbl_usuario", schema = "sch_pessoas" )
+@Table (name = "secretaria", schema = "sch_pessoas" )
 public class Secretaria extends Usuario {
+
 
 	@Override
 	public int hashCode() {
@@ -14,13 +15,8 @@ public class Secretaria extends Usuario {
 
 	
 	public boolean equals(Secretaria s) {
-		
-		if (this.getCpf() == s.getCpf() && this.getNome() == s.getNome()) {
-			return true;
-		} else {
-			return false;
-		}
-		
+		return this.getCpf().equals(s.getCpf()) &&
+				this.getNome().equals(s.getNome());
 	}
 
 	

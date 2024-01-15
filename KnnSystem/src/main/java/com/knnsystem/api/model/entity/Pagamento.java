@@ -2,31 +2,22 @@ package com.knnsystem.api.model.entity;
 
 import java.util.Date;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table (name = "tbl_pagamento", schema = "sch_financeiro")
+@Table (name = "pagamento", schema = "sch_financeiro")
+@SecondaryTable(name = "sch_financeiro_contratos", schema = "sch_financeiro")
+@SecondaryTable(name = "sch_pessoas_usuario", schema = "sch_pessoas")
 abstract public class Pagamento {
 
 	@Id
-	@Column(name = "pk_id")
+	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idPagamento;
 	
 		
 	@ManyToOne
-	@JoinColumn(name = "pk_id", table = "sch_financeiro.tbl_contratos", referencedColumnName = "fk_contrato")
-	@Column(name = "fk_contrato")
+	@JoinColumn(name = "fk_contrato", table = "sch_financeiro.contratos", referencedColumnName = "id")
 	private Contrato idContrato;
 	
 	@Column(name = "data_hora")
@@ -52,8 +43,7 @@ abstract public class Pagamento {
 	
 
 	@ManyToOne
-	@JoinColumn(name = "pk_id", table = "sch_pessoas.tbl_usuario", referencedColumnName = "fk_usuario")
-	@Column(name = "fk_usuario")
+	@JoinColumn(name = "fk_usuario", table = "sch_pessoas.usuario", referencedColumnName = "id")
 	private Usuario usuario;
 	
 	

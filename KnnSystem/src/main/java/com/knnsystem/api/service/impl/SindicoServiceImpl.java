@@ -32,28 +32,28 @@ public class SindicoServiceImpl implements SindicoService {
 
 	@Override
 	@Transactional
-	public Sindico atualizar(Sindico SindicoParm) {
+	public Sindico atualizar(Sindico sindicoParm) {
 		
-		Objects.requireNonNull(SindicoParm.getId());
+		Objects.requireNonNull(sindicoParm.getCpf());
 		
-		return repository.save(SindicoParm);
+		return repository.save(sindicoParm);
 	}
 
 	@Override
 	@Transactional
-	public void deletar(Sindico SindicoParm) {
+	public void deletar(Sindico sindicoParm) {
 	
-		Objects.requireNonNull(SindicoParm.getId());
-		repository.delete(SindicoParm);
+		Objects.requireNonNull(sindicoParm.getCpf());
+		repository.delete(sindicoParm);
 		
 		
 	}
 
 	@Override
 	@Transactional
-	public List<Sindico> buscar(Sindico SindicoParm) {
+	public List<Sindico> buscar(Sindico sindicoParm) {
 		
-		Example example = Example.of(SindicoParm);
+		Example example = Example.of(sindicoParm);
 		
 		return repository.findAll(example);
 	}
