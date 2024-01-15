@@ -52,13 +52,12 @@ public class AutenticacaoController {
 
         if (token != null) {
             var usuario = repository.findByCpf(dto.cpf());
-            usuario.ifPresent(
-                    value -> value.setSenha(
-                            passwordEncoder.encode(
-                                    dto.novaSenha()
-                            )
-                    )
-            );
+
+            if (usuario.isPresent()){
+                usuario.get().setSenha(passwordEncoder.encode(dto.novaSenha()));
+                repository.save(usuario.get());
+            }
+
         }
 
         return ResponseEntity.ok(new TokenLoginDTO(token));

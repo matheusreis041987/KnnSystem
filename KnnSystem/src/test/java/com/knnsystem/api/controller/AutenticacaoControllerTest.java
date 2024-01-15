@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -126,6 +128,27 @@ class AutenticacaoControllerTest {
                 )
                 // Assert
                 .andExpect(status().isOk());
+        var usuarioAtualizado = usuarioRepository.findByCpf(usuario.getCpf());
+        assertTrue(
+                passwordEncoder.matches("654321", usuarioAtualizado.get().getSenha())
+        );
+    }
+
+    @DisplayName("Testa que não consegue logar com senha provisória incorreta")
+    @Test
+    void NaoDeveLogarComSenhaProvisoriaIncorreta() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_REDEFINE)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuario.getCpf() + "\", " +
+                                                "\"senhaProvisoria\": \"654321\", " +
+                                                "\"novaSenha\": \"123456\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isForbidden());
     }
 
 }
