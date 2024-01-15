@@ -2,8 +2,8 @@ package com.knnsystem.api.controller;
 
 import com.knnsystem.api.model.entity.Pessoa;
 import com.knnsystem.api.model.entity.Usuario;
-import com.knnsystem.api.model.repository.PessoaRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +27,8 @@ class AutenticacaoControllerTest {
 
     private Usuario usuario;
     private final String ENDPOINT_LOGIN = "/auth/api/login";
+
+    private final String ENDPOINT_REDEFINE = "/auth/api/redefine";
 
     @Autowired
     private MockMvc mockMvc;
@@ -56,6 +58,11 @@ class AutenticacaoControllerTest {
 
     }
 
+    @AfterEach
+    void tearDown(){
+        usuarioRepository.deleteAll();
+    }
+
     @DisplayName("Testa que consegue logar com senha correta")
     @Test
     void deveLogarComSenhaCorreta() throws Exception {
@@ -69,6 +76,55 @@ class AutenticacaoControllerTest {
                         )
         )
         // Assert
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("Testa que não consegue logar com senha incorreta")
+    @Test
+    void naodeveLogarComSenhaIncorreta() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_LOGIN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuario.getCpf() + "\", " +
+                                                "\"senha\": \"1234567\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("Testa que não consegue logar com cpf incorreto")
+    @Test
+    void naodeveLogarComCpfIncorreto() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_LOGIN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"56214649170\", " +
+                                                "\"senha\": \"123456\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("Testa que consegue logar com senha provisória e atualiza")
+    @Test
+    void deveLogarComSenhaProvisoriaEAtualizar() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_REDEFINE)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuario.getCpf() + "\", " +
+                                                "\"senhaProvisoria\": \"123456\", " +
+                                                "\"novaSenha\": \"654321\"}"
+                                )
+                )
+                // Assert
                 .andExpect(status().isOk());
     }
 

@@ -1,6 +1,7 @@
 package com.knnsystem.api.controller;
 
 import com.knnsystem.api.dto.AutenticacaoDTO;
+import com.knnsystem.api.dto.AutenticacaoProvisoriaDTO;
 import com.knnsystem.api.dto.TokenLoginDTO;
 import com.knnsystem.api.infrastructure.security.TokenService;
 import com.knnsystem.api.model.entity.Usuario;
@@ -37,16 +38,41 @@ public class AutenticacaoController {
     public ResponseEntity<TokenLoginDTO> autentica(
             @RequestBody @Valid AutenticacaoDTO dto
             ){
-        var usuarioSenha = new UsernamePasswordAuthenticationToken(
-                dto.cpf(),
-                dto.senha());
-
-        var auth = authenticationManager.authenticate(usuarioSenha);
-
-        var token = tokenService.geraToken((Usuario) auth.getPrincipal());
+        var token = getToken(dto.cpf(), dto.senha());
 
         return ResponseEntity.ok(new TokenLoginDTO(token));
 
+    }
+
+    @PostMapping("/redefine")
+    public ResponseEntity<TokenLoginDTO> redefine(
+            @RequestBody @Valid AutenticacaoProvisoriaDTO dto
+    ){
+        var token = getToken(dto.cpf(), dto.senhaProvisoria());
+
+        if (token != null) {
+            var usuario = repository.findByCpf(dto.cpf());
+            usuario.ifPresent(
+                    value -> value.setSenha(
+                            passwordEncoder.encode(
+                                    dto.novaSenha()
+                            )
+                    )
+            );
+        }
+
+        return ResponseEntity.ok(new TokenLoginDTO(token));
+
+    }
+
+    private String getToken(String cpf, String senha) {
+        var usuarioSenha = new UsernamePasswordAuthenticationToken(
+                cpf,
+                senha);
+
+        var auth = authenticationManager.authenticate(usuarioSenha);
+
+        return tokenService.geraToken((Usuario) auth.getPrincipal());
     }
 
 
