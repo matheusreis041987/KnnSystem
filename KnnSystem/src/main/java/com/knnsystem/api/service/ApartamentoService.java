@@ -1,4 +1,4 @@
-package com.knnsystem.api.servic;
+package com.knnsystem.api.service;
 
 import com.knnsystem.api.model.entity.Apartamento;
 

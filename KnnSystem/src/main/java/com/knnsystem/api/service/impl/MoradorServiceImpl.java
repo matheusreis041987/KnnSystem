@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Morador;
 import com.knnsystem.api.model.repository.MoradorRepository;
-import com.knnsystem.api.servic.MoradorService;
+import com.knnsystem.api.service.MoradorService;
 
 @Service
 public class MoradorServiceImpl implements MoradorService {

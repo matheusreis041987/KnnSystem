@@ -12,7 +12,7 @@ import com.knnsystem.api.exceptions.ErroAutenticacao;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.UsuarioRepository;
-import com.knnsystem.api.servic.UsuarioService;
+import com.knnsystem.api.service.UsuarioService;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {

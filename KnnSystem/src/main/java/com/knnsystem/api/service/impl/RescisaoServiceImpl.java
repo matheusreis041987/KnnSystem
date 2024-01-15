@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Rescisao;
 import com.knnsystem.api.model.repository.RescisaoRepository;
-import com.knnsystem.api.servic.RescisaoService;
+import com.knnsystem.api.service.RescisaoService;
 
 @Service
 public class RescisaoServiceImpl implements RescisaoService {

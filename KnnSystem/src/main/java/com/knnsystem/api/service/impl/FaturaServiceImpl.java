@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Fatura;
 import com.knnsystem.api.model.repository.FaturaRepository;
-import com.knnsystem.api.servic.FaturaService;
+import com.knnsystem.api.service.FaturaService;
 
 @Service
 public class FaturaServiceImpl implements FaturaService  {

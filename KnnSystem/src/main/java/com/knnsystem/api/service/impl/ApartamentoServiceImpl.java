@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Apartamento;
 import com.knnsystem.api.model.repository.ApartamentoRepository;
-import com.knnsystem.api.servic.ApartamentoService;
+import com.knnsystem.api.service.ApartamentoService;
 
 
 

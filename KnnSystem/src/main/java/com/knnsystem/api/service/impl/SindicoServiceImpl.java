@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Sindico;
 import com.knnsystem.api.model.repository.SindicoRepository;
-import com.knnsystem.api.servic.SindicoService;
+import com.knnsystem.api.service.SindicoService;
 
 @Service
 public class SindicoServiceImpl implements SindicoService {

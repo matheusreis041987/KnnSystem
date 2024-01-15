@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Secretaria;
 import com.knnsystem.api.model.repository.SecretariaRepository;
-import com.knnsystem.api.servic.SecretariaService;
+import com.knnsystem.api.service.SecretariaService;
 
 @Service
 public class SecretariaServiceImpl implements SecretariaService {

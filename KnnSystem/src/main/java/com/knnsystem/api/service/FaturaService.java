@@ -1,4 +1,4 @@
-package com.knnsystem.api.servic;
+package com.knnsystem.api.service;
 
 import java.util.List;
 import java.util.Optional;
