@@ -2,6 +2,11 @@ package com.knnsystem.api.model.entity;
 
 public enum StatusBoleto {
 
-	Vencido_sem_notificacao, Boleto_enviado_para_cartorio, Enviar_para_cobranca_judicial, vencido, pago, notificado
+	VENCIDO_SEM_NOTIFICACAO,
+	BOLETO_ENVIADO_PARA_CARTORIO,
+	ENVIAR_PARA_COBRANCA_JUDICIAL,
+	VENCIDO,
+	PAGO,
+	NOTIFICADO
 	
 }
