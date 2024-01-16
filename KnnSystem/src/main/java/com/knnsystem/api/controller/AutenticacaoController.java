@@ -64,6 +64,11 @@ public class AutenticacaoController {
 
     }
 
+    @PostMapping("/registra")
+    public ResponseEntity regristra(@RequestBody @Valid RegistroUsuarioDTO dto) {
+        return ResponseEntity.ok().build();
+    }
+
     private String getToken(String cpf, String senha) {
         var usuarioSenha = new UsernamePasswordAuthenticationToken(
                 cpf,
