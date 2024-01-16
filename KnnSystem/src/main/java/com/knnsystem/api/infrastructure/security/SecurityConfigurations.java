@@ -32,7 +32,7 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,
                                 "/auth/api/login",
-                                        "/auth/api/cadastra",
+                                        "/usuario/api/cadastra",
                                         "/auth/api/redefine").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/auth/api/registra").hasRole(PAPEL_ADMINISTRADOR)

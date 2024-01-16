@@ -1,8 +1,5 @@
 package com.knnsystem.api.controller;
 
-import com.knnsystem.api.model.entity.Pessoa;
-import com.knnsystem.api.model.entity.StatusGeral;
-
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.PessoaRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
@@ -18,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,8 +35,6 @@ class AutenticacaoControllerTest {
 
     private final String ENDPOINT_REDEFINE = "/auth/api/redefine";
 
-    private final String ENDPOINT_CADASTRO = "/auth/api/cadastra";
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -53,42 +47,16 @@ class AutenticacaoControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private TestDataBuilder testDataBuilder;
+
     @BeforeEach
     void setUp(){
-        // Ativo
-        // Arrange
-        Pessoa pessoa = new Pessoa();
-        pessoa.setId(1);
-        // https://www.4devs.com.br/gerador_de_cpf
-        pessoa.setCpf("56214649070");
-        pessoa.setNome("Nome da Pessoa");
-        pessoa.setEmail("emaildapessoa@email");
-        pessoa.setStatus(StatusGeral.ATIVO);
 
-        usuarioAtivo = new Usuario(pessoa);
-        usuarioAtivo.setCargo("Cargo");
-        usuarioAtivo.setPerfil("Perfil");
-        usuarioAtivo.setSenha(passwordEncoder.encode("123456"));
-        usuarioAtivo.setDataNascimento(LocalDate.of(1971,1 ,1));
-
+        usuarioAtivo = testDataBuilder.createUsuarioAtivo();
         usuarioRepository.save(usuarioAtivo);
 
-        // Inativo
-        // Arrange
-        pessoa = new Pessoa();
-        pessoa.setId(2);
-        // https://www.4devs.com.br/gerador_de_cpf
-        pessoa.setCpf("77309636040");
-        pessoa.setNome("Nome da Pessoa 2");
-        pessoa.setEmail("emaildapessoa2@email");
-        pessoa.setStatus(StatusGeral.INATIVO);
-
-        usuarioInativo = new Usuario(pessoa);
-        usuarioInativo.setCargo("Cargo 2");
-        usuarioInativo.setPerfil("Perfil 2");
-        usuarioInativo.setSenha(passwordEncoder.encode("1234567"));
-        usuarioInativo.setDataNascimento(LocalDate.of(1980,12 ,13));
-
+        usuarioInativo = testDataBuilder.createUsuarioInativo();
         usuarioRepository.save(usuarioInativo);
 
     }
@@ -200,25 +168,4 @@ class AutenticacaoControllerTest {
                 // Assert
                 .andExpect(status().isForbidden());
     }
-
-    @DisplayName("Testa que não pode cadastrar novo usuário com cpf já utilizado")
-    @Test
-    void naoDeveCadastrarCpfPelaSegundaVez() throws Exception {
-        // Act
-        this.mockMvc.perform(
-                        post(ENDPOINT_CADASTRO)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
-                                                "\"nome\": \"" + usuarioAtivo.getNome() + "\", " +
-                                                "\"email\": \"" + usuarioAtivo.getEmail() + "\", " +
-                                                "\"dataDeNascimento\": \"" + usuarioAtivo.getDataNascimento() + "\", " +
-                                                "\"cargo\": \"" + usuarioAtivo.getCargo() + "\", " +
-                                                "\"senha\": \"1234567\"}"
-                                )
-                )
-                // Assert
-                .andExpect(status().isConflict());
-    }
-
 }

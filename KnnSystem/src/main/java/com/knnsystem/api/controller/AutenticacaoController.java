@@ -67,16 +67,6 @@ public class AutenticacaoController {
 
     }
 
-    @PostMapping("/cadastra")
-    public ResponseEntity<String> cadastra(
-            @RequestBody @Valid UsuarioCadastroDTO dto
-            ){
-        if (repository.findByCpf(dto.cpf()).isPresent()) {
-            throw new UsuarioCadastradoException("CPF já cadastrado");
-        }
-        return ResponseEntity.ok().build();
-    }
-
     private String getToken(String cpf, String senha) {
 
         var usuarioOptional = repository
