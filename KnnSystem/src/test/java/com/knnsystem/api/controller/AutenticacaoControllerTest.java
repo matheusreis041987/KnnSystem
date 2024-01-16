@@ -1,6 +1,8 @@
 package com.knnsystem.api.controller;
 
 import com.knnsystem.api.model.entity.Pessoa;
+import com.knnsystem.api.model.entity.StatusGeral;
+
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.PessoaRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
@@ -28,7 +30,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureMockMvc
 class AutenticacaoControllerTest {
 
-    private Usuario usuario;
+
+    private Usuario usuarioAtivo;
+
+    private Usuario usuarioInativo;
+
     private final String ENDPOINT_LOGIN = "/auth/api/login";
 
     private final String ENDPOINT_REDEFINE = "/auth/api/redefine";
@@ -47,6 +53,7 @@ class AutenticacaoControllerTest {
 
     @BeforeEach
     void setUp(){
+        // Ativo
         // Arrange
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1);
@@ -54,14 +61,33 @@ class AutenticacaoControllerTest {
         pessoa.setCpf("56214649070");
         pessoa.setNome("Nome da Pessoa");
         pessoa.setEmail("emaildapessoa@email");
+        pessoa.setStatus(StatusGeral.ATIVO);
 
-        usuario = new Usuario(pessoa);
-        usuario.setCargo("Cargo");
-        usuario.setPerfil("Perfil");
-        usuario.setSenha(passwordEncoder.encode("123456"));
-        usuario.setDataNascimento(LocalDate.of(1971,1 ,1));
+        usuarioAtivo = new Usuario(pessoa);
+        usuarioAtivo.setCargo("Cargo");
+        usuarioAtivo.setPerfil("Perfil");
+        usuarioAtivo.setSenha(passwordEncoder.encode("123456"));
+        usuarioAtivo.setDataNascimento(LocalDate.of(1971,1 ,1));
 
-        usuarioRepository.save(usuario);
+        usuarioRepository.save(usuarioAtivo);
+
+        // Inativo
+        // Arrange
+        pessoa = new Pessoa();
+        pessoa.setId(2);
+        // https://www.4devs.com.br/gerador_de_cpf
+        pessoa.setCpf("77309636040");
+        pessoa.setNome("Nome da Pessoa 2");
+        pessoa.setEmail("emaildapessoa2@email");
+        pessoa.setStatus(StatusGeral.INATIVO);
+
+        usuarioInativo = new Usuario(pessoa);
+        usuarioInativo.setCargo("Cargo 2");
+        usuarioInativo.setPerfil("Perfil 2");
+        usuarioInativo.setSenha(passwordEncoder.encode("1234567"));
+        usuarioInativo.setDataNascimento(LocalDate.of(1980,12 ,13));
+
+        usuarioRepository.save(usuarioInativo);
 
     }
 
@@ -78,7 +104,7 @@ class AutenticacaoControllerTest {
                 post(ENDPOINT_LOGIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
-                                "{\"cpf\": \"" + usuario.getCpf() + "\", " +
+                                "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
                                         "\"senha\": \"123456\"}"
                         )
         )
@@ -94,7 +120,7 @@ class AutenticacaoControllerTest {
                         post(ENDPOINT_LOGIN)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"cpf\": \"" + usuario.getCpf() + "\", " +
+                                        "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
                                                 "\"senha\": \"1234567\"}"
                                 )
                 )
@@ -126,14 +152,15 @@ class AutenticacaoControllerTest {
                         post(ENDPOINT_REDEFINE)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"cpf\": \"" + usuario.getCpf() + "\", " +
+                                        "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
                                                 "\"senhaProvisoria\": \"123456\", " +
                                                 "\"novaSenha\": \"654321\"}"
                                 )
                 )
                 // Assert
                 .andExpect(status().isOk());
-        var usuarioAtualizado = usuarioRepository.findByCpf(usuario.getCpf());
+        var usuarioAtualizado = usuarioRepository.findByCpf(usuarioAtivo.getCpf());
+
         assertTrue(
                 passwordEncoder.matches("654321", usuarioAtualizado.get().getSenha())
         );
@@ -147,9 +174,25 @@ class AutenticacaoControllerTest {
                         post(ENDPOINT_REDEFINE)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"cpf\": \"" + usuario.getCpf() + "\", " +
+                                        "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
                                                 "\"senhaProvisoria\": \"654321\", " +
                                                 "\"novaSenha\": \"123456\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("Testa que não consegue logar se usuário está inativo")
+    @Test
+    void naodeveLogarSeUsuarioInativo() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_LOGIN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuarioInativo.getCpf() + "\", " +
+                                                "\"senha\": \"1234567\"}"
                                 )
                 )
                 // Assert

@@ -55,6 +55,9 @@ public class Usuario implements UserDetails {
 	@JoinColumn(name = "id", referencedColumnName = "id")
 	private Pessoa pessoa;
 
+	@Transient
+	private boolean ativo;
+
 	public Usuario(){
 
 	}
@@ -65,6 +68,10 @@ public class Usuario implements UserDetails {
 		this.email = this.pessoa.getEmail();
 		this.nome = this.pessoa.getNome();
 		this.cpf = this.pessoa.getCpf();
+	}
+
+	public boolean isAtivo(){
+		return this.pessoa.isAtivo();
 	}
 
 	@Override
