@@ -5,9 +5,9 @@ name: Testes Unitários e de Integração
 
 on:
   push:
-    branches: [ "main", "develop", "usecases/consolidado" ]
+    branches: [ "usecases/consolidado" ]
   pull_request:
-    branches: [ "main", "develop", "usecases/consolidado" ]
+    branches: [ "usecases/consolidado" ]
 
 jobs:
   build:
