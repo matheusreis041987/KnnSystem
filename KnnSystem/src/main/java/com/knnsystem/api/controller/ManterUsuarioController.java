@@ -3,6 +3,7 @@ package com.knnsystem.api.controller;
 import com.knnsystem.api.dto.UsuarioCadastroDTO;
 import com.knnsystem.api.exceptions.UsuarioCadastradoException;
 import com.knnsystem.api.model.repository.UsuarioRepository;
+import com.knnsystem.api.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ManterUsuarioController {
 
     @Autowired
-    private UsuarioRepository repository;
+    private UsuarioService service;
 
     @PostMapping("/cadastra")
     public ResponseEntity<String> cadastra(
             @RequestBody @Valid UsuarioCadastroDTO dto
     ){
-        if (repository.findByCpf(dto.cpf()).isPresent()) {
-            throw new UsuarioCadastradoException("CPF já cadastrado");
-        }
+        var usarioSalvo = service.salvar(dto);
         return ResponseEntity.ok().build();
     }
 
