@@ -39,6 +39,8 @@ class AutenticacaoControllerTest {
 
     private final String ENDPOINT_REDEFINE = "/auth/api/redefine";
 
+    private final String ENDPOINT_CADASTRO = "/auth/api/cadastra";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -185,7 +187,7 @@ class AutenticacaoControllerTest {
 
     @DisplayName("Testa que não consegue logar se usuário está inativo")
     @Test
-    void naodeveLogarSeUsuarioInativo() throws Exception {
+    void naoDeveLogarSeUsuarioInativo() throws Exception {
         // Act
         this.mockMvc.perform(
                         post(ENDPOINT_LOGIN)
@@ -197,6 +199,26 @@ class AutenticacaoControllerTest {
                 )
                 // Assert
                 .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("Testa que não pode cadastrar novo usuário com cpf já utilizado")
+    @Test
+    void naoDeveCadastrarCpfPelaSegundaVez() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
+                                                "\"nome\": \"" + usuarioAtivo.getNome() + "\", " +
+                                                "\"email\": \"" + usuarioAtivo.getEmail() + "\", " +
+                                                "\"dataDeNascimento\": \"" + usuarioAtivo.getDataNascimento() + "\", " +
+                                                "\"cargo\": \"" + usuarioAtivo.getCargo() + "\", " +
+                                                "\"senha\": \"1234567\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isConflict());
     }
 
 }
