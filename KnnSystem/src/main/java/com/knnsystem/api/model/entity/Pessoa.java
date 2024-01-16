@@ -11,6 +11,7 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
+
 public class Pessoa {
 	
 	@Id
@@ -21,7 +22,7 @@ public class Pessoa {
 	@Column(name = "nome")
 	private String nome;
 	
-	@Column(name = "cpf" )
+	@Column(name = "cpf")
 	private String cpf;
 	
 	@Column(name = "email")	
@@ -30,6 +31,9 @@ public class Pessoa {
 	@Column (name = "status")
 	@Enumerated(EnumType.STRING)
 	private StatusGeral status;
+
+	@OneToOne(mappedBy = "pessoa")
+	private Usuario usuario;
 
 	public Pessoa(){
 		this.status = StatusGeral.ATIVO;

@@ -34,7 +34,7 @@ public class SecretariaServiceImpl implements SecretariaService {
 	@Transactional
 	public Secretaria atualizar(Secretaria SecretariaParm) {
 		
-		Objects.requireNonNull(SecretariaParm.getId());
+		Objects.requireNonNull(SecretariaParm.getCpf());
 		
 		return repository.save(SecretariaParm);
 	}
@@ -43,7 +43,7 @@ public class SecretariaServiceImpl implements SecretariaService {
 	@Transactional
 	public void deletar(Secretaria SecretariaParm) {
 		
-		Objects.requireNonNull(SecretariaParm.getId());
+		Objects.requireNonNull(SecretariaParm.getCpf());
 		repository.delete(SecretariaParm);
 		
 		

@@ -2,6 +2,7 @@ package com.knnsystem.api.controller;
 
 import com.knnsystem.api.model.entity.Pessoa;
 import com.knnsystem.api.model.entity.Usuario;
+import com.knnsystem.api.model.repository.PessoaRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,12 +40,16 @@ class AutenticacaoControllerTest {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
+    private PessoaRepository pessoaRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp(){
         // Arrange
         Pessoa pessoa = new Pessoa();
+        pessoa.setId(1);
         // https://www.4devs.com.br/gerador_de_cpf
         pessoa.setCpf("56214649070");
         pessoa.setNome("Nome da Pessoa");

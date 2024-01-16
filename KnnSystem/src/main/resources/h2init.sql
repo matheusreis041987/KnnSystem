@@ -12,9 +12,10 @@ drop table if exists sch_pessoas.usuario;
 drop table if exists sch_pessoas.pessoa;
 
 drop sequence if exists id_pessoas_seq;
-
+drop sequence if exists id_usuarios_seq;
 
 create sequence id_pessoas_seq;
+create sequence id_usuarios_seq;
 
 create table sch_pessoas.pessoa (
 	id bigint not null default nextval('id_pessoas_seq'),
@@ -26,7 +27,10 @@ create table sch_pessoas.pessoa (
 );
 
 create table sch_pessoas.usuario (
-	id bigint not null,
+	id bigint not null default nextval('id_usuarios_seq'),
+	cpf character varying(11) not null unique,
+	nome character varying(60) not null,
+	email character varying(60) not null,
 	cargo character varying(20)	not null,
 	perfil character varying(20)	not null,
 	dt_nasc date not null,
