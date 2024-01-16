@@ -1,4 +1,4 @@
-package com.knnsystem.api.infrastructure.security.error;
+package com.knnsystem.api.infrastructure.error;
 
 import com.knnsystem.api.exceptions.ErroAutenticacao;
 import org.springframework.http.HttpStatus;
