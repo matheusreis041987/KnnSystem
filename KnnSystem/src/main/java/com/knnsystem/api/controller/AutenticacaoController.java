@@ -3,6 +3,7 @@ package com.knnsystem.api.controller;
 import com.knnsystem.api.dto.AutenticacaoDTO;
 import com.knnsystem.api.dto.AutenticacaoProvisoriaDTO;
 import com.knnsystem.api.dto.TokenLoginDTO;
+import com.knnsystem.api.exceptions.ErroAutenticacao;
 import com.knnsystem.api.infrastructure.security.TokenService;
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.UsuarioRepository;
@@ -65,6 +66,14 @@ public class AutenticacaoController {
     }
 
     private String getToken(String cpf, String senha) {
+
+        var usuarioOptional = repository
+                .findByCpf(cpf);
+
+        if (usuarioOptional.isEmpty() || !usuarioOptional.get().isAtivo()) {
+            throw new ErroAutenticacao("Não há usuário ativo para o CPF informado");
+        }
+
         var usuarioSenha = new UsernamePasswordAuthenticationToken(
                 cpf,
                 senha);

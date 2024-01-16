@@ -39,6 +39,10 @@ public class Pessoa {
 		this.status = StatusGeral.ATIVO;
 	}
 
+	public boolean isAtivo() {
+		return this.status.equals(StatusGeral.ATIVO);
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(cpf, email, id, nome, status);
