@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Proprietario;
 import com.knnsystem.api.model.repository.ProprietarioRepository;
-import com.knnsystem.api.servic.ProprietarioService;
+import com.knnsystem.api.service.ProprietarioService;
 
 @Service
 public class ProprietarioServiceImpl implements ProprietarioService {

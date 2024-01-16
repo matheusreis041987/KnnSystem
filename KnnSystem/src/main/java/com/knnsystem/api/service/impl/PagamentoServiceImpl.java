@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Pagamento;
 import com.knnsystem.api.model.repository.PagamentoRepository;
-import com.knnsystem.api.servic.PagamentoService;
+import com.knnsystem.api.service.PagamentoService;
 
 @Service
 public class PagamentoServiceImpl implements PagamentoService {

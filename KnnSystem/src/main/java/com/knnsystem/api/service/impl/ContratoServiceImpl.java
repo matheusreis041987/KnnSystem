@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Contrato;
-import com.knnsystem.api.model.repository.ApartamentoRepository;
 import com.knnsystem.api.model.repository.ContratoRepository;
-import com.knnsystem.api.servic.ContratoService;
+import com.knnsystem.api.service.ContratoService;
 
 @Service
 public class ContratoServiceImpl implements ContratoService {

@@ -2,6 +2,8 @@ package com.knnsystem.api.model.entity;
 
 public enum StatusPagamento {
 
-	Ativo, Inativo, Enviado_para_Pagamento, Aguardando_aprovacao
+	ATIVO, INATIVO,
+	ENVIADO_PARA_PAGAMENTO,
+	AGUARDANDO_APROVACAO
 	
 }

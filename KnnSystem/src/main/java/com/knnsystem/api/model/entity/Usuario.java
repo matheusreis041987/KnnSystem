@@ -1,110 +1,111 @@
 package com.knnsystem.api.model.entity;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import jakarta.validation.constraints.Email;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-@Table (name = "tbl_usuario", schema = "sch_pessoas" )
-public class Usuario extends Pessoa {
+@Table (name = "usuario", schema = "sch_pessoas" )
+@Getter
+public class Usuario implements UserDetails {
 
 	@Id
+	@Column(name = "id")
+	@Setter
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@OneToOne
-	@Column(name = "pk_id")
-	@JoinColumn(name = "pk_id")
-	private Pessoa id_pessoa;
-	
+	private int id;
+
+	@Column(name = "nome")
+	private String nome;
+
+	@Column(name = "cpf")
+	@CPF
+	private String cpf;
+
+	@Column(name = "email")
+	@Email
+	private String email;
+
 	@Column(name = "perfil")
+	@Setter
 	private String perfil;
 	
 	@Column(name = "dt_nasc")
+	@Setter
 	private LocalDate dataNascimento;
 	
 	@Column(name = "cargo")
+	@Setter
 	private String cargo;
 	
 	@Column(name = "senha")
+	@Setter
 	private String senha;
 
-	public Pessoa getId_pessoa() {
-		return id_pessoa;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "id", referencedColumnName = "id")
+	private Pessoa pessoa;
+
+	@Transient
+	private boolean ativo;
+
+	public Usuario(){
+
 	}
 
-	public void setId_pessoa(Pessoa id_pessoa) {
-		this.id_pessoa = id_pessoa;
+	public Usuario(Pessoa pessoa) {
+		this.pessoa = pessoa;
+		this.id = this.pessoa.getId();
+		this.email = this.pessoa.getEmail();
+		this.nome = this.pessoa.getNome();
+		this.cpf = this.pessoa.getCpf();
 	}
 
-	public String getPerfil() {
-		return perfil;
-	}
-
-	public void setPerfil(String perfil) {
-		this.perfil = perfil;
-	}
-
-	public LocalDate getDataNascimento() {
-		return dataNascimento;
-	}
-
-	public void setDataNascimento(LocalDate dataNascimento) {
-		this.dataNascimento = dataNascimento;
-	}
-
-	public String getCargo() {
-		return cargo;
-	}
-
-	public void setCargo(String cargo) {
-		this.cargo = cargo;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
+	public boolean isAtivo(){
+		return this.pessoa.isAtivo();
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((cargo == null) ? 0 : cargo.hashCode());
-		result = prime * result + ((dataNascimento == null) ? 0 : dataNascimento.hashCode());
-		result = prime * result + ((id_pessoa == null) ? 0 : id_pessoa.hashCode());
-		result = prime * result + ((perfil == null) ? 0 : perfil.hashCode());
-		result = prime * result + ((senha == null) ? 0 : senha.hashCode());
-		return result;
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of();
 	}
 
-	
-	public boolean equals(Usuario u) {
-		
-		if(this.getCpf() == u.getCpf() && this.cargo == u.cargo && this.senha == u.senha && this.cargo == u.cargo && 
-				this.dataNascimento == u.dataNascimento ) {
-			return true;
-		} else {
-			return false;
-		}
-		
+	@Override
+	public String getPassword() {
+		return this.senha;
 	}
-	
-	
-	
 
+	@Override
+	public String getUsername() {
+		return this.getCpf();
+	}
 
-	
-	
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }
