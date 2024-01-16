@@ -19,6 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfigurations {
 
+    private static final String PAPEL_ADMINISTRADOR = "ADMINISTRADOR";
+
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity httpSecurity, SecurityFilter securityFilter) throws Exception {
@@ -30,6 +32,7 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,
                                 "/auth/api/login", "/auth/api/redefine").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/api/registra").hasRole(PAPEL_ADMINISTRADOR)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
