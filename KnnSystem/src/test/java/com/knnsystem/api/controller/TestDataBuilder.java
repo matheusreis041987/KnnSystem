@@ -89,7 +89,7 @@ public class TestDataBuilder {
         pessoa.setStatus(StatusGeral.ATIVO);
 
         Usuario usuarioAtivo = new Usuario(pessoa);
-        usuarioAtivo.setCargo(Cargo.SINDICO);
+        usuarioAtivo.setCargo(Cargo.ADMINISTRADOR);
         usuarioAtivo.setSenha(passwordEncoder.encode("1234567A"));
         usuarioAtivo.setDataNascimento(LocalDate.of(1955,1 ,1));
 
