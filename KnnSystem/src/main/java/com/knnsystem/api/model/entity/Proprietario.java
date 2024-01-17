@@ -3,10 +3,13 @@ package com.knnsystem.api.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Entity
 @Table (name = "proprietario", schema = "sch_pessoas")
@@ -17,6 +20,10 @@ public class Proprietario extends Pessoa {
 
 	@Column(name = "num_rgi")
 	private int registroImovel;
+
+	@OneToMany(mappedBy = "proprietario")
+	private Set<Apartamento> apartamentos;
+
 
 	
 }

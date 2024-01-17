@@ -4,7 +4,7 @@ CREATE SCHEMA IF NOT EXISTS sch_contratos;
 
 drop table if exists sch_contratos.gestor;
 drop table if exists sch_contratos.sindico;
-
+drop table if exists sch_pessoas.apartamento;
 drop table if exists sch_pessoas.telefone;
 drop table if exists sch_pessoas.secretaria;
 drop table if exists sch_pessoas.morador;
@@ -16,10 +16,14 @@ drop table if exists sch_pessoas.pessoa;
 drop sequence if exists id_pessoas_seq;
 drop sequence if exists id_usuarios_seq;
 drop sequence if exists id_telefone_seq;
+drop sequence if exists id_apartamento_seq;
+drop sequence if exists id_proprietario_seq;
 
+create sequence id_apartamento_seq;
 create sequence id_pessoas_seq;
 create sequence id_usuarios_seq;
 create sequence id_telefone_seq;
+create sequence id_proprietario_seq;
 
 create table sch_pessoas.pessoa (
 	id bigint not null default nextval('id_pessoas_seq'),
@@ -56,7 +60,7 @@ create table sch_pessoas.secretaria (
 );
 
 create table sch_pessoas.proprietario (
-	id bigint not null,
+	id bigint not null default nextval('id_proprietario_seq'),
 	num_rgi integer not null unique,
 	constraint pk_proprietario primary key (id),
 	constraint fk_id_proprietario foreign key (id)
@@ -102,4 +106,26 @@ create table sch_contratos.gestor (
 	nome character varying(60) not null,
 	email character varying(60) not null,
 	constraint pk_gestor primary key (cpf)
+);
+
+create table sch_pessoas.apartamento (
+	id bigint not null default nextval('id_apartamento_seq'),
+	fk_proprietario integer not null,
+	fk_morador integer not null,
+	metragem numeric (10, 2) not null,
+	bloco character varying(10) not null,
+	numero integer not null,
+	status character varying(30) not null,
+	constraint pk_apartamento primary key (id),
+
+	constraint fk_id_apartamento_proprietario foreign key (fk_proprietario)
+	references sch_pessoas.proprietario (id)
+	on delete cascade
+	on update cascade,
+
+	constraint fk_id_apartamento_morador foreign key (fk_morador)
+	references sch_pessoas.morador (id)
+	on delete cascade
+	on update cascade
+
 );
