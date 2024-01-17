@@ -7,10 +7,16 @@ public enum Cargo {
             return Perfil.SECRETARIA;
         }
     },
-    SINDICO {
+    ADMINISTRADOR {
         @Override
         Perfil getPerfil() {
             return Perfil.ADMINISTRADOR;
+        }
+    },
+    SINDICO {
+        @Override
+        Perfil getPerfil() {
+            return Perfil.SINDICO;
         }
     };
 

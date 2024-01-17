@@ -21,7 +21,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfigurations {
 
     private static final String PAPEL_ADMINISTRADOR = Perfil.ADMINISTRADOR.name();
+    private static final String PAPEL_SECRETARIA = Perfil.SECRETARIA.name();
 
+    private static final String PAPEL_SINDICO = Perfil.SINDICO.name();
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity httpSecurity, SecurityFilter securityFilter) throws Exception {
@@ -40,6 +42,8 @@ public class SecurityConfigurations {
                                 "/usuario/api/**").hasRole(PAPEL_ADMINISTRADOR)
                         .requestMatchers(HttpMethod.PUT,
                                 "/usuario/api/**").hasRole(PAPEL_ADMINISTRADOR)
+                        .requestMatchers(HttpMethod.GET,
+                                "/relatorio/api/**").hasAnyRole(PAPEL_ADMINISTRADOR, PAPEL_SINDICO)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

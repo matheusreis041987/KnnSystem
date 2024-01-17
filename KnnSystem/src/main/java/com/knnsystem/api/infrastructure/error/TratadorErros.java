@@ -1,6 +1,7 @@
 package com.knnsystem.api.infrastructure.error;
 
 import com.knnsystem.api.exceptions.ErroAutenticacao;
+import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
 import com.knnsystem.api.exceptions.UsuarioCadastradoException;
 import com.knnsystem.api.exceptions.UsuarioNaoEncontradoException;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,9 @@ public class TratadorErros {
         );
     }
 
-    @ExceptionHandler({UsuarioNaoEncontradoException.class})
+    @ExceptionHandler({
+            UsuarioNaoEncontradoException.class,
+            RelatorioSemResultadoException.class})
     public ResponseEntity trataErro404(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ErroSoComMensagemValidacao(exception.getMessage())

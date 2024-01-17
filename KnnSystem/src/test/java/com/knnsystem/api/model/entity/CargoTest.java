@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CargoTest {
 
-    @DisplayName("Testa perfil para cargo de síndico é de administrador")
+    @DisplayName("Testa perfil para cargo de administrador é de administrador")
     @Test
-    void sindicoDevePossuirPerfilDeAdministrador(){
+    void administradorDevePossuirPerfilDeAdministrador(){
         // Act
-        Perfil perfil = Cargo.SINDICO.getPerfil();
+        Perfil perfil = Cargo.ADMINISTRADOR.getPerfil();
         // Assert
         assertEquals(perfil, Perfil.ADMINISTRADOR);
     }
@@ -23,6 +23,15 @@ class CargoTest {
         Perfil perfil = Cargo.FUNCIONARIO.getPerfil();
         // Assert
         assertEquals(perfil, Perfil.SECRETARIA);
+    }
+
+    @DisplayName("Testa perfil para cargo de síndico é de síndico")
+    @Test
+    void sindicoDevePossuirPerfilDeSindico(){
+        // Act
+        Perfil perfil = Cargo.SINDICO.getPerfil();
+        // Assert
+        assertEquals(perfil, Perfil.SINDICO);
     }
 
 }

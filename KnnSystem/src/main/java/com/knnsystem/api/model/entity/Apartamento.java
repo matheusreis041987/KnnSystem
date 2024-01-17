@@ -24,7 +24,7 @@ public class Apartamento {
 	private Morador morador;
 	
 	@ManyToOne
-	@JoinColumn(name = "fk_proprietario", table = "proprietario", referencedColumnName = "id")
+	@JoinColumn(name = "fk_proprietario")
 	private Proprietario proprietario;
 	
 	@Column(name = "numero")
@@ -40,5 +40,4 @@ public class Apartamento {
 	@Enumerated(EnumType.STRING)
 	private StatusGeral statusApt;
 
-	
 }
