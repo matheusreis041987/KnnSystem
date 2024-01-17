@@ -3,24 +3,26 @@ package com.knnsystem.api.controller;
 import com.knnsystem.api.dto.UsuarioCadastroDTO;
 import com.knnsystem.api.dto.UsuarioConsultaDTO;
 import com.knnsystem.api.dto.UsuarioResumoDTO;
+import com.knnsystem.api.exceptions.UsuarioNaoEncontradoException;
 import com.knnsystem.api.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/usuario/api")
+@PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
 public class ManterUsuarioController {
 
     @Autowired
     private UsuarioService service;
 
     @PostMapping("/cadastra")
-    @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
     public ResponseEntity<UsuarioResumoDTO> cadastra(
             @RequestBody @Valid UsuarioCadastroDTO dto,
             UriComponentsBuilder uriComponentsBuilder
@@ -35,7 +37,7 @@ public class ManterUsuarioController {
             @PathVariable @CPF String cpf
     ){
         var dto = service.consultarPorCPF(cpf);
-        return ResponseEntity.ok(dto.get());
+        return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/{cpf}")
@@ -45,6 +47,14 @@ public class ManterUsuarioController {
     ){
         service.editar(cpf, dto);
         return ResponseEntity.ok("usuário foi atualizado");
+    }
+
+    @PutMapping("/ativa/{cpf}")
+    public ResponseEntity<UsuarioConsultaDTO> ativa(
+            @PathVariable @CPF String cpf
+    ) {
+        var dto = service.ativar(cpf);
+        return ResponseEntity.ok(dto);
     }
 
 }

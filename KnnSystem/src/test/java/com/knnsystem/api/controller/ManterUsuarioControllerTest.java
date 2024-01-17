@@ -1,5 +1,6 @@
 package com.knnsystem.api.controller;
 
+import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.PessoaRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
@@ -21,6 +22,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,6 +43,8 @@ class ManterUsuarioControllerTest {
     private final String ENDPOINT_CONSULTA_BASE = "/usuario/api";
 
     private final String ENDPOINT_CADASTRO = "/usuario/api/cadastra";
+
+    private final String ENDPOINT_ATIVAR = "/usuario/api/ativa";
 
     @Autowired
     private MockMvc mockMvc;
@@ -265,6 +270,24 @@ class ManterUsuarioControllerTest {
                 .andExpect(status().isForbidden())
         ;
 
+    }
+
+    @DisplayName("Testa ativação de usuário inativo")
+    @Test
+    void deveAtivarUsuarioInativo() throws Exception {
+
+        // Arrange
+        Usuario usuarioInativo = testDataBuilder.createUsuarioInativo();
+        usuarioRepository.save(usuarioInativo);
+
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_ATIVAR + "/" + usuarioInativo.getCpf())
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isOk());
+        assertEquals(usuarioInativo.getPessoa().getStatus(), StatusGeral.INATIVO);
     }
 
 }

@@ -15,6 +15,8 @@ public interface UsuarioService {
 
 	UsuarioResumoDTO editar(String cpf, UsuarioCadastroDTO dto);
 
-	Optional<UsuarioConsultaDTO> consultarPorCPF(@CPF String cpf);
+	UsuarioConsultaDTO consultarPorCPF(@CPF String cpf);
+
+	UsuarioConsultaDTO ativar(@CPF String cpf);
 
 }
