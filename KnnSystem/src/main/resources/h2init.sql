@@ -5,17 +5,21 @@ CREATE SCHEMA IF NOT EXISTS sch_contratos;
 drop table if exists sch_contratos.gestor;
 drop table if exists sch_contratos.sindico;
 
+drop table if exists sch_pessoas.telefone;
 drop table if exists sch_pessoas.secretaria;
 drop table if exists sch_pessoas.morador;
 drop table if exists sch_pessoas.proprietario;
 drop table if exists sch_pessoas.usuario;
 drop table if exists sch_pessoas.pessoa;
 
+
 drop sequence if exists id_pessoas_seq;
 drop sequence if exists id_usuarios_seq;
+drop sequence if exists id_telefone_seq;
 
 create sequence id_pessoas_seq;
 create sequence id_usuarios_seq;
+create sequence id_telefone_seq;
 
 create table sch_pessoas.pessoa (
 	id bigint not null default nextval('id_pessoas_seq'),
@@ -71,6 +75,18 @@ create table sch_pessoas.morador (
 	on delete cascade
 	on update cascade
 );
+
+create table sch_pessoas.telefone (
+	id bigint not null default nextval('id_telefone_seq'),
+	numero character varying(15) not null,
+	pessoa_id bigint not null,
+	constraint pk_telefones primary key (id),
+	constraint fk_id_telefones foreign key (pessoa_id)
+	references sch_pessoas.pessoa (id)
+	on delete cascade
+	on update cascade
+);
+
 
 
 create table sch_contratos.sindico (
