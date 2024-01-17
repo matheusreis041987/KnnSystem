@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import org.hibernate.validator.constraints.br.CPF;
 
 public record UsuarioResumoDTO(
+
+        Integer id,
         String nome,
 
         @CPF
@@ -14,6 +16,6 @@ public record UsuarioResumoDTO(
 
 ) {
     public UsuarioResumoDTO(Usuario usuario) {
-        this(usuario.getNome(), usuario.getCpf(), usuario.getEmail());
+        this(usuario.getId(), usuario.getNome(), usuario.getCpf(), usuario.getEmail());
     }
 }

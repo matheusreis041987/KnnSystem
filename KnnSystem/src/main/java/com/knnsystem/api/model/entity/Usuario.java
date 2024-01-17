@@ -36,16 +36,16 @@ public class Usuario implements UserDetails {
 	private String email;
 
 	@Column(name = "perfil")
-	@Setter
-	private String perfil;
+	@Enumerated(EnumType.STRING)
+	private Perfil perfil;
 	
 	@Column(name = "dt_nasc")
 	@Setter
 	private LocalDate dataNascimento;
 	
 	@Column(name = "cargo")
-	@Setter
-	private String cargo;
+	@Enumerated(EnumType.STRING)
+	private Cargo cargo;
 	
 	@Column(name = "senha")
 	@Setter
@@ -60,6 +60,11 @@ public class Usuario implements UserDetails {
 
 	public Usuario(){
 
+	}
+
+	public void setCargo(Cargo cargo) {
+		this.cargo = cargo;
+		this.perfil = this.cargo.getPerfil();
 	}
 
 	public Usuario(Pessoa pessoa) {

@@ -48,9 +48,6 @@ class ManterUsuarioControllerTest {
     void setUp(){
         usuarioAtivo = testDataBuilder.createUsuarioAtivo();
         usuarioRepository.save(usuarioAtivo);
-
-        usuarioInativo = testDataBuilder.createUsuarioInativo();
-        usuarioRepository.save(usuarioInativo);
     }
 
     @AfterEach
@@ -69,13 +66,38 @@ class ManterUsuarioControllerTest {
                                         "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
                                                 "\"nome\": \"" + usuarioAtivo.getNome() + "\", " +
                                                 "\"email\": \"" + usuarioAtivo.getEmail() + "\", " +
-                                                "\"dataDeNascimento\": \"" + usuarioAtivo.getDataNascimento() + "\", " +
+                                                "\"dataNascimento\": \"" + usuarioAtivo.getDataNascimento() + "\", " +
                                                 "\"cargo\": \"" + usuarioAtivo.getCargo() + "\", " +
-                                                "\"senha\": \"1234567\"}"
+                                                "\"senhaProvisoria\": \"1234567\"}"
                                 )
                 )
                 // Assert
                 .andExpect(status().isConflict());
+    }
+
+
+    @DisplayName("Testa cadastro de usuário com dados válidos")
+    @Test
+    void deveCadastrarUsuarioComDadosValidos() throws Exception {
+
+        // Arrange
+        Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuarioNovo.getCpf() + "\", " +
+                                                "\"nome\": \"" + usuarioNovo.getNome() + "\", " +
+                                                "\"email\": \"" + usuarioNovo.getEmail() + "\", " +
+                                                "\"dataNascimento\": \"" + usuarioNovo.getDataNascimento() + "\", " +
+                                                "\"cargo\": \"" + usuarioNovo.getCargo() + "\", " +
+                                                "\"senhaProvisoria\": \"12A45678\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isCreated());
     }
 
 }

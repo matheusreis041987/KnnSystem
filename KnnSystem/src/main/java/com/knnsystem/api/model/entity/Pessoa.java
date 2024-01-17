@@ -1,5 +1,6 @@
 package com.knnsystem.api.model.entity;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ public class Pessoa {
 	private Usuario usuario;
 
 	@OneToMany(mappedBy = "pessoa")
-	private Set<Telefone> telefones;
+	private Set<Telefone> telefones = new HashSet<>();
 
 	public Pessoa(){
 		this.status = StatusGeral.ATIVO;

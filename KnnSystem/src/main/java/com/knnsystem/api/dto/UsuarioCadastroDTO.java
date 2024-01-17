@@ -1,9 +1,6 @@
 package com.knnsystem.api.dto;
 
-import com.knnsystem.api.model.entity.Pessoa;
-import com.knnsystem.api.model.entity.StatusGeral;
-import com.knnsystem.api.model.entity.Telefone;
-import com.knnsystem.api.model.entity.Usuario;
+import com.knnsystem.api.model.entity.*;
 import jakarta.validation.constraints.Email;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,6 +39,7 @@ public record UsuarioCadastroDTO(
                 pessoa.adicionaTelefone(telefone);
 
                 Usuario usuario = new Usuario(pessoa);
+                usuario.setCargo(Cargo.valueOf(cargo()));
                 usuario.setDataNascimento(dataNascimento());
                 usuario.setSenha(passwordEncoder.encode(senhaProvisoria()));
 
