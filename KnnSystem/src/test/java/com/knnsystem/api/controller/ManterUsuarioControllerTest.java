@@ -72,7 +72,7 @@ class ManterUsuarioControllerTest {
                                                 "\"email\": \"" + usuarioAtivo.getEmail() + "\", " +
                                                 "\"dataNascimento\": \"" + usuarioAtivo.getDataNascimento() + "\", " +
                                                 "\"cargo\": \"" + usuarioAtivo.getCargo() + "\", " +
-                                                "\"senhaProvisoria\": \"1234567\"}"
+                                                "\"senha\": \"1234567\"}"
                                 )
                 )
                 // Assert
@@ -100,7 +100,7 @@ class ManterUsuarioControllerTest {
                                                 "\"email\": \"" + usuarioNovo.getEmail() + "\", " +
                                                 "\"dataNascimento\": \"" + usuarioNovo.getDataNascimento() + "\", " +
                                                 "\"cargo\": \"" + usuarioNovo.getCargo() + "\", " +
-                                                "\"senhaProvisoria\": \"12A45678\"}"
+                                                "\"senha\": \"12A45678\"}"
                                 )
                 )
                 // Assert
@@ -154,6 +154,35 @@ class ManterUsuarioControllerTest {
         ;
 
 
+
+    }
+
+    @DisplayName("Testa atualização de usuário por CPF retorna erro se não encontra")
+    @Test
+    void testDeveLancarErroSeNaoEncontrarUsuarioPorCPFNaAtualizacao() throws Exception {
+        // Arrange
+        Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
+
+        // Act
+        this.mockMvc
+                .perform(
+                        put(ENDPOINT_CONSULTA_BASE + "/" + usuarioNovo.getCpf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuarioNovo.getCpf() + "\", " +
+                                                "\"nome\": \"" + usuarioNovo.getNome() + "\", " +
+                                                "\"email\": \"" + usuarioNovo.getEmail() + "\", " +
+                                                "\"telefone\": \"" + usuarioNovo.getPessoa().getTelefones().stream().findFirst().get() + "\", " +
+                                                "\"dataNascimento\": \"" + usuarioNovo.getDataNascimento() + "\", " +
+                                                "\"cargo\": \"" + usuarioNovo.getCargo() + "\", " +
+                                                "\"senha\": \"1234567\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("CPF inválido")))
+        ;
 
     }
 

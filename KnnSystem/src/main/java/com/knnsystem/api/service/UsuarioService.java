@@ -13,6 +13,8 @@ public interface UsuarioService {
 
 	UsuarioResumoDTO salvar (UsuarioCadastroDTO dto);
 
+	UsuarioResumoDTO editar(String cpf, UsuarioCadastroDTO dto);
+
 	Optional<UsuarioConsultaDTO> consultarPorCPF(@CPF String cpf);
 
 }

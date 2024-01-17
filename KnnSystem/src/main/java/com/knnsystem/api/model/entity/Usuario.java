@@ -16,11 +16,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table (name = "usuario", schema = "sch_pessoas" )
 @Getter
+@Setter
 public class Usuario implements UserDetails {
 
 	@Id
 	@Column(name = "id")
-	@Setter
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 

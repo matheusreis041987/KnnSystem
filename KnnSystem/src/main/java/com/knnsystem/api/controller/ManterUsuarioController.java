@@ -6,6 +6,7 @@ import com.knnsystem.api.dto.UsuarioResumoDTO;
 import com.knnsystem.api.exceptions.UsuarioNaoEncontradoException;
 import com.knnsystem.api.service.UsuarioService;
 import jakarta.validation.Valid;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +31,19 @@ public class ManterUsuarioController {
 
     @GetMapping("/{cpf}")
     public ResponseEntity<UsuarioConsultaDTO> consulta(
-            @PathVariable String cpf
+            @PathVariable @CPF String cpf
     ){
         var dto = service.consultarPorCPF(cpf);
         return ResponseEntity.ok(dto.get());
+    }
+
+    @PutMapping("/{cpf}")
+    public ResponseEntity<String> altera(
+            @PathVariable @CPF String cpf,
+            @RequestBody @Valid UsuarioCadastroDTO dto
+    ){
+        service.editar(cpf, dto);
+        return ResponseEntity.ok("usuário foi atualizado");
     }
 
 }

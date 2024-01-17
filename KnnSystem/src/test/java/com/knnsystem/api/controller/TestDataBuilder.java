@@ -1,9 +1,6 @@
 package com.knnsystem.api.controller;
 
-import com.knnsystem.api.model.entity.Cargo;
-import com.knnsystem.api.model.entity.Pessoa;
-import com.knnsystem.api.model.entity.StatusGeral;
-import com.knnsystem.api.model.entity.Usuario;
+import com.knnsystem.api.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,6 +63,9 @@ public class TestDataBuilder {
         pessoa.setNome("Novo usuário");
         pessoa.setEmail("novousuario@knnsytem.com");
         pessoa.setStatus(StatusGeral.ATIVO);
+        Telefone telefone = new Telefone();
+        telefone.setNumero("21987654321");
+        pessoa.adicionaTelefone(telefone);
 
         Usuario usuario = new Usuario(pessoa);
         usuario.setCargo(Cargo.FUNCIONARIO);

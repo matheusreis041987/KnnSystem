@@ -24,5 +24,8 @@ public class Telefone {
     @JoinColumn(name = "pessoa_id", nullable = false)
     private Pessoa pessoa;
 
-
+    @Override
+    public String toString() {
+        return this.numero;
+    }
 }

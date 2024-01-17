@@ -22,7 +22,9 @@ public record UsuarioCadastroDTO(
 
         String cargo,
 
-        String senhaProvisoria
+        String senha
+
+
 ) {
 
 
@@ -41,7 +43,7 @@ public record UsuarioCadastroDTO(
                 Usuario usuario = new Usuario(pessoa);
                 usuario.setCargo(Cargo.valueOf(cargo()));
                 usuario.setDataNascimento(dataNascimento());
-                usuario.setSenha(passwordEncoder.encode(senhaProvisoria()));
+                usuario.setSenha(passwordEncoder.encode(senha()));
 
                 return usuario;
         }

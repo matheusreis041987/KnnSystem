@@ -36,6 +36,8 @@ public class SecurityConfigurations {
                                         "/auth/api/redefine").permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/usuario/api/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT,
+                                "/usuario/api/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/auth/api/registra").hasRole(PAPEL_ADMINISTRADOR)
                         .anyRequest().authenticated()

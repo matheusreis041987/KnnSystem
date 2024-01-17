@@ -7,6 +7,7 @@ import com.knnsystem.api.dto.UsuarioConsultaDTO;
 import com.knnsystem.api.dto.UsuarioResumoDTO;
 import com.knnsystem.api.exceptions.UsuarioCadastradoException;
 import com.knnsystem.api.exceptions.UsuarioNaoEncontradoException;
+import com.knnsystem.api.model.entity.Cargo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,22 @@ public class UsuarioServiceImpl implements UsuarioService {
 		var usuarioSalvo = repository.save(usuario);
 
 		return new UsuarioResumoDTO(usuarioSalvo);
+	}
+
+	@Override
+	@Transactional
+	public UsuarioResumoDTO editar(String cpf, UsuarioCadastroDTO dto) {
+		if (repository.findByCpf(dto.cpf()).isEmpty()) {
+			throw new UsuarioNaoEncontradoException("CPF inválido");
+		}
+		var usuarioAEditar = dto.toModel(passwordEncoder);
+		usuarioAEditar.setNome(dto.nome());
+		usuarioAEditar.setCpf(dto.cpf());
+		usuarioAEditar.setEmail(dto.email());
+		usuarioAEditar.setDataNascimento(dto.dataNascimento());
+		usuarioAEditar.setCargo(Cargo.valueOf(dto.cargo()));
+
+		return null;
 	}
 
 	@Override
