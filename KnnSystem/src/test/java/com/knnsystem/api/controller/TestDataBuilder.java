@@ -115,4 +115,37 @@ public class TestDataBuilder {
         return usuarioAtivo;
     }
 
+    public Apartamento getApartamentoAtivo( Morador morador, Proprietario proprietario){
+        Apartamento apartamento = new Apartamento();
+        apartamento.setMorador(morador);
+        apartamento.setProprietario(proprietario);
+        apartamento.setNumApt(morador.getNumApt());
+        apartamento.setBlocoApt(morador.getBloco());
+        apartamento.setStatusApt(StatusGeral.ATIVO);
+
+        return apartamento;
+    }
+
+    public Morador getMoradorA(){
+        Morador morador = new Morador();
+        morador.setCpf("50729301060");
+        morador.setNome("Morador do apartamento A");
+        morador.setEmail("emaildomoradordoa@knnsystem.com.br");
+        morador.setBloco("Bloco X");
+        morador.setNumApt(101);
+
+        return morador;
+    }
+
+    public Proprietario getProprietarioA(){
+        Proprietario proprietario = new Proprietario();
+        proprietario.setCpf("04578520030");
+        proprietario.setNome("Proprietário do apartamento A");
+        proprietario.setEmail("emaildoproprietariodoa@knnsystem.com.br");
+        proprietario.setRegistroImovel(123);
+
+        return proprietario;
+
+    }
+
 }

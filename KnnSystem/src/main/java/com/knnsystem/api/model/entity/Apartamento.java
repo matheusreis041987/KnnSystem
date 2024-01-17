@@ -40,5 +40,4 @@ public class Apartamento {
 	@Enumerated(EnumType.STRING)
 	private StatusGeral statusApt;
 
-	
 }
