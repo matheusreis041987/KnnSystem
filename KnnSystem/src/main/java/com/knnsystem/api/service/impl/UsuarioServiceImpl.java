@@ -1,22 +1,17 @@
 package com.knnsystem.api.service.impl;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.knnsystem.api.dto.UsuarioCadastroDTO;
 import com.knnsystem.api.dto.UsuarioConsultaDTO;
 import com.knnsystem.api.dto.UsuarioResumoDTO;
 import com.knnsystem.api.exceptions.UsuarioCadastradoException;
+import com.knnsystem.api.exceptions.UsuarioNaoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.knnsystem.api.exceptions.ErroAutenticacao;
-import com.knnsystem.api.exceptions.RegraNegocioException;
-import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.UsuarioRepository;
 import com.knnsystem.api.service.UsuarioService;
 
@@ -47,7 +42,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	@Transactional
 	public Optional<UsuarioConsultaDTO> consultarPorCPF(String cpf) {
-		return Optional.empty();
+
+
+		if (cpf == null){
+			throw new UsuarioNaoEncontradoException("Erro - CPF é um campo obrigatório");
+		}
+
+		var usuario = repository.findByCpf(cpf);
+
+		if (usuario.isEmpty()){
+			throw new UsuarioNaoEncontradoException("Erro - não há usuário cadastrado para esse CPF");
+		}
+
+		return Optional.of(new UsuarioConsultaDTO(usuario.get()));
 	}
 
 }

@@ -33,11 +33,6 @@ public class ManterUsuarioController {
             @PathVariable String cpf
     ){
         var dto = service.consultarPorCPF(cpf);
-
-        if (dto.isEmpty()){
-            throw new UsuarioNaoEncontradoException("Erro - não há usuário cadastrado para esse CPF");
-        }
-
         return ResponseEntity.ok(dto.get());
     }
 

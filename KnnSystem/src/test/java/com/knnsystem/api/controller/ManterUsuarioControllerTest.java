@@ -124,6 +124,35 @@ class ManterUsuarioControllerTest {
                         Matchers.is("Erro - não há usuário cadastrado para esse CPF")))
         ;
 
+    }
+
+    @DisplayName("Testa consulta de usuário por CPF existente o retorna")
+    @Test
+    void testDeveRetornarUsuarioCorrespondenteACPFNaConsulta() throws Exception {
+        // Arrange
+        Usuario usuarioAtivo = testDataBuilder.createUsuarioAtivo();
+
+        // Act
+        this.mockMvc
+                .perform(
+                        get(ENDPOINT_CONSULTA_BASE + "/" + usuarioAtivo.getCpf())
+                )
+                // Assert
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome",
+                        Matchers.is(usuarioAtivo.getNome())))
+                .andExpect(jsonPath("$.cpf",
+                        Matchers.is(usuarioAtivo.getCpf())))
+                .andExpect(jsonPath("$.email",
+                        Matchers.is(usuarioAtivo.getEmail())))
+                .andExpect(jsonPath("$.dataNascimento",
+                        Matchers.is(usuarioAtivo.getDataNascimento().toString())))
+                .andExpect(jsonPath("$.cargo",
+                        Matchers.is(usuarioAtivo.getCargo().toString())))
+                .andExpect(jsonPath("$.status",
+                        Matchers.is(usuarioAtivo.getPessoa().getStatus().toString())))
+        ;
+
 
 
     }

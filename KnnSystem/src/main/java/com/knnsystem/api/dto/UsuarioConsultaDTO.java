@@ -3,6 +3,7 @@ package com.knnsystem.api.dto;
 import com.knnsystem.api.model.entity.Cargo;
 import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.entity.Telefone;
+import com.knnsystem.api.model.entity.Usuario;
 import jakarta.validation.constraints.Email;
 import org.hibernate.validator.constraints.br.CPF;
 
@@ -27,4 +28,10 @@ public record UsuarioConsultaDTO(
         StatusGeral status
 
 ) {
+        public UsuarioConsultaDTO(Usuario usuario) {
+                this(usuario.getNome(), usuario.getCpf(),
+                        usuario.getEmail(), usuario.getPessoa().getTelefones(),
+                        usuario.getDataNascimento(), usuario.getCargo(),
+                        usuario.getPessoa().getStatus());
+        }
 }
