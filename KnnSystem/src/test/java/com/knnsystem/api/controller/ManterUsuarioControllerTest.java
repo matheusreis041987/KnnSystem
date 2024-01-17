@@ -3,6 +3,7 @@ package com.knnsystem.api.controller;
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.PessoaRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -29,6 +31,8 @@ class ManterUsuarioControllerTest {
     private Usuario usuarioAtivo;
 
     private Usuario usuarioInativo;
+
+    private final String ENDPOINT_CONSULTA_BASE = "/usuario/api";
 
     private final String ENDPOINT_CADASTRO = "/usuario/api/cadastra";
 
@@ -72,7 +76,10 @@ class ManterUsuarioControllerTest {
                                 )
                 )
                 // Assert
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("CPF já cadastrado")))
+        ;
     }
 
 
@@ -98,6 +105,27 @@ class ManterUsuarioControllerTest {
                 )
                 // Assert
                 .andExpect(status().isCreated());
+    }
+
+    @DisplayName("Testa consulta de usuário por CPF retorna erro se não encontra")
+    @Test
+    void testDeveLancarErroSeNaoEncontrarUsuarioPorCPF() throws Exception {
+        // Arrange
+        Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
+
+        // Act
+        this.mockMvc
+                .perform(
+                        get(ENDPOINT_CONSULTA_BASE + "/" + usuarioNovo.getCpf())
+                )
+                // Assert
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - não há usuário cadastrado para esse CPF")))
+        ;
+
+
+
     }
 
 }

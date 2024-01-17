@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.knnsystem.api.dto.UsuarioCadastroDTO;
+import com.knnsystem.api.dto.UsuarioConsultaDTO;
 import com.knnsystem.api.dto.UsuarioResumoDTO;
 import com.knnsystem.api.exceptions.UsuarioCadastradoException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 		var usuarioSalvo = repository.save(usuario);
 
 		return new UsuarioResumoDTO(usuarioSalvo);
+	}
+
+	@Override
+	@Transactional
+	public Optional<UsuarioConsultaDTO> consultarPorCPF(String cpf) {
+		return Optional.empty();
 	}
 
 }
