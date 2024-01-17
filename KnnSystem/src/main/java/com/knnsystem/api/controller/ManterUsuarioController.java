@@ -57,4 +57,12 @@ public class ManterUsuarioController {
         return ResponseEntity.ok(dto);
     }
 
+    @PutMapping("/inativa/{cpf}")
+    public ResponseEntity<UsuarioConsultaDTO> inativa(
+            @PathVariable @CPF String cpf
+    ) {
+        var dto = service.inativar(cpf);
+        return ResponseEntity.ok(dto);
+    }
+
 }

@@ -19,4 +19,6 @@ public interface UsuarioService {
 
 	UsuarioConsultaDTO ativar(@CPF String cpf);
 
+	UsuarioConsultaDTO inativar(@CPF String cpf);
+
 }

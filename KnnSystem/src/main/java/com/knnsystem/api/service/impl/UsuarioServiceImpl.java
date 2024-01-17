@@ -71,6 +71,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return new UsuarioConsultaDTO(usuario);
 	}
 
+	@Override
+	public UsuarioConsultaDTO inativar(String cpf) {
+		var usuario = consultarUsuarioPorCPF(cpf);
+		usuario.getPessoa().setStatus(StatusGeral.INATIVO);
+		return new UsuarioConsultaDTO(usuario);
+
+	}
+
 	private Usuario consultarUsuarioPorCPF(String cpf){
 		if (cpf == null){
 			throw new UsuarioNaoEncontradoException("Erro - CPF é um campo obrigatório");

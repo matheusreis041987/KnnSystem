@@ -1,6 +1,6 @@
 package com.knnsystem.api.controller;
 
-import com.knnsystem.api.model.entity.StatusGeral;
+
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.PessoaRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
@@ -22,7 +22,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -45,6 +44,8 @@ class ManterUsuarioControllerTest {
     private final String ENDPOINT_CADASTRO = "/usuario/api/cadastra";
 
     private final String ENDPOINT_ATIVAR = "/usuario/api/ativa";
+
+    private final String ENDPOINT_INATIVAR = "/usuario/api/inativa";
 
     @Autowired
     private MockMvc mockMvc;
@@ -122,7 +123,6 @@ class ManterUsuarioControllerTest {
     @DisplayName("Testa cadastro de usuário com dados válidos")
     @Test
     void deveCadastrarUsuarioComDadosValidos() throws Exception {
-
         // Arrange
         Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
 
@@ -167,9 +167,6 @@ class ManterUsuarioControllerTest {
     @DisplayName("Testa funcionário de secretaria não consulta por CPF")
     @Test
     void testNaoDevePermitirFuncionarioSecretariaEncontrarUsuarioPorCPF() throws Exception {
-        // Arrange
-        Usuario usuarioAtivo = testDataBuilder.createUsuarioAtivo();
-
         // Act
         this.mockMvc
                 .perform(
@@ -185,9 +182,6 @@ class ManterUsuarioControllerTest {
     @DisplayName("Testa consulta de usuário por CPF existente o retorna")
     @Test
     void testDeveRetornarUsuarioCorrespondenteACPFNaConsulta() throws Exception {
-        // Arrange
-        Usuario usuarioAtivo = testDataBuilder.createUsuarioAtivo();
-
         // Act
         this.mockMvc
                 .perform(
@@ -247,9 +241,6 @@ class ManterUsuarioControllerTest {
     @DisplayName("Testa atualização de usuário por CPF não é permitida a secretaria")
     @Test
     void testNaoDeveAtualizarUsuarioSeFuncionarioSecretaria() throws Exception {
-        // Arrange
-        Usuario usuarioAtivo = testDataBuilder.createUsuarioAtivo();
-
         // Act
         this.mockMvc
                 .perform(
@@ -277,7 +268,7 @@ class ManterUsuarioControllerTest {
     void deveAtivarUsuarioInativo() throws Exception {
 
         // Arrange
-        Usuario usuarioInativo = testDataBuilder.createUsuarioInativo();
+        usuarioInativo = testDataBuilder.createUsuarioInativo();
         usuarioRepository.save(usuarioInativo);
 
         // Act
@@ -286,8 +277,60 @@ class ManterUsuarioControllerTest {
                                 .with(user(usuarioAdministrador))
                 )
                 // Assert
-                .andExpect(status().isOk());
-        assertEquals(usuarioInativo.getPessoa().getStatus(), StatusGeral.INATIVO);
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status",
+                        Matchers.is("ATIVO")));
+    }
+
+    @DisplayName("Testa perfil de secretaria não pode ativar usuário inativo")
+    @Test
+    void naoDeveAtivarUsuarioInativoSeSecretaria() throws Exception {
+
+        // Arrange
+        usuarioInativo = testDataBuilder.createUsuarioInativo();
+        usuarioRepository.save(usuarioInativo);
+
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_ATIVAR + "/" + usuarioInativo.getCpf())
+                                .with(user(usuarioSecretaria))
+                )
+                // Assert
+                .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("Testa inativação de usuário ativo")
+    @Test
+    void deveInativarUsuarioAtivo() throws Exception {
+        // Arrange
+        usuarioInativo = testDataBuilder.createUsuarioInativo();
+        usuarioRepository.save(usuarioInativo);
+
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_INATIVAR + "/" + usuarioInativo.getCpf())
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status",
+                        Matchers.is("INATIVO")));
+    }
+
+    @DisplayName("Testa não deve inativar usuário ativo se funcionário da secretaria")
+    @Test
+    void naoDeveInativarUsuarioAtivoSeSecretaria() throws Exception {
+        // Arrange
+        usuarioInativo = testDataBuilder.createUsuarioInativo();
+        usuarioRepository.save(usuarioInativo);
+
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_INATIVAR + "/" + usuarioInativo.getCpf())
+                                .with(user(usuarioSecretaria))
+                )
+                // Assert
+                .andExpect(status().isForbidden());
     }
 
 }
