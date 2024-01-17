@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,6 +32,8 @@ class ManterUsuarioControllerTest {
     private Usuario usuarioAtivo;
 
     private Usuario usuarioInativo;
+
+    private Usuario usuarioAdministrador;
 
     private final String ENDPOINT_CONSULTA_BASE = "/usuario/api";
 
@@ -52,6 +55,8 @@ class ManterUsuarioControllerTest {
     void setUp(){
         usuarioAtivo = testDataBuilder.createUsuarioAtivo();
         usuarioRepository.save(usuarioAtivo);
+
+        usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
     }
 
     @AfterEach
@@ -65,6 +70,7 @@ class ManterUsuarioControllerTest {
         // Act
         this.mockMvc.perform(
                         post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
@@ -93,6 +99,7 @@ class ManterUsuarioControllerTest {
         // Act
         this.mockMvc.perform(
                         post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         "{\"cpf\": \"" + usuarioNovo.getCpf() + "\", " +
@@ -117,6 +124,7 @@ class ManterUsuarioControllerTest {
         this.mockMvc
                 .perform(
                         get(ENDPOINT_CONSULTA_BASE + "/" + usuarioNovo.getCpf())
+                                .with(user(usuarioAdministrador))
                 )
                 // Assert
                 .andExpect(status().isNotFound())
@@ -136,6 +144,7 @@ class ManterUsuarioControllerTest {
         this.mockMvc
                 .perform(
                         get(ENDPOINT_CONSULTA_BASE + "/" + usuarioAtivo.getCpf())
+                                .with(user(usuarioAdministrador))
                 )
                 // Assert
                 .andExpect(status().isOk())
@@ -167,6 +176,7 @@ class ManterUsuarioControllerTest {
         this.mockMvc
                 .perform(
                         put(ENDPOINT_CONSULTA_BASE + "/" + usuarioNovo.getCpf())
+                                .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         "{\"cpf\": \"" + usuarioNovo.getCpf() + "\", " +

@@ -74,4 +74,23 @@ public class TestDataBuilder {
         return usuario;
     }
 
+    public Usuario createUsuarioAdministrador(){
+        // Ativo
+        // Arrange
+        Pessoa pessoa = new Pessoa();
+        pessoa.setId(1);
+        // https://www.4devs.com.br/gerador_de_cpf
+        pessoa.setCpf("44890168087");
+        pessoa.setNome("Sindico");
+        pessoa.setEmail("emaildosindico@knnsytem.com");
+        pessoa.setStatus(StatusGeral.ATIVO);
+
+        Usuario usuarioAtivo = new Usuario(pessoa);
+        usuarioAtivo.setCargo(Cargo.SINDICO);
+        usuarioAtivo.setSenha(passwordEncoder.encode("1234567A"));
+        usuarioAtivo.setDataNascimento(LocalDate.of(1955,1 ,1));
+
+        return usuarioAtivo;
+    }
+
 }
