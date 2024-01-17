@@ -148,4 +148,26 @@ public class TestDataBuilder {
 
     }
 
+    public Morador getMoradorB(){
+        Morador morador = new Morador();
+        morador.setCpf("51105530094");
+        morador.setNome("Morador do apartamento B");
+        morador.setEmail("emaildomoradordoa@knnsystem.com.br");
+        morador.setBloco("Bloco Y");
+        morador.setNumApt(102);
+
+        return morador;
+    }
+
+    public Proprietario getProprietarioB(){
+        Proprietario proprietario = new Proprietario();
+        proprietario.setCpf("30429734093");
+        proprietario.setNome("Proprietário do apartamento B");
+        proprietario.setEmail("emaildoproprietariodob@knnsystem.com.br");
+        proprietario.setRegistroImovel(456);
+
+        return proprietario;
+
+    }
+
 }

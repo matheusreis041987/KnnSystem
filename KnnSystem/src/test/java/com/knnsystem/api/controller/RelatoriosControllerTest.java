@@ -104,6 +104,26 @@ class RelatoriosControllerTest {
                         hasSize(1)))
                 .andExpect(jsonPath("$[0].numeroDoApartamento",
                         Matchers.is(apartamento.getNumApt())))
+                .andExpect(jsonPath("$[0].bloco",
+                        Matchers.is(apartamento.getBlocoApt())))
+                .andExpect(jsonPath("$[0].nomeDoProprietario",
+                        Matchers.is(proprietario.getNome())))
+                .andExpect(jsonPath("$[0].nomeDoMorador",
+                        Matchers.is(morador.getNome())))
+                .andExpect(jsonPath("$[0].telefoneDoProprietario",
+                        Matchers.is(proprietario.getTelefones().stream().findFirst().toString())))
+                .andExpect(jsonPath("$[0].telefoneDoMorador",
+                        Matchers.is(morador.getTelefones().stream().findFirst().toString())))
+                .andExpect(jsonPath("$[0].cpfDoProprietario",
+                        Matchers.is(proprietario.getCpf())))
+                .andExpect(jsonPath("$[0].cpfDoMorador",
+                        Matchers.is(morador.getCpf())))
+                .andExpect(jsonPath("$[0].emailDoProprietario",
+                        Matchers.is(proprietario.getEmail())))
+                .andExpect(jsonPath("$[0].emailDoMorador",
+                        Matchers.is(morador.getEmail())))
+                .andExpect(jsonPath("$[0].metragemDoImovel",
+                        Matchers.is(apartamento.getMetragem())))
         ;
     }
 
