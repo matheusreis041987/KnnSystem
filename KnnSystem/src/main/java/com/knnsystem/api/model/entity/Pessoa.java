@@ -1,6 +1,7 @@
 package com.knnsystem.api.model.entity;
 
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +12,6 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
-
 public class Pessoa {
 	
 	@Id
@@ -35,6 +35,9 @@ public class Pessoa {
 	@OneToOne(mappedBy = "pessoa")
 	private Usuario usuario;
 
+	@OneToMany(mappedBy = "pessoa")
+	private Set<Telefone> telefones;
+
 	public Pessoa(){
 		this.status = StatusGeral.ATIVO;
 	}
@@ -42,6 +45,10 @@ public class Pessoa {
 	public boolean isAtivo() {
 		return this.status.equals(StatusGeral.ATIVO);
 
+	}
+
+	public void adicionaTelefone(Telefone telefone){
+		telefones.add(telefone);
 	}
 
 	@Override

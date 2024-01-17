@@ -5,9 +5,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.knnsystem.api.dto.UsuarioCadastroDTO;
+import com.knnsystem.api.dto.UsuarioResumoDTO;
 import com.knnsystem.api.exceptions.UsuarioCadastradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +25,22 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Autowired
 	private UsuarioRepository repository;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	@Override
 	@Transactional
-	public UsuarioCadastroDTO salvar(UsuarioCadastroDTO dto) {
+	public UsuarioResumoDTO salvar(UsuarioCadastroDTO dto) {
 
 		if (repository.findByCpf(dto.cpf()).isPresent()) {
 			throw new UsuarioCadastradoException("CPF já cadastrado");
 		}
 
+		var usuario = dto.toModel(passwordEncoder);
 
-		return null;
+		var usuarioSalvo = repository.save(usuario);
+
+		return new UsuarioResumoDTO(usuarioSalvo);
 	}
 
 }
