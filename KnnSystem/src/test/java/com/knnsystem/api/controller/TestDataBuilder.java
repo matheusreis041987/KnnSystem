@@ -23,6 +23,9 @@ public class TestDataBuilder {
         pessoa.setNome("Nome da Pessoa");
         pessoa.setEmail("emaildapessoa@knnsytem.com");
         pessoa.setStatus(StatusGeral.ATIVO);
+        Telefone telefone = new Telefone();
+        telefone.setNumero("21987654321");
+        pessoa.adicionaTelefone(telefone);
 
         Usuario usuarioAtivo = new Usuario(pessoa);
         usuarioAtivo.setCargo(Cargo.SINDICO);
@@ -89,6 +92,25 @@ public class TestDataBuilder {
         usuarioAtivo.setCargo(Cargo.SINDICO);
         usuarioAtivo.setSenha(passwordEncoder.encode("1234567A"));
         usuarioAtivo.setDataNascimento(LocalDate.of(1955,1 ,1));
+
+        return usuarioAtivo;
+    }
+
+    public Usuario createUsuarioSecretaria(){
+        // Ativo
+        // Arrange
+        Pessoa pessoa = new Pessoa();
+        pessoa.setId(1);
+        // https://www.4devs.com.br/gerador_de_cpf
+        pessoa.setCpf("94302590084");
+        pessoa.setNome("Funcionário da secretaria");
+        pessoa.setEmail("emaildofuncionario@knnsytem.com");
+        pessoa.setStatus(StatusGeral.ATIVO);
+
+        Usuario usuarioAtivo = new Usuario(pessoa);
+        usuarioAtivo.setCargo(Cargo.FUNCIONARIO);
+        usuarioAtivo.setSenha(passwordEncoder.encode("1234567A"));
+        usuarioAtivo.setDataNascimento(LocalDate.of(1989,6 ,1));
 
         return usuarioAtivo;
     }

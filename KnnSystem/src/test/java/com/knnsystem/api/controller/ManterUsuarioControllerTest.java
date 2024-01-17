@@ -35,6 +35,8 @@ class ManterUsuarioControllerTest {
 
     private Usuario usuarioAdministrador;
 
+    private Usuario usuarioSecretaria;
+
     private final String ENDPOINT_CONSULTA_BASE = "/usuario/api";
 
     private final String ENDPOINT_CADASTRO = "/usuario/api/cadastra";
@@ -57,6 +59,7 @@ class ManterUsuarioControllerTest {
         usuarioRepository.save(usuarioAtivo);
 
         usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
+        usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
     }
 
     @AfterEach
@@ -88,6 +91,28 @@ class ManterUsuarioControllerTest {
         ;
     }
 
+
+    @DisplayName("Testa que não funcionário secretaria não pode cadastrar novo usuário")
+    @Test
+    void naoDeveCadastrarUsuarioSeForFuncionarioDaSecretaria() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
+                                                "\"nome\": \"" + usuarioAtivo.getNome() + "\", " +
+                                                "\"email\": \"" + usuarioAtivo.getEmail() + "\", " +
+                                                "\"dataNascimento\": \"" + usuarioAtivo.getDataNascimento() + "\", " +
+                                                "\"cargo\": \"" + usuarioAtivo.getCargo() + "\", " +
+                                                "\"senha\": \"1234567\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isForbidden())
+        ;
+    }
 
     @DisplayName("Testa cadastro de usuário com dados válidos")
     @Test
@@ -130,6 +155,24 @@ class ManterUsuarioControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Erro - não há usuário cadastrado para esse CPF")))
+        ;
+
+    }
+
+    @DisplayName("Testa funcionário de secretaria não consulta por CPF")
+    @Test
+    void testNaoDevePermitirFuncionarioSecretariaEncontrarUsuarioPorCPF() throws Exception {
+        // Arrange
+        Usuario usuarioAtivo = testDataBuilder.createUsuarioAtivo();
+
+        // Act
+        this.mockMvc
+                .perform(
+                        get(ENDPOINT_CONSULTA_BASE + "/" + usuarioAtivo.getCpf())
+                                .with(user(usuarioSecretaria))
+                )
+                // Assert
+                .andExpect(status().isForbidden())
         ;
 
     }
@@ -192,6 +235,34 @@ class ManterUsuarioControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("CPF inválido")))
+        ;
+
+    }
+
+    @DisplayName("Testa atualização de usuário por CPF não é permitida a secretaria")
+    @Test
+    void testNaoDeveAtualizarUsuarioSeFuncionarioSecretaria() throws Exception {
+        // Arrange
+        Usuario usuarioAtivo = testDataBuilder.createUsuarioAtivo();
+
+        // Act
+        this.mockMvc
+                .perform(
+                        put(ENDPOINT_CONSULTA_BASE + "/" + usuarioAtivo.getCpf())
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
+                                                "\"nome\": \"" + usuarioAtivo.getNome() + "\", " +
+                                                "\"email\": \"" + usuarioAtivo.getEmail() + "\", " +
+                                                "\"telefone\": \"" + usuarioAtivo.getPessoa().getTelefones().stream().findFirst().get() + "\", " +
+                                                "\"dataNascimento\": \"" + usuarioAtivo.getDataNascimento() + "\", " +
+                                                "\"cargo\": \"" + usuarioAtivo.getCargo() + "\", " +
+                                                "\"senha\": \"1234567\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isForbidden())
         ;
 
     }
