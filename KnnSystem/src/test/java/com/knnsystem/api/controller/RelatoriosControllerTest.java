@@ -31,6 +31,10 @@ class RelatoriosControllerTest {
 
     private Usuario usuarioSindico;
 
+    private Usuario usuarioAdministrador;
+
+    private Usuario usuarioSecretaria;
+
     private final String ENDPOINT_RELATORIO_APARTAMENTOS = "/relatorio/api/apartamentos";
 
     @Autowired
@@ -53,7 +57,10 @@ class RelatoriosControllerTest {
 
     @BeforeEach
     void setUp(){
-        usuarioSindico = testDataBuilder.createUsuarioAdministrador();
+
+        usuarioSindico = testDataBuilder.createUsuarioSindico();
+        usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
+        usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
     }
 
     @AfterEach
@@ -124,6 +131,52 @@ class RelatoriosControllerTest {
                         Matchers.is(morador.getEmail())))
                 .andExpect(jsonPath("$[0].metragemDoImovel",
                         Matchers.is(apartamento.getMetragem())))
+        ;
+    }
+
+    @DisplayName("testa relatório de apartamento com mais resultados")
+    @Test
+    void deveRetornarMaisApartamentosSeHouver() throws Exception {
+        // Arrange
+        var morador = testDataBuilder.getMoradorA();
+        var proprietario = testDataBuilder.getProprietarioA();
+        var apartamento = testDataBuilder.getApartamentoAtivo(morador, proprietario);
+
+        moradorRepository.save(morador);
+        proprietarioRepository.save(proprietario);
+        apartamentoRepository.save(apartamento);
+
+        morador = testDataBuilder.getMoradorB();
+        proprietario = testDataBuilder.getProprietarioB();
+        apartamento = testDataBuilder.getApartamentoAtivo(morador, proprietario);
+
+        moradorRepository.save(morador);
+        proprietarioRepository.save(proprietario);
+        apartamentoRepository.save(apartamento);
+
+        // Act
+        this.mockMvc
+                .perform(
+                        get(ENDPOINT_RELATORIO_APARTAMENTOS)
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        hasSize(2)));
+    }
+
+    @DisplayName("testa perfil secretaria nao visualiza relatorios")
+    @Test
+    void deveProibirSecretariaDeVisualizarRelatorioDeApartamentos() throws Exception {
+        // Act
+        this.mockMvc
+                .perform(
+                        get(ENDPOINT_RELATORIO_APARTAMENTOS)
+                                .with(user(usuarioSecretaria))
+                )
+                // Assert
+                .andExpect(status().isForbidden())
         ;
     }
 

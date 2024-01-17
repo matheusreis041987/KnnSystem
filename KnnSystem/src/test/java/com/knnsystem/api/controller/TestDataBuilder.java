@@ -84,13 +84,13 @@ public class TestDataBuilder {
         pessoa.setId(1);
         // https://www.4devs.com.br/gerador_de_cpf
         pessoa.setCpf("44890168087");
-        pessoa.setNome("Sindico");
-        pessoa.setEmail("emaildosindico@knnsytem.com");
+        pessoa.setNome("Administrador");
+        pessoa.setEmail("emaildoadministrador@knnsytem.com");
         pessoa.setStatus(StatusGeral.ATIVO);
 
         Usuario usuarioAtivo = new Usuario(pessoa);
         usuarioAtivo.setCargo(Cargo.ADMINISTRADOR);
-        usuarioAtivo.setSenha(passwordEncoder.encode("1234567A"));
+        usuarioAtivo.setSenha(passwordEncoder.encode("1234567C"));
         usuarioAtivo.setDataNascimento(LocalDate.of(1955,1 ,1));
 
         return usuarioAtivo;
@@ -111,6 +111,25 @@ public class TestDataBuilder {
         usuarioAtivo.setCargo(Cargo.FUNCIONARIO);
         usuarioAtivo.setSenha(passwordEncoder.encode("1234567A"));
         usuarioAtivo.setDataNascimento(LocalDate.of(1989,6 ,1));
+
+        return usuarioAtivo;
+    }
+
+    public Usuario createUsuarioSindico(){
+        // Ativo
+        // Arrange
+        Pessoa pessoa = new Pessoa();
+        pessoa.setId(1);
+        // https://www.4devs.com.br/gerador_de_cpf
+        pessoa.setCpf("94142552066");
+        pessoa.setNome("Sindico");
+        pessoa.setEmail("emaildosindico@knnsytem.com");
+        pessoa.setStatus(StatusGeral.ATIVO);
+
+        Usuario usuarioAtivo = new Usuario(pessoa);
+        usuarioAtivo.setCargo(Cargo.SINDICO);
+        usuarioAtivo.setSenha(passwordEncoder.encode("1234567B"));
+        usuarioAtivo.setDataNascimento(LocalDate.of(1969,5 ,1));
 
         return usuarioAtivo;
     }
