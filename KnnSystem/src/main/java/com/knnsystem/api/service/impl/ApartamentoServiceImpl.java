@@ -38,15 +38,20 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 
 	@Override
 	@Transactional
-	public ApartamentoFormularioDTO salvar(ApartamentoFormularioDTO apartamentoFormularioDTO) {
+	public ApartamentoFormularioDTO salvar(ApartamentoFormularioDTO dto) {
 
 		if (repository
 				.findByNumAptAndBlocoApt(
-						apartamentoFormularioDTO.numeroDoApartamento(),
-						apartamentoFormularioDTO.bloco()).isPresent()){
+						dto.numeroDoApartamento(),
+						dto.bloco()).isPresent()){
 			throw new EntidadeCadastradaException("Já há um apartamento cadastrado para os dados informados");
 		}
 
-		return null;
+		var apartamento = dto.toModel();
+
+		var apartamentoSalvo = repository.save(apartamento);
+
+		return new ApartamentoFormularioDTO(apartamentoSalvo);
+
 	}
 }

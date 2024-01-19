@@ -57,7 +57,6 @@ class ApartamentoControllerTest {
         proprietario = proprietarioRepository.save(proprietario);
 
         apartamentoCadastrado = testDataBuilder.getApartamentoAtivo(morador, proprietario);
-        apartamentoCadastrado = apartamentoRepository.save(apartamentoCadastrado);
         usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
     }
 
@@ -70,6 +69,8 @@ class ApartamentoControllerTest {
     @Test
     @Transactional
     void naoDeveCadastrarApartamentoPelaSegundaVez() throws Exception {
+        // Arrange
+        apartamentoCadastrado = apartamentoRepository.save(apartamentoCadastrado);
         // Act
         this.mockMvc.perform(
                         post(ENDPOINT_CADASTRO)
@@ -155,6 +156,34 @@ class ApartamentoControllerTest {
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("telefone do morador deve ser preenchido")))
         ;
+    }
+
+    @DisplayName("Testa cadastro de apartamento com dados válidos")
+    @Test
+    @Transactional
+    void deveCadastrarUsuarioComDadosValidos() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioAdministrador))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroDoApartamento\": " + apartamentoCadastrado.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoCadastrado.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getCpf() + "\", " +
+                                                "\"emailDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoCadastrado.getMorador().getNome() + "\", " +
+                                                "\"telefoneDoMorador\": \"" + apartamentoCadastrado.getMorador().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoCadastrado.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoCadastrado.getMorador().getEmail() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoCadastrado.getMetragem() + "}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isCreated());
     }
 
 }

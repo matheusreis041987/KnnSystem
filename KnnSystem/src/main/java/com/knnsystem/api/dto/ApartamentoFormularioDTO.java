@@ -1,6 +1,8 @@
 package com.knnsystem.api.dto;
 
 import com.knnsystem.api.model.entity.Apartamento;
+import com.knnsystem.api.model.entity.Morador;
+import com.knnsystem.api.model.entity.Proprietario;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -49,5 +51,28 @@ public record ApartamentoFormularioDTO(
 				apartamento.getMetragem(),
 				apartamento.getIdApartamento());
 
+	}
+
+	public Apartamento toModel() {
+		Morador morador = new Morador();
+		morador.setCpf(cpfDoMorador());
+		morador.setNome(nomeDoMorador());
+		morador.setEmail(emailDoMorador());
+		morador.setNumApt(numeroDoApartamento());
+		morador.setBloco(bloco());
+
+		Proprietario proprietario = new Proprietario();
+		proprietario.setCpf(cpfDoProprietario());
+		proprietario.setNome(nomeDoProprietario());
+		proprietario.setEmail(emailDoProprietario());
+
+		Apartamento apartamento = new Apartamento();
+		apartamento.setMorador(morador);
+		apartamento.setProprietario(proprietario);
+		apartamento.setNumApt(numeroDoApartamento());
+		apartamento.setBlocoApt(bloco());
+		apartamento.setMetragem(metragemDoImovel());
+
+		return apartamento;
 	}
 }
