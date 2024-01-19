@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.knnsystem.api.model.repository.MoradorRepository;
 import com.knnsystem.api.service.MoradorService;
 
+import java.util.List;
+
 @Service
 public class MoradorServiceImpl implements MoradorService {
 	@Autowired
@@ -24,5 +26,14 @@ public class MoradorServiceImpl implements MoradorService {
 
 		return new MoradorDTO(moradorSalvo);
 
+	}
+
+	@Override
+	public List<MoradorDTO> listar(String cpf, String nome) {
+		return repository
+				.findByCpfOrNome(cpf, nome)
+				.stream()
+				.map(MoradorDTO::new)
+				.toList();
 	}
 }

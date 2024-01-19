@@ -16,8 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,6 +34,8 @@ class MoradorControllerTest {
     private Usuario usuarioSecretaria;
 
     private final String ENDPOINT_CADASTRO = "/morador/api/cadastra";
+
+    private final String ENDPOINT_CONSULTA = "/morador/api/consulta";
 
     @Autowired
     private MockMvc mockMvc;
@@ -153,6 +155,76 @@ class MoradorControllerTest {
                 // Assert
                 .andExpect(status().isCreated())
         ;
+    }
+
+    @DisplayName("Testa consulta para repositório de moradores vazio")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverMoradores() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - Morador não cadastrado")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra cpf do morador")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverMoradorParaCpfInformado() throws Exception {
+        // Arrange
+        moradorRepository.save(moradorA);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("cpf", moradorB.getCpf())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - Morador não cadastrado")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra nome do morador")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverMoradorParaNomeInformado() throws Exception {
+        // Arrange
+        moradorRepository.save(moradorB);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("nome", moradorA.getNome())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - Morador não cadastrado")));
+
+    }
+
+    @DisplayName("Testa consulta quando encontra tanto cpf quanto nome")
+    @Test
+    @Transactional
+    void deveRetornarMoradoresQuePossuamCpfOuNome() throws Exception {
+        // Arrange
+        moradorRepository.save(moradorA);
+        moradorRepository.save(moradorB);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("cpf", moradorB.getCpf())
+                                .param("nome", moradorA.getNome())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.hasSize(2)));
+
     }
 
 }
