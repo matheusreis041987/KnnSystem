@@ -1,11 +1,13 @@
 package com.knnsystem.api.service;
 
-import com.knnsystem.api.dto.ApartamentoRelatorioDTO;
+import com.knnsystem.api.dto.ApartamentoFormularioDTO;
 
 import java.util.List;
 
 public interface ApartamentoService {
 
-	List<ApartamentoRelatorioDTO> listar();
+	List<ApartamentoFormularioDTO> listar();
+
+	ApartamentoFormularioDTO salvar(ApartamentoFormularioDTO apartamentoFormularioDTO);
 
 }

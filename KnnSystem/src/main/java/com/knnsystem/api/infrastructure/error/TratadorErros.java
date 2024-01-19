@@ -2,8 +2,8 @@ package com.knnsystem.api.infrastructure.error;
 
 import com.knnsystem.api.exceptions.ErroAutenticacao;
 import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
-import com.knnsystem.api.exceptions.UsuarioCadastradoException;
-import com.knnsystem.api.exceptions.UsuarioNaoEncontradoException;
+import com.knnsystem.api.exceptions.EntidadeCadastradaException;
+import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,7 +19,7 @@ public class TratadorErros {
         );
     }
 
-    @ExceptionHandler({UsuarioCadastradoException.class})
+    @ExceptionHandler({EntidadeCadastradaException.class})
     public ResponseEntity trataErro409(Exception exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 new ErroSoComMensagemValidacao(exception.getMessage())
@@ -27,7 +27,7 @@ public class TratadorErros {
     }
 
     @ExceptionHandler({
-            UsuarioNaoEncontradoException.class,
+            EntidadeNaoEncontradaException.class,
             RelatorioSemResultadoException.class})
     public ResponseEntity trataErro404(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(

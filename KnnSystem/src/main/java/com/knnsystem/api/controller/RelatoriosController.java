@@ -1,7 +1,7 @@
 package com.knnsystem.api.controller;
 
 
-import com.knnsystem.api.dto.ApartamentoRelatorioDTO;
+import com.knnsystem.api.dto.ApartamentoFormularioDTO;
 import com.knnsystem.api.service.ApartamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class RelatoriosController {
     private ApartamentoService apartamentoService;
 
     @GetMapping("/apartamentos")
-    public ResponseEntity<List<ApartamentoRelatorioDTO>> listaApartamentos() {
+    public ResponseEntity<List<ApartamentoFormularioDTO>> listaApartamentos() {
         var relatorio = apartamentoService.listar();
         return ResponseEntity.ok(relatorio);
     }
