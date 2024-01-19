@@ -8,6 +8,8 @@ public interface ApartamentoService {
 
 	List<ApartamentoFormularioDTO> listar();
 
+	List<ApartamentoFormularioDTO> listar(Integer numero, String bloco);
+
 	ApartamentoFormularioDTO salvar(ApartamentoFormularioDTO apartamentoFormularioDTO);
 
 }

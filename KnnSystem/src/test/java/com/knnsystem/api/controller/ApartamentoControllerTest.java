@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,11 +28,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ApartamentoControllerTest {
 
-    private Apartamento apartamentoCadastrado;
+    private Apartamento apartamentoA;
+
+    private Apartamento apartamentoB;
 
     private Usuario usuarioAdministrador;
 
     private final String ENDPOINT_CADASTRO = "/apartamento/api/cadastra";
+
+    private final String ENDPOINT_CONSULTA = "/apartamento/api/consulta";
 
     @Autowired
     private MockMvc mockMvc;
@@ -51,12 +55,20 @@ class ApartamentoControllerTest {
 
     @BeforeEach
     void setUp(){
+        // Primeiro Apartamento
         var morador = testDataBuilder.getMoradorA();
         var proprietario = testDataBuilder.getProprietarioA();
         morador = moradorRepository.save(morador);
         proprietario = proprietarioRepository.save(proprietario);
+        apartamentoA = testDataBuilder.getApartamentoAtivo(morador, proprietario);
 
-        apartamentoCadastrado = testDataBuilder.getApartamentoAtivo(morador, proprietario);
+        // Segundo Apartamento
+        morador = testDataBuilder.getMoradorB();
+        proprietario = testDataBuilder.getProprietarioB();
+        morador = moradorRepository.save(morador);
+        proprietario = proprietarioRepository.save(proprietario);
+        apartamentoB = testDataBuilder.getApartamentoAtivo(morador, proprietario);
+
         usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
     }
 
@@ -70,25 +82,25 @@ class ApartamentoControllerTest {
     @Transactional
     void naoDeveCadastrarApartamentoPelaSegundaVez() throws Exception {
         // Arrange
-        apartamentoCadastrado = apartamentoRepository.save(apartamentoCadastrado);
+        apartamentoA = apartamentoRepository.save(apartamentoA);
         // Act
         this.mockMvc.perform(
                         post(ENDPOINT_CADASTRO)
                                 .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroDoApartamento\": " + apartamentoCadastrado.getNumApt() + ", " +
-                                                "\"bloco\": \"" + apartamentoCadastrado.getBlocoApt() + "\", " +
-                                                "\"nomeDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getNome() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getCpf() + "\", " +
-                                                "\"emailDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getEmail() + "\", " +
-                                                "\"nomeDoMorador\": \"" + apartamentoCadastrado.getMorador().getNome() + "\", " +
-                                                "\"telefoneDoMorador\": \"" + apartamentoCadastrado.getMorador().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoMorador\": \"" + apartamentoCadastrado.getMorador().getCpf() + "\", " +
-                                                "\"emailDoMorador\": \"" + apartamentoCadastrado.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"metragemDoImovel\": " + apartamentoCadastrado.getMetragem() + "}"
+                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
+                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
                                 )
                 )
                 // Assert
@@ -108,17 +120,17 @@ class ApartamentoControllerTest {
                                 .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroDoApartamento\": " + apartamentoCadastrado.getNumApt() + ", " +
-                                                "\"bloco\": \"" + apartamentoCadastrado.getBlocoApt() + "\", " +
-                                                "\"nomeDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getNome() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
                                                 "\"cpfDoProprietario\": \"123456789101\", " +
-                                                "\"emailDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getEmail() + "\", " +
-                                                "\"nomeDoMorador\": \"" + apartamentoCadastrado.getMorador().getNome() + "\", " +
-                                                "\"cpfDoMorador\": \"" + apartamentoCadastrado.getMorador().getCpf() + "\", " +
-                                                "\"emailDoMorador\": \"" + apartamentoCadastrado.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoMorador\": \"" + apartamentoCadastrado.getMorador().getTelefones().stream().findFirst() + "\", " +
-                                                "\"metragemDoImovel\": " + apartamentoCadastrado.getMetragem() + "}"
+                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
+                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
                                 )
                 )
                 // Assert
@@ -138,17 +150,17 @@ class ApartamentoControllerTest {
                                 .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroDoApartamento\": " + apartamentoCadastrado.getNumApt() + ", " +
-                                                "\"bloco\": \"" + apartamentoCadastrado.getBlocoApt() + "\", " +
-                                                "\"nomeDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getNome() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getCpf() + "\", " +
-                                                "\"emailDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getEmail() + "\", " +
-                                                "\"nomeDoMorador\": \"" + apartamentoCadastrado.getMorador().getNome() + "\", " +
-                                                "\"cpfDoMorador\": \"" + apartamentoCadastrado.getMorador().getCpf() + "\", " +
-                                                "\"emailDoMorador\": \"" + apartamentoCadastrado.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"metragemDoImovel\": " + apartamentoCadastrado.getMetragem() + "}"
+                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
+                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
                                 )
                 )
                 // Assert
@@ -168,22 +180,92 @@ class ApartamentoControllerTest {
                                 .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroDoApartamento\": " + apartamentoCadastrado.getNumApt() + ", " +
-                                                "\"bloco\": \"" + apartamentoCadastrado.getBlocoApt() + "\", " +
-                                                "\"nomeDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getNome() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getCpf() + "\", " +
-                                                "\"emailDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getEmail() + "\", " +
-                                                "\"nomeDoMorador\": \"" + apartamentoCadastrado.getMorador().getNome() + "\", " +
-                                                "\"telefoneDoMorador\": \"" + apartamentoCadastrado.getMorador().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoMorador\": \"" + apartamentoCadastrado.getMorador().getCpf() + "\", " +
-                                                "\"emailDoMorador\": \"" + apartamentoCadastrado.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"metragemDoImovel\": " + apartamentoCadastrado.getMetragem() + "}"
+                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
+                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
                                 )
                 )
                 // Assert
                 .andExpect(status().isCreated());
+    }
+
+    @DisplayName("Testa consulta para repositório de apartamentos vazio")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverApartamentos() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                get(ENDPOINT_CONSULTA)
+                        .with(user(usuarioAdministrador)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um apartamento cadastrado para os dados informados")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra número do apartamento")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverApartamentosParaNumeroInformado() throws Exception {
+        // Arrange
+        apartamentoRepository.save(apartamentoA);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("numero", Integer.toString(apartamentoB.getNumApt()))
+                                .with(user(usuarioAdministrador)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um apartamento cadastrado para os dados informados")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra bloco do apartamento")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverApartamentosParaBlocoInformado() throws Exception {
+        // Arrange
+        apartamentoRepository.save(apartamentoA);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("bloco", apartamentoB.getBlocoApt())
+                                .with(user(usuarioAdministrador)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um apartamento cadastrado para os dados informados")));
+
+    }
+
+    @DisplayName("Testa consulta quando encontra tanto número quanto bloco")
+    @Test
+    @Transactional
+    void deveRetornarApartamentosQuePossuamNumeroOuBlocoInformado() throws Exception {
+        // Arrange
+        apartamentoRepository.save(apartamentoA);
+        apartamentoRepository.save(apartamentoB);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("numero", Integer.toString(apartamentoB.getNumApt()))
+                                .param("bloco", apartamentoA.getBlocoApt())
+                                .with(user(usuarioAdministrador)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.hasSize(2)));
+
     }
 
 }

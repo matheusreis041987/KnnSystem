@@ -37,6 +37,15 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 	}
 
 	@Override
+	public List<ApartamentoFormularioDTO> listar(Integer numero, String bloco) {
+		return repository
+				.findByNumAptOrBlocoApt(numero, bloco)
+				.stream()
+				.map(ApartamentoFormularioDTO::new)
+				.toList();
+	}
+
+	@Override
 	@Transactional
 	public ApartamentoFormularioDTO salvar(ApartamentoFormularioDTO dto) {
 
