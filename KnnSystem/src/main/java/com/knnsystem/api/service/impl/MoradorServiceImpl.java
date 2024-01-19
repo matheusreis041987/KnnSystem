@@ -1,67 +1,39 @@
 package com.knnsystem.api.service.impl;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.springframework.data.domain.Example;
+import com.knnsystem.api.dto.MoradorDTO;
+import com.knnsystem.api.exceptions.EntidadeCadastradaException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.knnsystem.api.model.entity.Morador;
 import com.knnsystem.api.model.repository.MoradorRepository;
 import com.knnsystem.api.service.MoradorService;
 
+import java.util.List;
+
 @Service
 public class MoradorServiceImpl implements MoradorService {
-
+	@Autowired
 	private MoradorRepository repository;
-	
-	public MoradorServiceImpl (MoradorRepository repo) {
-		this.repository = repo;
-	}
-	
 	@Override
-	@Transactional
-	public Morador salvar(Morador MoradorParm) {
-	
-		
-		return repository.save(MoradorParm);
+	public MoradorDTO salvar(MoradorDTO moradorDTO) {
+		if (repository.findByCpf(moradorDTO.cpf()).isPresent()) {
+			throw new EntidadeCadastradaException("Já há um morador cadastrado para os dados informados");
+		}
+
+		var morador = moradorDTO.toModel(true);
+
+		var moradorSalvo = repository.save(morador);
+
+		return new MoradorDTO(moradorSalvo);
+
 	}
 
 	@Override
-	@Transactional
-	public Morador atualizar(Morador MoradorParm) {
-	
-		Objects.requireNonNull(MoradorParm.getId());
-		
-		return repository.save(MoradorParm);
+	public List<MoradorDTO> listar(String cpf, String nome) {
+		return repository
+				.findByCpfOrNome(cpf, nome)
+				.stream()
+				.map(MoradorDTO::new)
+				.toList();
 	}
-
-	@Override
-	@Transactional
-	public void deletar(Morador MoradorParm) {
-		
-		Objects.requireNonNull(MoradorParm.getId());
-		
-		repository.delete(MoradorParm);
-		
-	}
-
-	@Override
-	@Transactional
-	public List<Morador> buscar(Morador MoradorParm) {
-		
-		Example example = Example.of(MoradorParm);
-		return repository.findAll(example);
-	}
-
-	@Override
-	@Transactional
-	public Optional<Morador> consultarPorId(Integer idMorador) {
-		
-		
-		return repository.findById(idMorador);
-	}
-
 }

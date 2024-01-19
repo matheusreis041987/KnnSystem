@@ -132,6 +132,37 @@ class ApartamentoControllerTest {
                                                 "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
                                                 "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
                                                 "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
+                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("telefone do morador deve ser preenchido")))
+
+        ;
+    }
+
+    @DisplayName("Testa que não pode cadastrar novo apartamento com algum dado inválido")
+    @Test
+    @Transactional
+    void naoDeveCadastrarApartamentoComDadosInvalidos() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioAdministrador))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+
+                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
                                                 "\"cpfDoProprietario\": \"123456789101\", " +
                                                 "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
                                                 "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
@@ -148,40 +179,10 @@ class ApartamentoControllerTest {
         ;
     }
 
-    @DisplayName("Testa que não pode cadastrar novo apartamento com algum dado inválido")
-    @Test
-    @Transactional
-    void naoDeveCadastrarApartamentoComDadosInvalidos() throws Exception {
-        // Act
-        this.mockMvc.perform(
-                        post(ENDPOINT_CADASTRO)
-                                .with(user(usuarioAdministrador))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
-                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
-                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
-                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
-                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
-                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
-                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
-                                )
-                )
-                // Assert
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.mensagem",
-                        Matchers.is("telefone do morador deve ser preenchido")))
-        ;
-    }
-
     @DisplayName("Testa cadastro de apartamento com dados válidos")
     @Test
     @Transactional
-    void deveCadastrarUsuarioComDadosValidos() throws Exception {
+    void deveCadastrarApartamentoComDadosValidos() throws Exception {
         // Act
         this.mockMvc.perform(
                         post(ENDPOINT_CADASTRO)
