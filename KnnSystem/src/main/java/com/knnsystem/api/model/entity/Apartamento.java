@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "apartamento", schema = "sch_pessoas")
-@SecondaryTable(name = "proprietario", schema = "sch_pessoas")
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -19,7 +18,7 @@ public class Apartamento {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idApartamento;
 	
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "fk_morador")
 	private Morador morador;
 	

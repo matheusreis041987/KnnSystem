@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class RelatoriosControllerTest {
 
     private Usuario usuarioSindico;
@@ -65,10 +65,6 @@ class RelatoriosControllerTest {
 
     @AfterEach
     void tearDown(){
-        proprietarioRepository.deleteAll();
-        moradorRepository.deleteAll();
-        pessoaRepository.deleteAll();
-        apartamentoRepository.deleteAll();
     }
 
     @DisplayName("testa relatório de apartamentos sem resultados retorna erro")
@@ -140,10 +136,10 @@ class RelatoriosControllerTest {
         // Arrange
         var morador = testDataBuilder.getMoradorA();
         var proprietario = testDataBuilder.getProprietarioA();
-        var apartamento = testDataBuilder.getApartamentoAtivo(morador, proprietario);
-
         moradorRepository.save(morador);
         proprietarioRepository.save(proprietario);
+
+        var apartamento = testDataBuilder.getApartamentoAtivo(morador, proprietario);
         apartamentoRepository.save(apartamento);
 
         morador = testDataBuilder.getMoradorB();

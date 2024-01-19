@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ManterUsuarioControllerTest {
 
     @Autowired
@@ -72,7 +72,6 @@ class ManterUsuarioControllerTest {
 
     @AfterEach
     void tearDown(){
-        usuarioRepository.deleteAll();
     }
 
     @DisplayName("Testa que não pode cadastrar novo usuário com cpf já utilizado")

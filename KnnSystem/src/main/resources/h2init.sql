@@ -1,5 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS sch_pessoas;
 CREATE SCHEMA IF NOT EXISTS sch_contratos;
+CREATE SCHEMA IF NOT EXISTS sch_financeiro;
 
 
 drop table if exists sch_contratos.gestor;

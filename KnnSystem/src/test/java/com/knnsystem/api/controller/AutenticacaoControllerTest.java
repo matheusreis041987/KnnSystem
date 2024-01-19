@@ -1,7 +1,6 @@
 package com.knnsystem.api.controller;
 
 import com.knnsystem.api.model.entity.Usuario;
-import com.knnsystem.api.model.repository.PessoaRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AutenticacaoControllerTest {
 
 
@@ -42,9 +41,6 @@ class AutenticacaoControllerTest {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private PessoaRepository pessoaRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -65,7 +61,6 @@ class AutenticacaoControllerTest {
 
     @AfterEach
     void tearDown(){
-        usuarioRepository.deleteAll();
     }
 
     @DisplayName("Testa que consegue logar com senha correta")
