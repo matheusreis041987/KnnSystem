@@ -132,19 +132,19 @@ class ApartamentoControllerTest {
                                                 "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
                                                 "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
                                                 "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"123456789101\", " +
+                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
                                                 "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
                                                 "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
                                                 "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
                                                 "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
                                                 "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
                                 )
                 )
                 // Assert
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.mensagem",
-                        Matchers.is("CPF do proprietário inválido")))
+                        Matchers.is("telefone do morador deve ser preenchido")))
+
         ;
     }
 
@@ -158,23 +158,24 @@ class ApartamentoControllerTest {
                                 .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
+
                                         "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
                                                 "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
                                                 "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
                                                 "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
+                                                "\"cpfDoProprietario\": \"123456789101\", " +
                                                 "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
                                                 "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
                                                 "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
                                                 "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
                                                 "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
                                 )
                 )
                 // Assert
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.mensagem",
-                        Matchers.is("telefone do morador deve ser preenchido")))
+                        Matchers.is("CPF do proprietário inválido")))
         ;
     }
 

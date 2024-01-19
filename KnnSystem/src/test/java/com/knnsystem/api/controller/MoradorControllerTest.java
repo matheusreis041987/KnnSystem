@@ -83,4 +83,53 @@ class MoradorControllerTest {
         ;
     }
 
+    @DisplayName("Testa que não pode cadastrar novo morador sem preencher o formulario completo")
+    @Test
+    @Transactional
+    void naoDeveCadastrarMoradorComDadosIncompletos() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"nome\": \"" + moradorA.getNome() + "\", " +
+                                                "\"cpf\": \"" + moradorA.getCpf() + "\", " +
+                                                "\"telefone\": \"" + moradorA.getTelefones().stream().findFirst() + "\", " +
+                                                "\"numeroDoApartamento\": " + moradorA.getNumApt() + ", " +
+                                                "\"blocoDoApartamento\": \"" + moradorA.getBloco() + "\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("e-mail do morador é obrigatório")))
+        ;
+    }
+
+    @DisplayName("Testa que não pode cadastrar novo morador com algum dado inválido")
+    @Test
+    @Transactional
+    void naoDeveCadastrarMoradorComDadosInvalidos() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"nome\": \"" + moradorA.getNome() + "\", " +
+                                                "\"cpf\": \"" + moradorA.getCpf() + "\", " +
+                                                "\"email\": \" abc \", " +
+                                                "\"telefone\": \"" + moradorA.getTelefones().stream().findFirst() + "\", " +
+                                                "\"numeroDoApartamento\": " + moradorA.getNumApt() + ", " +
+                                                "\"blocoDoApartamento\": \"" + moradorA.getBloco() + "\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("e-mail inválido")))
+        ;
+    }
+
 }
