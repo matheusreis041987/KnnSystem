@@ -47,7 +47,7 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 			throw new EntidadeCadastradaException("Já há um apartamento cadastrado para os dados informados");
 		}
 
-		var apartamento = dto.toModel();
+		var apartamento = dto.toModel(true);
 
 		var apartamentoSalvo = repository.save(apartamento);
 

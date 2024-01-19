@@ -3,6 +3,7 @@ package com.knnsystem.api.dto;
 import com.knnsystem.api.model.entity.Apartamento;
 import com.knnsystem.api.model.entity.Morador;
 import com.knnsystem.api.model.entity.Proprietario;
+import com.knnsystem.api.model.entity.StatusGeral;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -53,7 +54,7 @@ public record ApartamentoFormularioDTO(
 
 	}
 
-	public Apartamento toModel() {
+	public Apartamento toModel(boolean isInclusao) {
 		Morador morador = new Morador();
 		morador.setCpf(cpfDoMorador());
 		morador.setNome(nomeDoMorador());
@@ -72,6 +73,10 @@ public record ApartamentoFormularioDTO(
 		apartamento.setNumApt(numeroDoApartamento());
 		apartamento.setBlocoApt(bloco());
 		apartamento.setMetragem(metragemDoImovel());
+
+		if (isInclusao){
+			apartamento.setStatusApt(StatusGeral.ATIVO);
+		}
 
 		return apartamento;
 	}
