@@ -1,5 +1,8 @@
 package com.knnsystem.api.dto;
 
+import com.knnsystem.api.model.entity.Morador;
+import com.knnsystem.api.model.entity.StatusGeral;
+import com.knnsystem.api.model.entity.Telefone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,4 +33,33 @@ public record MoradorDTO (
 		String blocoDoApartamento
 		){
 
+	public MoradorDTO(Morador morador) {
+		this(
+				morador.getId(),
+				morador.getNome(),
+				morador.getCpf(),
+				morador.getEmail(),
+				morador.getTelefones().stream().findFirst().get().toString(),
+				morador.getNumApt(),
+				morador.getBloco()
+				);
+	}
+
+	public Morador toModel(boolean isInclusao) {
+		Morador morador = new Morador();
+		morador.setCpf(cpf());
+		morador.setNome(nome());
+		morador.setEmail(email());
+		morador.setBloco(blocoDoApartamento());
+		morador.setNumApt(numeroDoApartamento());
+		Telefone telefone = new Telefone();
+		telefone.setNumero(telefone());
+		morador.adicionaTelefone(telefone);
+
+		if (isInclusao){
+			morador.setStatus(StatusGeral.ATIVO);
+		}
+
+		return morador;
+	}
 }

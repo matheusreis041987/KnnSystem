@@ -132,4 +132,27 @@ class MoradorControllerTest {
         ;
     }
 
+    @DisplayName("Testa cadastro de morador com dados válidos")
+    @Test
+    @Transactional
+    void deveCadastrarMoradorComDadosValidos() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"nome\": \"" + moradorA.getNome() + "\", " +
+                                                "\"cpf\": \"" + moradorA.getCpf() + "\", " +
+                                                "\"email\": \"" + moradorA.getEmail() + "\", " +
+                                                "\"telefone\": \"" + moradorA.getTelefones().stream().findFirst() + "\", " +
+                                                "\"numeroDoApartamento\": " + moradorA.getNumApt() + ", " +
+                                                "\"blocoDoApartamento\": \"" + moradorA.getBloco() + "\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isCreated())
+        ;
+    }
+
 }

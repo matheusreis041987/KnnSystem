@@ -182,7 +182,7 @@ class ApartamentoControllerTest {
     @DisplayName("Testa cadastro de apartamento com dados válidos")
     @Test
     @Transactional
-    void deveCadastrarUsuarioComDadosValidos() throws Exception {
+    void deveCadastrarApartamentoComDadosValidos() throws Exception {
         // Act
         this.mockMvc.perform(
                         post(ENDPOINT_CADASTRO)
