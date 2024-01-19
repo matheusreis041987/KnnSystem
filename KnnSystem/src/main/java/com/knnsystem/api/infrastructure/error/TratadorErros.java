@@ -6,6 +6,8 @@ import com.knnsystem.api.exceptions.EntidadeCadastradaException;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -35,6 +37,16 @@ public class TratadorErros {
         );
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity tratarErro400(MethodArgumentNotValidException exception) {
+        var erros = exception.getFieldErrors();
+        for (FieldError erro: erros) {
+            return ResponseEntity.badRequest().body(
+                    new ErroSoComMensagemValidacao(erro.getDefaultMessage())
+                );
+        }
+        return ResponseEntity.badRequest().build();
+    }
 
     private record ErroSoComMensagemValidacao(String mensagem){ }
 

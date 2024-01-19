@@ -69,7 +69,7 @@ class ApartamentoControllerTest {
     @DisplayName("Testa que não pode cadastrar novo apartamento com número e bloco já utilizado")
     @Test
     @Transactional
-    void naoDeveCadastrarCpfPelaSegundaVez() throws Exception {
+    void naoDeveCadastrarApartamentoPelaSegundaVez() throws Exception {
         // Act
         this.mockMvc.perform(
                         post(ENDPOINT_CADASTRO)
@@ -87,7 +87,7 @@ class ApartamentoControllerTest {
                                                 "\"cpfDoMorador\": \"" + apartamentoCadastrado.getMorador().getCpf() + "\", " +
                                                 "\"emailDoMorador\": \"" + apartamentoCadastrado.getMorador().getEmail() + "\", " +
                                                 "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cargo\": " + apartamentoCadastrado.getMetragem() + "}"
+                                                "\"metragemDoImovel\": " + apartamentoCadastrado.getMetragem() + "}"
                                 )
                 )
                 // Assert
@@ -96,4 +96,65 @@ class ApartamentoControllerTest {
                         Matchers.is("Já há um apartamento cadastrado para os dados informados")))
         ;
     }
+
+    @DisplayName("Testa que não pode cadastrar novo apartamento sem preencher o formulario completo")
+    @Test
+    @Transactional
+    void naoDeveCadastrarApartamentoComDadosIncompletos() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioAdministrador))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroDoApartamento\": " + apartamentoCadastrado.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoCadastrado.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoProprietario\": \"123456789101\", " +
+                                                "\"emailDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoCadastrado.getMorador().getNome() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoCadastrado.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoCadastrado.getMorador().getEmail() + "\", " +
+                                                "\"telefoneDoMorador\": \"" + apartamentoCadastrado.getMorador().getTelefones().stream().findFirst() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoCadastrado.getMetragem() + "}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("CPF do proprietário inválido")))
+        ;
+    }
+
+    @DisplayName("Testa que não pode cadastrar novo apartamento com algum dado inválido")
+    @Test
+    @Transactional
+    void naoDeveCadastrarApartamentoComDadosInvalidos() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioAdministrador))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroDoApartamento\": " + apartamentoCadastrado.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoCadastrado.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getCpf() + "\", " +
+                                                "\"emailDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoCadastrado.getMorador().getNome() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoCadastrado.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoCadastrado.getMorador().getEmail() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoCadastrado.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoCadastrado.getMetragem() + "}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("telefone do morador deve ser preenchido")))
+        ;
+    }
+
 }
