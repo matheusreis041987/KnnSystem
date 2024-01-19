@@ -8,9 +8,9 @@ public enum TipoTransacaoFinanceira {
     DESPESA {
         @Override
         void valida(BigDecimal valor) {
-            if (valor.signum() > 0) {
+            if (valor.signum() >= 0) {
                 throw new ValorTransacaoFinanceiraInvalidoException(
-                        "valor para transação financeira deve ser negativo"
+                        "valor para transação financeira de despesa deve ser negativo"
                 );
             }
         }
@@ -18,7 +18,11 @@ public enum TipoTransacaoFinanceira {
     RECEITA {
         @Override
         void valida(BigDecimal valor) {
-
+            if (valor.signum() <= 0) {
+                throw new ValorTransacaoFinanceiraInvalidoException(
+                        "valor para transação financeira de receita deve ser positivo"
+                );
+            }
         }
     };
 

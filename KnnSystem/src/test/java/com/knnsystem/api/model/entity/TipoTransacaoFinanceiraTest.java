@@ -28,4 +28,50 @@ class TipoTransacaoFinanceiraTest {
                 )
         );
     }
+
+    @DisplayName("testa transação do tipo receita não pode ser negativa")
+    @Test
+    void testTransacaoDoTipoReceitaNaoAceitaValorNegativo(){
+        // Act & Assert
+        assertThrows(
+                ValorTransacaoFinanceiraInvalidoException.class,
+                () -> new TransacaoFinanceira(
+                        tipoReceita,
+                        LocalDate.now(),
+                        new BigDecimal("-0.01"),
+                        "receita"
+                )
+        );
+    }
+
+    @DisplayName("testa transação do tipo despesa não pode ser nula")
+    @Test
+    void testTransacaoDoTipoDespesaNaoAceitaValorNulo(){
+        // Act & Assert
+        assertThrows(
+                ValorTransacaoFinanceiraInvalidoException.class,
+                () -> new TransacaoFinanceira(
+                        tipoDespesa,
+                        LocalDate.now(),
+                        BigDecimal.ZERO,
+                        "despesa"
+                )
+        );
+    }
+
+    @DisplayName("testa transação do tipo receita não pode ser nulo")
+    @Test
+    void testTransacaoDoTipoReceitaNaoAceitaValorNulo(){
+        // Act & Assert
+        assertThrows(
+                ValorTransacaoFinanceiraInvalidoException.class,
+                () -> new TransacaoFinanceira(
+                        tipoReceita,
+                        LocalDate.now(),
+                        BigDecimal.ZERO,
+                        "receita"
+                )
+        );
+    }
+
 }
