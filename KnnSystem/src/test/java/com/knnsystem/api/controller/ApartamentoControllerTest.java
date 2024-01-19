@@ -38,6 +38,8 @@ class ApartamentoControllerTest {
 
     private final String ENDPOINT_CONSULTA = "/apartamento/api/consulta";
 
+    private final String ENDPOINT_INATIVA = "/apartamento/api/inativa";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -265,6 +267,45 @@ class ApartamentoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",
                         Matchers.hasSize(2)));
+
+    }
+
+    @DisplayName("Testa inativação de apartamento dá erro quando não encontra")
+    @Test
+    @Transactional
+    void deveRetornarErroAoTentarInativarApartamentosNaoEncontrado() throws Exception {
+
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_INATIVA)
+                                .param("numero", Integer.toString(apartamentoA.getNumApt()))
+                                .param("bloco", apartamentoA.getBlocoApt())
+                                .with(user(usuarioAdministrador)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um apartamento cadastrado para os dados informados")));
+
+    }
+
+    @DisplayName("Testa inativação de apartamento com sucesso")
+    @Test
+    @Transactional
+    void deveRetornarDadosDeApartamentoAoInativarComSucesso() throws Exception {
+        // Arrange
+        apartamentoRepository.save(apartamentoA);
+
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_INATIVA)
+                                .param("numero", Integer.toString(apartamentoA.getNumApt()))
+                                .param("bloco", apartamentoA.getBlocoApt())
+                                .with(user(usuarioAdministrador)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numeroDoApartamento",
+                        Matchers.is(apartamentoA.getNumApt())))
+                .andExpect(jsonPath("$.bloco",
+                        Matchers.is(apartamentoA.getBlocoApt())))
+        ;
 
     }
 

@@ -42,4 +42,12 @@ public class ApartamentoController {
         return ResponseEntity.ok(apartamentos);
     }
 
+    @PutMapping("/inativa")
+    public ResponseEntity<ApartamentoFormularioDTO> inativar(
+            @RequestParam(value = "numero", required = false) Integer numero,
+            @RequestParam(value = "bloco", required = false) String bloco
+    ){
+        ApartamentoFormularioDTO dto = apartamentoService.inativar(numero, bloco);
+        return ResponseEntity.ok(dto);
+    }
 }

@@ -4,7 +4,9 @@ import java.util.List;
 
 
 import com.knnsystem.api.exceptions.EntidadeCadastradaException;
+import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
+import com.knnsystem.api.model.entity.StatusGeral;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,5 +64,20 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 
 		return new ApartamentoFormularioDTO(apartamentoSalvo);
 
+	}
+
+	@Override
+	public ApartamentoFormularioDTO inativar(Integer numero, String bloco) {
+		var apartamentoAInativar = repository.findByNumAptAndBlocoApt(numero, bloco);
+
+		if (apartamentoAInativar.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não há um apartamento cadastrado para os dados informados");
+		}
+
+		var apartamento = apartamentoAInativar.get();
+		apartamento.setStatusApt(StatusGeral.INATIVO);
+		repository.save(apartamento);
+
+		return new ApartamentoFormularioDTO(apartamento);
 	}
 }
