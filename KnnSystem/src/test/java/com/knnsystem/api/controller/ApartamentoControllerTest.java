@@ -34,6 +34,10 @@ class ApartamentoControllerTest {
 
     private Usuario usuarioAdministrador;
 
+    private Usuario usuarioSecretaria;
+
+    private Usuario usuarioSindico;
+
     private final String ENDPOINT_CADASTRO = "/apartamento/api/cadastra";
 
     private final String ENDPOINT_CONSULTA = "/apartamento/api/consulta";
@@ -72,6 +76,8 @@ class ApartamentoControllerTest {
         apartamentoB = testDataBuilder.getApartamentoAtivo(morador, proprietario);
 
         usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
+        usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
+        usuarioSindico = testDataBuilder.createUsuarioSindico();
     }
 
     @AfterEach
@@ -307,6 +313,64 @@ class ApartamentoControllerTest {
                         Matchers.is(apartamentoA.getBlocoApt())))
         ;
 
+    }
+
+    @DisplayName("Testa que funcionário secretaria não pode cadastrar novo usuário")
+    @Test
+    @Transactional
+    void naoDeveCadastrarApartamentoSeForFuncionarioDaSecretaria() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
+                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isForbidden())
+        ;
+    }
+
+    @DisplayName("Testa que perfil sindico não pode cadastrar novo usuário")
+    @Test
+    @Transactional
+    void naoDeveCadastrarApartamentoSePerfilDeSindico() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSindico))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
+                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
+                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
+                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
+                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
+                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
+                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
+                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isForbidden())
+        ;
     }
 
 }
