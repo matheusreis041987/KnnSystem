@@ -1,7 +1,6 @@
 package com.knnsystem.api.controller;
 
 import com.knnsystem.api.model.entity.Usuario;
-import com.knnsystem.api.model.repository.PessoaRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,9 +11,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -25,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext
 class AutenticacaoControllerTest {
 
 
@@ -42,9 +40,6 @@ class AutenticacaoControllerTest {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private PessoaRepository pessoaRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -65,11 +60,11 @@ class AutenticacaoControllerTest {
 
     @AfterEach
     void tearDown(){
-        usuarioRepository.deleteAll();
     }
 
     @DisplayName("Testa que consegue logar com senha correta")
     @Test
+    @Transactional
     void deveLogarComSenhaCorreta() throws Exception {
         // Act
         this.mockMvc.perform(
@@ -86,6 +81,7 @@ class AutenticacaoControllerTest {
 
     @DisplayName("Testa que não consegue logar com senha incorreta")
     @Test
+    @Transactional
     void naodeveLogarComSenhaIncorreta() throws Exception {
         // Act
         this.mockMvc.perform(
@@ -102,6 +98,7 @@ class AutenticacaoControllerTest {
 
     @DisplayName("Testa que não consegue logar com cpf incorreto")
     @Test
+    @Transactional
     void naodeveLogarComCpfIncorreto() throws Exception {
         // Act
         this.mockMvc.perform(
@@ -118,6 +115,7 @@ class AutenticacaoControllerTest {
 
     @DisplayName("Testa que consegue logar com senha provisória e atualiza")
     @Test
+    @Transactional
     void deveLogarComSenhaProvisoriaEAtualizar() throws Exception {
         // Act
         this.mockMvc.perform(
@@ -140,6 +138,7 @@ class AutenticacaoControllerTest {
 
     @DisplayName("Testa que não consegue logar com senha provisória incorreta")
     @Test
+    @Transactional
     void NaoDeveLogarComSenhaProvisoriaIncorreta() throws Exception {
         // Act
         this.mockMvc.perform(
@@ -157,6 +156,7 @@ class AutenticacaoControllerTest {
 
     @DisplayName("Testa que não consegue logar se usuário está inativo")
     @Test
+    @Transactional
     void naoDeveLogarSeUsuarioInativo() throws Exception {
         // Act
         this.mockMvc.perform(

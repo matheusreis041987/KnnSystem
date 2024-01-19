@@ -21,7 +21,7 @@ public class Telefone {
     private String numero;
 
     @ManyToOne
-    @JoinColumn(name = "pessoa_id", nullable = false)
+    @JoinColumn(name = "fk_id_pessoa", nullable = false)
     private Pessoa pessoa;
 
     @Override

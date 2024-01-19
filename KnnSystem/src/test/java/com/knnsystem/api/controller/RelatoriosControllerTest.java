@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext
 class RelatoriosControllerTest {
 
     private Usuario usuarioSindico;
@@ -65,14 +64,11 @@ class RelatoriosControllerTest {
 
     @AfterEach
     void tearDown(){
-        proprietarioRepository.deleteAll();
-        moradorRepository.deleteAll();
-        pessoaRepository.deleteAll();
-        apartamentoRepository.deleteAll();
     }
 
     @DisplayName("testa relatório de apartamentos sem resultados retorna erro")
     @Test
+    @Transactional
     void deveLancarErroRelatorioDeApartamentosSeNaoHouverResultados() throws Exception {
         // Act
         this.mockMvc
@@ -89,6 +85,7 @@ class RelatoriosControllerTest {
 
     @DisplayName("testa relatório de apartamento com um resultado")
     @Test
+    @Transactional
     void deveRetornarUnicoApartamentoSeForUnico() throws Exception {
         // Arrange
         var morador = testDataBuilder.getMoradorA();
@@ -136,14 +133,15 @@ class RelatoriosControllerTest {
 
     @DisplayName("testa relatório de apartamento com mais resultados")
     @Test
+    @Transactional
     void deveRetornarMaisApartamentosSeHouver() throws Exception {
         // Arrange
         var morador = testDataBuilder.getMoradorA();
         var proprietario = testDataBuilder.getProprietarioA();
-        var apartamento = testDataBuilder.getApartamentoAtivo(morador, proprietario);
-
         moradorRepository.save(morador);
         proprietarioRepository.save(proprietario);
+
+        var apartamento = testDataBuilder.getApartamentoAtivo(morador, proprietario);
         apartamentoRepository.save(apartamento);
 
         morador = testDataBuilder.getMoradorB();
@@ -168,6 +166,7 @@ class RelatoriosControllerTest {
 
     @DisplayName("testa perfil secretaria nao visualiza relatorios")
     @Test
+    @Transactional
     void deveProibirSecretariaDeVisualizarRelatorioDeApartamentos() throws Exception {
         // Act
         this.mockMvc
