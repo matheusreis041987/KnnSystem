@@ -1,39 +1,33 @@
 package com.knnsystem.api.dto;
 
-import com.knnsystem.api.model.entity.Pessoa;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.data.relational.core.sql.In;
 
-public class MoradorDTO {
+public record MoradorDTO (
+		Integer id,
 
-	private int numApt;
+		@NotBlank(message = "nome do morador é obrigatório")
+		String nome,
 
-	private String bloco;
+		@NotBlank(message = "CPF do morador é obrigatório")
+		@CPF(message = "CPF inválido")
+		String cpf,
 
-	private Pessoa id_pessoa;
+		@NotBlank(message = "e-mail do morador é obrigatório")
+		@Email(message = "e-mail inválido")
+		String email,
 
-	public int getNumApt() {
-		return numApt;
-	}
+		@NotBlank(message = "telefone do morador é obrigatório")
+		String telefone,
 
-	public void setNumApt(int numApt) {
-		this.numApt = numApt;
-	}
+		@NotNull(message = "número do apartamento do morador é obrigatório")
+		Integer numeroDoApartamento,
 
-	public String getBloco() {
-		return bloco;
-	}
+		@NotBlank(message = "bloco do apartamento do morador é obrigatório")
+		String blocoDoApartamento
+		){
 
-	public void setBloco(String bloco) {
-		this.bloco = bloco;
-	}
-
-	public Pessoa getId_pessoa() {
-		return id_pessoa;
-	}
-
-	public void setId_pessoa(Pessoa id_pessoa) {
-		this.id_pessoa = id_pessoa;
-	}
-	
-	
-	
 }
