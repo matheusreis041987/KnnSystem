@@ -1,12 +1,10 @@
 package com.knnsystem.api.service.impl;
 
-import java.util.Optional;
-
 import com.knnsystem.api.dto.UsuarioCadastroDTO;
 import com.knnsystem.api.dto.UsuarioConsultaDTO;
 import com.knnsystem.api.dto.UsuarioResumoDTO;
-import com.knnsystem.api.exceptions.UsuarioCadastradoException;
-import com.knnsystem.api.exceptions.UsuarioNaoEncontradoException;
+import com.knnsystem.api.exceptions.EntidadeCadastradaException;
+import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.model.entity.Cargo;
 import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.entity.Usuario;
@@ -32,7 +30,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public UsuarioResumoDTO salvar(UsuarioCadastroDTO dto) {
 
 		if (repository.findByCpf(dto.cpf()).isPresent()) {
-			throw new UsuarioCadastradoException("CPF já cadastrado");
+			throw new EntidadeCadastradaException("CPF já cadastrado");
 		}
 
 		var usuario = dto.toModel(passwordEncoder);
@@ -46,7 +44,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Transactional
 	public UsuarioResumoDTO editar(String cpf, UsuarioCadastroDTO dto) {
 		if (repository.findByCpf(dto.cpf()).isEmpty()) {
-			throw new UsuarioNaoEncontradoException("CPF inválido");
+			throw new EntidadeNaoEncontradaException("CPF inválido");
 		}
 		var usuarioAEditar = dto.toModel(passwordEncoder);
 		usuarioAEditar.setNome(dto.nome());
@@ -81,13 +79,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	private Usuario consultarUsuarioPorCPF(String cpf){
 		if (cpf == null){
-			throw new UsuarioNaoEncontradoException("Erro - CPF é um campo obrigatório");
+			throw new EntidadeNaoEncontradaException("Erro - CPF é um campo obrigatório");
 		}
 
 		var usuario = repository.findByCpf(cpf);
 
 		if (usuario.isEmpty()) {
-			throw new UsuarioNaoEncontradoException("Erro - não há usuário cadastrado para esse CPF");
+			throw new EntidadeNaoEncontradaException("Erro - não há usuário cadastrado para esse CPF");
 		}
 
 		return usuario.get();

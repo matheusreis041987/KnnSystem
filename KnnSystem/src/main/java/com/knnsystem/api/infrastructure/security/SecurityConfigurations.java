@@ -42,6 +42,12 @@ public class SecurityConfigurations {
                                 "/usuario/api/**").hasRole(PAPEL_ADMINISTRADOR)
                         .requestMatchers(HttpMethod.PUT,
                                 "/usuario/api/**").hasRole(PAPEL_ADMINISTRADOR)
+                        .requestMatchers(HttpMethod.POST,
+                                "/apartamento/api/**").hasRole(PAPEL_ADMINISTRADOR)
+                        .requestMatchers(HttpMethod.GET,
+                                "/apartamento/api/**").hasRole(PAPEL_ADMINISTRADOR)
+                        .requestMatchers(HttpMethod.PUT,
+                                "/apartamento/api/**").hasRole(PAPEL_ADMINISTRADOR)
                         .requestMatchers(HttpMethod.GET,
                                 "/relatorio/api/**").hasAnyRole(PAPEL_ADMINISTRADOR, PAPEL_SINDICO)
                         .anyRequest().authenticated()
