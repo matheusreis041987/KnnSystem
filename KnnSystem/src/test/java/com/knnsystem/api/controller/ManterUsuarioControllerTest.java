@@ -14,9 +14,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ManterUsuarioControllerTest {
 
     @Autowired
@@ -76,6 +75,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa que não pode cadastrar novo usuário com cpf já utilizado")
     @Test
+    @Transactional
     void naoDeveCadastrarCpfPelaSegundaVez() throws Exception {
         // Act
         this.mockMvc.perform(
@@ -101,6 +101,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa que não funcionário secretaria não pode cadastrar novo usuário")
     @Test
+    @Transactional
     void naoDeveCadastrarUsuarioSeForFuncionarioDaSecretaria() throws Exception {
         // Act
         this.mockMvc.perform(
@@ -123,6 +124,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa cadastro de usuário com dados válidos")
     @Test
+    @Transactional
     void deveCadastrarUsuarioComDadosValidos() throws Exception {
         // Arrange
         Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
@@ -147,6 +149,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa consulta de usuário por CPF retorna erro se não encontra")
     @Test
+    @Transactional
     void testDeveLancarErroSeNaoEncontrarUsuarioPorCPF() throws Exception {
         // Arrange
         Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
@@ -167,6 +170,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa funcionário de secretaria não consulta por CPF")
     @Test
+    @Transactional
     void testNaoDevePermitirFuncionarioSecretariaEncontrarUsuarioPorCPF() throws Exception {
         // Act
         this.mockMvc
@@ -182,6 +186,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa consulta de usuário por CPF existente o retorna")
     @Test
+    @Transactional
     void testDeveRetornarUsuarioCorrespondenteACPFNaConsulta() throws Exception {
         // Act
         this.mockMvc
@@ -211,6 +216,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa atualização de usuário por CPF retorna erro se não encontra")
     @Test
+    @Transactional
     void testDeveLancarErroSeNaoEncontrarUsuarioPorCPFNaAtualizacao() throws Exception {
         // Arrange
         Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
@@ -241,6 +247,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa atualização de usuário por CPF não é permitida a secretaria")
     @Test
+    @Transactional
     void testNaoDeveAtualizarUsuarioSeFuncionarioSecretaria() throws Exception {
         // Act
         this.mockMvc
@@ -266,6 +273,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa ativação de usuário inativo")
     @Test
+    @Transactional
     void deveAtivarUsuarioInativo() throws Exception {
 
         // Arrange
@@ -285,6 +293,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa perfil de secretaria não pode ativar usuário inativo")
     @Test
+    @Transactional
     void naoDeveAtivarUsuarioInativoSeSecretaria() throws Exception {
 
         // Arrange
@@ -302,6 +311,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa inativação de usuário ativo")
     @Test
+    @Transactional
     void deveInativarUsuarioAtivo() throws Exception {
         // Arrange
         usuarioInativo = testDataBuilder.createUsuarioInativo();
@@ -320,6 +330,7 @@ class ManterUsuarioControllerTest {
 
     @DisplayName("Testa não deve inativar usuário ativo se funcionário da secretaria")
     @Test
+    @Transactional
     void naoDeveInativarUsuarioAtivoSeSecretaria() throws Exception {
         // Arrange
         usuarioInativo = testDataBuilder.createUsuarioInativo();
