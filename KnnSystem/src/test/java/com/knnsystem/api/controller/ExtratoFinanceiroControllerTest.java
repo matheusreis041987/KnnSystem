@@ -87,4 +87,20 @@ class ExtratoFinanceiroControllerTest {
                         Matchers.is("não há valores para o período")));
     }
 
+    @DisplayName("Testa erro do extrato ao não passar parâmetro inválido")
+    @Test
+    void testErroSeConsultaPossuiParametroInvalido() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("anoInicio", "-1")
+                                .param("mesInicio", "10")
+                                .param("anoFim", "2023")
+                                .param("mesFim", "11")
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("parâmetros inválidos")));
+    }
+
 }

@@ -28,6 +28,13 @@ public class TratadorErros {
         );
     }
 
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity trataErro400ComMensagem(Exception exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErroSoComMensagemValidacao(exception.getMessage())
+        );
+    }
+
     @ExceptionHandler({
             EntidadeNaoEncontradaException.class,
             RelatorioSemResultadoException.class})
