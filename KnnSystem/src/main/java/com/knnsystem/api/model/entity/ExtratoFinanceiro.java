@@ -8,6 +8,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ExtratoFinanceiro {
+
+    private LocalDate dataEmissao;
+
+
     private LocalDate dataInicio;
 
     private LocalDate dataFim;
@@ -15,6 +19,10 @@ public class ExtratoFinanceiro {
     private Set<TransacaoFinanceira> transacoes;
 
     private BigDecimal saldoInicial;
+
+    private BigDecimal saldoFim;
+
+
 
     public ExtratoFinanceiro(
             @NotNull LocalDate dataInicio,
@@ -33,6 +41,7 @@ public class ExtratoFinanceiro {
         }
 
         // passou pelas validações, pode instanciar novo objeto
+        this.dataEmissao = LocalDate.now();
         this.dataInicio = dataInicio;
         this.dataFim = dataFim;
         this.saldoInicial = saldoInicial;
