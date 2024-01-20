@@ -27,6 +27,7 @@ public class ExtratoFinanceiro {
     @Getter
     private BigDecimal totalEntradas;
 
+    @Getter
     private BigDecimal totalSaidas;
     
     public ExtratoFinanceiro(
@@ -57,7 +58,11 @@ public class ExtratoFinanceiro {
     }
 
     public void adiciona(TransacaoFinanceira transacao) {
-        this.totalEntradas = this.totalEntradas.add(transacao.getValor());
+        if (transacao.getTipo().equals(TipoTransacaoFinanceira.RECEITA)){
+            this.totalEntradas = this.totalEntradas.add(transacao.getValor());
+        } else {
+            this.totalSaidas = this.totalSaidas.add(transacao.getValor());
+        }
         this.saldoFim = this.saldoFim.add(transacao.getValor());
     }
 }

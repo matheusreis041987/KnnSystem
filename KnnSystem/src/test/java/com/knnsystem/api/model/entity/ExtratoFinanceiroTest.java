@@ -115,4 +115,27 @@ class ExtratoFinanceiroTest {
         // Assert
         assertEquals(transacao.getValor(), extrato.getSaldoFim());
     }
+
+    @DisplayName("Testa extrato financeiro atualiza total de saídas após adicao de despesa")
+    @Test
+    void testAtualizaTotalDeSaidasAposAdicaoDeDespesa(){
+        // Arrange
+        ExtratoFinanceiro extrato = new ExtratoFinanceiro(
+                LocalDate.now().plusDays(-1),
+                LocalDate.now(),
+                BigDecimal.ZERO
+        );
+        TransacaoFinanceira transacao = new TransacaoFinanceira(
+                TipoTransacaoFinanceira.DESPESA,
+                LocalDate.now(),
+                BigDecimal.ONE.negate(),
+                "Despesa com funcionários"
+        );
+
+        // Act
+        extrato.adiciona(transacao);
+
+        // Assert
+        assertEquals(transacao.getValor(), extrato.getTotalSaidas());
+    }
 }
