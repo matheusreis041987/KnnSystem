@@ -1,6 +1,7 @@
 package com.knnsystem.api.model.entity;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,10 +21,14 @@ public class ExtratoFinanceiro {
 
     private BigDecimal saldoInicial;
 
+    @Getter
     private BigDecimal saldoFim;
 
+    @Getter
+    private BigDecimal totalEntradas;
 
-
+    private BigDecimal totalSaidas;
+    
     public ExtratoFinanceiro(
             @NotNull LocalDate dataInicio,
             @NotNull LocalDate dataFim,
@@ -45,7 +50,14 @@ public class ExtratoFinanceiro {
         this.dataInicio = dataInicio;
         this.dataFim = dataFim;
         this.saldoInicial = saldoInicial;
+        this.saldoFim = this.saldoInicial;
         this.transacoes = new HashSet<>();
+        this.totalEntradas = BigDecimal.ZERO;
+        this.totalSaidas = BigDecimal.ZERO;
     }
 
+    public void adiciona(TransacaoFinanceira transacao) {
+        this.totalEntradas = this.totalEntradas.add(transacao.getValor());
+        this.saldoFim = this.saldoFim.add(transacao.getValor());
+    }
 }

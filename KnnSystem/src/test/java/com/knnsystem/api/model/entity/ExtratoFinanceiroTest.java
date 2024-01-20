@@ -69,4 +69,50 @@ class ExtratoFinanceiroTest {
                 )
         );
     }
+
+    @DisplayName("Testa extrato financeiro atualiza total de entradas após adicao de receita")
+    @Test
+    void testAtualizaTotalDeEntradasAposAdicaoDeReceita(){
+        // Arrange
+        ExtratoFinanceiro extrato = new ExtratoFinanceiro(
+                LocalDate.now().plusDays(-1),
+                LocalDate.now(),
+                BigDecimal.ZERO
+        );
+        TransacaoFinanceira transacao = new TransacaoFinanceira(
+                TipoTransacaoFinanceira.RECEITA,
+                LocalDate.now().plusDays(-1),
+                BigDecimal.ONE,
+                "Receita de aluguéis"
+        );
+
+        // Act
+        extrato.adiciona(transacao);
+
+        // Assert
+        assertEquals(transacao.getValor(), extrato.getTotalEntradas());
+    }
+
+    @DisplayName("Testa extrato financeiro atualiza saldo Fim após adicao de receita")
+    @Test
+    void testAtualizaSaldoFimAposAdicaoDeReceita(){
+        // Arrange
+        ExtratoFinanceiro extrato = new ExtratoFinanceiro(
+                LocalDate.now().plusDays(-1),
+                LocalDate.now(),
+                BigDecimal.ZERO
+        );
+        TransacaoFinanceira transacao = new TransacaoFinanceira(
+                TipoTransacaoFinanceira.RECEITA,
+                LocalDate.now().plusDays(-1),
+                BigDecimal.ONE,
+                "Receita de aluguéis"
+        );
+
+        // Act
+        extrato.adiciona(transacao);
+
+        // Assert
+        assertEquals(transacao.getValor(), extrato.getSaldoFim());
+    }
 }

@@ -1,17 +1,20 @@
 package com.knnsystem.api.model.entity;
 
+import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Getter
 public class TransacaoFinanceira {
 
-    private LocalDate data;
+    private final LocalDate data;
 
-    private TipoTransacaoFinanceira tipo;
+    private final TipoTransacaoFinanceira tipo;
 
-    private String descricao;
+    private final String descricao;
 
-    private BigDecimal valor;
+    private final BigDecimal valor;
 
     public TransacaoFinanceira(
             TipoTransacaoFinanceira tipo,
@@ -28,4 +31,5 @@ public class TransacaoFinanceira {
         this.descricao = descricao;
         this.valor = valor;
     }
+
 }
