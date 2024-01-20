@@ -1,6 +1,7 @@
 package com.knnsystem.api.controller;
 
 import com.knnsystem.api.dto.ExtratoFinanceiroDTO;
+import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.infrastructure.api.financeiro.ApiExtratoFinanceiroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,10 @@ public class ExtratoFinanceiroController {
         LocalDate dataFim = YearMonth.of(anoFim, mesFim).atEndOfMonth();
 
         var extrato = extratoFinanceiroService.gerar(dataInicio, dataFim);
+
+        if (extrato.transacoes().isEmpty()){
+            throw new EntidadeNaoEncontradaException("não há valores para o período");
+        }
 
         return ResponseEntity.ok(extrato);
     }

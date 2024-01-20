@@ -1,7 +1,6 @@
 package com.knnsystem.api.infrastructure.api.financeiro.impl;
 
 import com.knnsystem.api.dto.ExtratoFinanceiroDTO;
-import com.knnsystem.api.dto.TransacaoFinanceiraDTO;
 import com.knnsystem.api.infrastructure.api.financeiro.ApiExtratoFinanceiroService;
 import com.knnsystem.api.model.entity.ExtratoFinanceiro;
 import com.knnsystem.api.model.entity.TipoTransacaoFinanceira;
@@ -11,8 +10,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -50,7 +47,11 @@ public class ApiExtratoFinanceiroServiceCsvImpl implements ApiExtratoFinanceiroS
                         new BigDecimal(valores.get(3)),
                         valores.get(2)
                 );
-                extrato.adiciona(transacaoFinanceira);
+                try {
+                    extrato.adiciona(transacaoFinanceira);
+                } catch (IllegalArgumentException ex) {
+                    continue;
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

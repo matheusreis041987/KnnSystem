@@ -71,4 +71,20 @@ class ExtratoFinanceiroControllerTest {
         ;
     }
 
+    @DisplayName("Testa erro do extrato ao não encontrar transações")
+    @Test
+    void testErroSeConsultaSemResultado() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("anoInicio", "2023")
+                                .param("mesInicio", "10")
+                                .param("anoFim", "2023")
+                                .param("mesFim", "11")
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("não há valores para o período")));
+    }
+
 }
