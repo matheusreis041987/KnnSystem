@@ -1,7 +1,5 @@
 package com.knnsystem.api.model.entity;
 
-import com.knnsystem.api.exceptions.RegraNegocioException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -137,5 +135,53 @@ class ExtratoFinanceiroTest {
 
         // Assert
         assertEquals(transacao.getValor(), extrato.getTotalSaidas());
+    }
+
+    @DisplayName("Testa extrato financeiro lança erro ao adicionar transação anterior ao período")
+    @Test
+    void testNaoDeveReceberTransacaoAnteriorADataInicio(){
+        // Arrange
+        ExtratoFinanceiro extrato = new ExtratoFinanceiro(
+                LocalDate.now().plusDays(-1),
+                LocalDate.now(),
+                BigDecimal.ZERO
+        );
+        TransacaoFinanceira transacao = new TransacaoFinanceira(
+                TipoTransacaoFinanceira.RECEITA,
+                LocalDate.now().plusDays(-2),
+                BigDecimal.ONE,
+                "Receita de aluguéis"
+        );
+
+        // Act & Assert
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> extrato.adiciona(transacao)
+        );
+
+    }
+
+    @DisplayName("Testa extrato financeiro lança erro ao adicionar transação posterior ao período")
+    @Test
+    void testNaoDeveReceberTransacaoPosteriorADataFim(){
+        // Arrange
+        ExtratoFinanceiro extrato = new ExtratoFinanceiro(
+                LocalDate.now().plusDays(-1),
+                LocalDate.now(),
+                BigDecimal.ZERO
+        );
+        TransacaoFinanceira transacao = new TransacaoFinanceira(
+                TipoTransacaoFinanceira.DESPESA,
+                LocalDate.now().plusDays(1),
+                BigDecimal.ONE.negate(),
+                "Despesa de manutenção"
+        );
+
+        // Act & Assert
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> extrato.adiciona(transacao)
+        );
+
     }
 }

@@ -58,6 +58,13 @@ public class ExtratoFinanceiro {
     }
 
     public void adiciona(TransacaoFinanceira transacao) {
+        // valida transação está entre data início e data fim do extrado
+        if (transacao.getData().isBefore(dataInicio)
+                || transacao.getData().isAfter(dataFim)) {
+            throw new IllegalArgumentException("Transação deve estar no período do extrato");
+        }
+
+        // prossegue com atualização do extrato
         if (transacao.getTipo().equals(TipoTransacaoFinanceira.RECEITA)){
             this.totalEntradas = this.totalEntradas.add(transacao.getValor());
         } else {
