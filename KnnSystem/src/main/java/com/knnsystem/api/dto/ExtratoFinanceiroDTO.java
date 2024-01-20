@@ -1,9 +1,11 @@
 package com.knnsystem.api.dto;
 
+import com.knnsystem.api.model.entity.ExtratoFinanceiro;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public record ExtratoFinanceiroDTO(
@@ -30,4 +32,16 @@ public record ExtratoFinanceiroDTO(
         @NotNull
         BigDecimal saldoFim
 ) {
+
+        public ExtratoFinanceiroDTO(ExtratoFinanceiro extrato) {
+                this(extrato.getTransacoes().stream().map(TransacaoFinanceiraDTO::new).toList(),
+                        extrato.getDataEmissao(),
+                        extrato.getDataInicio(),
+                        extrato.getDataFim(),
+                        extrato.getTotalEntradas(),
+                        extrato.getTotalSaidas(),
+                        extrato.getSaldoInicial(),
+                        extrato.getSaldoFim()
+                        );
+        }
 }

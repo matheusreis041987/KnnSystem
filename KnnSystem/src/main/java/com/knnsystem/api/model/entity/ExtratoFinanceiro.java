@@ -5,20 +5,24 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ExtratoFinanceiro {
 
-    private LocalDate dataEmissao;
+    @Getter
+    private final LocalDate dataEmissao;
 
+    @Getter
+    private final LocalDate dataInicio;
 
-    private LocalDate dataInicio;
+    @Getter
+    private final LocalDate dataFim;
 
-    private LocalDate dataFim;
+    private final List<TransacaoFinanceira> transacoes;
 
-    private Set<TransacaoFinanceira> transacoes;
-
+    @Getter
     private BigDecimal saldoInicial;
 
     @Getter
@@ -52,7 +56,7 @@ public class ExtratoFinanceiro {
         this.dataFim = dataFim;
         this.saldoInicial = saldoInicial;
         this.saldoFim = this.saldoInicial;
-        this.transacoes = new HashSet<>();
+        this.transacoes = new ArrayList<>();
         this.totalEntradas = BigDecimal.ZERO;
         this.totalSaidas = BigDecimal.ZERO;
     }
@@ -71,5 +75,11 @@ public class ExtratoFinanceiro {
             this.totalSaidas = this.totalSaidas.add(transacao.getValor());
         }
         this.saldoFim = this.saldoFim.add(transacao.getValor());
+        this.transacoes.add(transacao);
+    }
+
+
+    public List<TransacaoFinanceira> getTransacoes() {
+        return Collections.unmodifiableList(transacoes);
     }
 }
