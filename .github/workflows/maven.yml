@@ -1,0 +1,26 @@
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Testes Unitários e de Integração
+
+on:
+  push:
+    branches: [ "main", "develop", "usecases/consolidado" ]
+  pull_request:
+    branches: [ "main", "develop", "usecases/consolidado" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build and test with Maven
+        run: mvn -B package --file KnnSystem/pom.xml

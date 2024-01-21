@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.DomicilioBancario;
-import com.knnsystem.api.model.repository.ContratoRepository;
 import com.knnsystem.api.model.repository.DomicilioBancarioRepository;
-import com.knnsystem.api.servic.DomicilioBancarioService;
+import com.knnsystem.api.service.DomicilioBancarioService;
 
 @Service
 public class DomicilioBancarioServiceImpl implements DomicilioBancarioService {

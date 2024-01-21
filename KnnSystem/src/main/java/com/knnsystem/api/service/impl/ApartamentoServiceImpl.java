@@ -1,65 +1,83 @@
 package com.knnsystem.api.service.impl;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
-import org.springframework.data.domain.Example;
+
+import com.knnsystem.api.exceptions.EntidadeCadastradaException;
+import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
+import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
+import com.knnsystem.api.model.entity.StatusGeral;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.knnsystem.api.model.entity.Apartamento;
+import com.knnsystem.api.dto.ApartamentoFormularioDTO;
 import com.knnsystem.api.model.repository.ApartamentoRepository;
-import com.knnsystem.api.servic.ApartamentoService;
+import com.knnsystem.api.service.ApartamentoService;
 
 
 
 @Service
 public class ApartamentoServiceImpl implements ApartamentoService {
 
+	@Autowired
 	private ApartamentoRepository repository;
-	
-	public ApartamentoServiceImpl (ApartamentoRepository repo) {
-		this.repository = repo;
-	}
-	
+
 	@Override
 	@Transactional
-	public Apartamento salvar(Apartamento apartamentoParam) {
-		
-		return repository.save(apartamentoParam);
+	public List<ApartamentoFormularioDTO> listar() {
+		var apartamentos = repository
+				.findAll()
+				.stream()
+				.map(ApartamentoFormularioDTO::new)
+				.toList();
+
+		if (apartamentos.isEmpty()) {
+			throw new RelatorioSemResultadoException("Erro -  não há dados para o relatório");
+		}
+		return apartamentos;
+	}
+
+	@Override
+	public List<ApartamentoFormularioDTO> listar(Integer numero, String bloco) {
+		return repository
+				.findByNumAptOrBlocoApt(numero, bloco)
+				.stream()
+				.map(ApartamentoFormularioDTO::new)
+				.toList();
 	}
 
 	@Override
 	@Transactional
-	public Apartamento atualizar(Apartamento apartamentoParm) {
-		
-		Objects.requireNonNull(apartamentoParm.getIdApartamento());
-		
-		return repository.save(apartamentoParm);
+	public ApartamentoFormularioDTO salvar(ApartamentoFormularioDTO dto) {
+
+		if (repository
+				.findByNumAptAndBlocoApt(
+						dto.numeroDoApartamento(),
+						dto.bloco()).isPresent()){
+			throw new EntidadeCadastradaException("Já há um apartamento cadastrado para os dados informados");
+		}
+
+		var apartamento = dto.toModel(true);
+
+		var apartamentoSalvo = repository.save(apartamento);
+
+		return new ApartamentoFormularioDTO(apartamentoSalvo);
+
 	}
 
 	@Override
-	@Transactional
-	public void deletar(Apartamento apartamentoParm) {
-		
-		Objects.requireNonNull(apartamentoParm.getIdApartamento());
-		repository.delete(apartamentoParm);
-	}
+	public ApartamentoFormularioDTO inativar(Integer numero, String bloco) {
+		var apartamentoAInativar = repository.findByNumAptAndBlocoApt(numero, bloco);
 
-	@Override
-	@Transactional
-	public List<Apartamento> buscar(Apartamento apartamentoParm) {
-	
-		Example example = Example.of(apartamentoParm);
-		return repository.findAll(example);
-	}
+		if (apartamentoAInativar.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não há um apartamento cadastrado para os dados informados");
+		}
 
-	@Override
-	@Transactional
-	public Optional<Apartamento> consultarPorId(Integer idApartamento) {
-	
-		return repository.findById(idApartamento);
-	}
+		var apartamento = apartamentoAInativar.get();
+		apartamento.setStatusApt(StatusGeral.INATIVO);
+		repository.save(apartamento);
 
+		return new ApartamentoFormularioDTO(apartamento);
+	}
 }

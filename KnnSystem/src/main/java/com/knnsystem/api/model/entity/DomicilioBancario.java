@@ -1,25 +1,15 @@
 package com.knnsystem.api.model.entity;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.Objects;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tbl_domicilio_bancario", schema = "sch_contratos")
+@Table(name = "domicilio_bancario", schema = "sch_contratos")
+@SecondaryTable(name = "fornecedor", schema = "sch_contratos")
 public class DomicilioBancario {
 
 	@Id
-	@Column(name = "pk_id")
+	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idDomicilio;
 	
@@ -39,7 +29,7 @@ public class DomicilioBancario {
 	private String statusDomicilio;
 	
 	@OneToOne
-	@JoinColumn(name = "fk_id_fornecedor", table = "tbl_fornecedor", referencedColumnName = "pk_id")
+	@JoinColumn(name = "fk_id_fornecedor", table = "fornecedor", referencedColumnName = "id")
 	private Fornecedor fornecedor;
 
 	public int getIdDomicilio() {

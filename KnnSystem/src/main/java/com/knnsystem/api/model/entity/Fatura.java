@@ -2,24 +2,15 @@ package com.knnsystem.api.model.entity;
 
 import java.util.Date;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tbl_fatura", schema = "sch_financeiro")
+@Table(name = "fatura", schema = "sch_financeiro")
+@SecondaryTable(name = "pagamento", schema = "sch_financeiro")
 public class Fatura {
 
 	@Id
-	@Column(name = "pk_id")
+	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idFatura;
 	
@@ -37,8 +28,7 @@ public class Fatura {
 	private StatusGeral StatusFatura;
 	
 	@OneToOne
-	@JoinColumn(name = "pk_id", table = "tbl_pagamento", referencedColumnName = "fk_pagamento")
-	@Column(name = "fk_usuario")
+	@JoinColumn(name = "fk_pagamento", table = "pagamento", referencedColumnName = "id")
 	private Pagamento pagamento;
 
 	public int getIdFatura() {

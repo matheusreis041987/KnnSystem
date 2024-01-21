@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Secretaria;
 import com.knnsystem.api.model.repository.SecretariaRepository;
-import com.knnsystem.api.servic.SecretariaService;
+import com.knnsystem.api.service.SecretariaService;
 
 @Service
 public class SecretariaServiceImpl implements SecretariaService {
@@ -34,7 +34,7 @@ public class SecretariaServiceImpl implements SecretariaService {
 	@Transactional
 	public Secretaria atualizar(Secretaria SecretariaParm) {
 		
-		Objects.requireNonNull(SecretariaParm.getId());
+		Objects.requireNonNull(SecretariaParm.getCpf());
 		
 		return repository.save(SecretariaParm);
 	}
@@ -43,7 +43,7 @@ public class SecretariaServiceImpl implements SecretariaService {
 	@Transactional
 	public void deletar(Secretaria SecretariaParm) {
 		
-		Objects.requireNonNull(SecretariaParm.getId());
+		Objects.requireNonNull(SecretariaParm.getCpf());
 		repository.delete(SecretariaParm);
 		
 		

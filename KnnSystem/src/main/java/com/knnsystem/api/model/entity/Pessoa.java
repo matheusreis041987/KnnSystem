@@ -1,31 +1,29 @@
 package com.knnsystem.api.model.entity;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Table (name = "tbl_pessoa", schema = "sch_pessoas" )
+@Table (name = "pessoa", schema = "sch_pessoas" )
+@Inheritance(strategy = InheritanceType.JOINED)
+@Getter
+@Setter
 public class Pessoa {
 	
 	@Id
-	@Column(name = "pk_id")
+	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
 	@Column(name = "nome")
 	private String nome;
 	
-	@Column(name = "cpf" )
+	@Column(name = "cpf")
 	private String cpf;
 	
 	@Column(name = "email")	
@@ -35,45 +33,23 @@ public class Pessoa {
 	@Enumerated(EnumType.STRING)
 	private StatusGeral status;
 
-	
-	public int getId() {
-		return id;
+	@OneToOne(mappedBy = "pessoa")
+	private Usuario usuario;
+
+	@OneToMany(mappedBy = "pessoa")
+	private Set<Telefone> telefones = new HashSet<>();
+
+	public Pessoa(){
+		this.status = StatusGeral.ATIVO;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public boolean isAtivo() {
+		return this.status.equals(StatusGeral.ATIVO);
+
 	}
 
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public StatusGeral getStatus() {
-		return status;
-	}
-
-	public void setStatus(StatusGeral status) {
-		this.status = status;
+	public void adicionaTelefone(Telefone telefone){
+		telefones.add(telefone);
 	}
 
 	@Override
@@ -82,13 +58,9 @@ public class Pessoa {
 	}
 
 	public boolean equals(Pessoa p) {
-		
-		if (this.cpf == p.cpf && this.nome == p.nome ) {
-			return true;
-		} else {
-			return false;
-		}
-		
+		return this.cpf.equals(p.getCpf()) &&
+				this.nome.equals(p.getNome());
+
 	}
 	
 	

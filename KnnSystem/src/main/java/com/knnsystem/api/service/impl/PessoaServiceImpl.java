@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.model.entity.Pessoa;
 import com.knnsystem.api.model.repository.PessoaRepository;
-import com.knnsystem.api.servic.PessoaService;
+import com.knnsystem.api.service.PessoaService;
 
 @Service
 public class PessoaServiceImpl implements PessoaService {
