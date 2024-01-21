@@ -2,6 +2,8 @@ package com.knnsystem.api.model.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "fornecedor", schema = "sch_contratos")
@@ -11,136 +13,71 @@ public class Fornecedor {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Getter
+	@Setter
 	private int idFornecedor;
 	
 	@Column(name = "num_contr")
+	@Getter
 	private int numControle;
 	
 	@Column(name = "razao_social")
+	@Getter
+	@Setter
 	private String razaoSocial;
 	
 	@Column(name = "cnpj")
+	@Getter
+	@Setter
 	private String cnpj;
-	
+
+	@Transient
+	@Getter
+	private Responsavel responsavel;
+
 	@Column(name = "fk_cpf_responsavel")
+	@Getter
 	private String cpfResponsavel;
 	
 	@Column(name = "nome", table = "responsavel")
+	@Getter
 	private String nomeResponsavel;
 	
 	@Column(name = "email", table = "responsavel")
+	@Getter
 	private String emailResponsavel;
 	
 	@Column(name = "email_corporativo")
+	@Getter
+	@Setter
 	private String emailCorporativo;
 	
 	@Column(name = "natureza_servico")
+	@Getter
+	@Setter
 	private String naturezaServico;
 	
 	@Column(name = "endereco")
+	@Getter
+	@Setter
 	private String enderecoCompleto;
 	
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
+	@Getter
+	@Setter
 	private StatusGeral StatusFornecedor;
 
 	@OneToOne
+	@Getter
+	@Setter
 	private DomicilioBancario domicilioBancario;
 
-	public int getIdFornecedor() {
-		return idFornecedor;
-	}
-
-	public void setIdFornecedor(int idFornecedor) {
-		this.idFornecedor = idFornecedor;
-	}
-
-	public int getNumControle() {
-		return numControle;
-	}
-
-	public void setNumControle(int numControle) {
-		this.numControle = numControle;
-	}
-
-	public String getRazaoSocial() {
-		return razaoSocial;
-	}
-
-	public void setRazaoSocial(String razaoSocial) {
-		this.razaoSocial = razaoSocial;
-	}
-
-	public String getCnpj() {
-		return cnpj;
-	}
-
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
-	}
-
-	public String getCpfResponsavel() {
-		return cpfResponsavel;
-	}
-
-	public void setCpfResponsavel(String cpfResponsavel) {
-		this.cpfResponsavel = cpfResponsavel;
-	}
-
-	public String getNomeResponsavel() {
-		return nomeResponsavel;
-	}
-
-	public void setNomeResponsavel(String nomeResponsavel) {
-		this.nomeResponsavel = nomeResponsavel;
-	}
-
-	public String getEmailResponsavel() {
-		return emailResponsavel;
-	}
-
-	public void setEmailResponsavel(String emailResponsavel) {
-		this.emailResponsavel = emailResponsavel;
-	}
-
-	public String getEmailCorporativo() {
-		return emailCorporativo;
-	}
-
-	public void setEmailCorporativo(String emailCorporativo) {
-		this.emailCorporativo = emailCorporativo;
-	}
-
-	public String getNaturezaServico() {
-		return naturezaServico;
-	}
-
-	public void setNaturezaServico(String naturezaServico) {
-		this.naturezaServico = naturezaServico;
-	}
-
-	public String getEnderecoCompleto() {
-		return enderecoCompleto;
-	}
-
-	public void setEnderecoCompleto(String enderecoCompleto) {
-		this.enderecoCompleto = enderecoCompleto;
-	}
-
-	public StatusGeral getStatusFornecedor() {
-		return StatusFornecedor;
-	}
-
-	public void setStatusFornecedor(StatusGeral statusFornecedor) {
-		StatusFornecedor = statusFornecedor;
-	}
-
-	public DomicilioBancario getDomicilioBancario() {
-		return domicilioBancario;
-	}
-
-	public void setDomicilioBancario(DomicilioBancario domicilioBancario) {
-		this.domicilioBancario = domicilioBancario;
+	public void setResponsavel(Responsavel responsavel) {
+		this.responsavel = responsavel;
+		this.cpfResponsavel = responsavel.getCpf();
+		this.nomeResponsavel = responsavel.getNome();
+		this.emailResponsavel = responsavel.getEmail();
 	}
 
 	@Override
@@ -164,11 +101,9 @@ public class Fornecedor {
 
 	
 	public boolean equals(Fornecedor f) {
-		if (this.cnpj == f.cnpj && this.razaoSocial == f.razaoSocial && this.numControle == f.numControle) {
-			return true;
-		} else {
-			return false;
-		}
+        return this.cnpj.equals(f.cnpj) &&
+                this.razaoSocial.equals(f.razaoSocial) &&
+				this.numControle == f.numControle;
 	}
 	
 	
