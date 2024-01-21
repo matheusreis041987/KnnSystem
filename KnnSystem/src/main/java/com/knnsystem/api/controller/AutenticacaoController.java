@@ -1,12 +1,15 @@
 package com.knnsystem.api.controller;
 
 import com.knnsystem.api.dto.AutenticacaoDTO;
+import com.knnsystem.api.dto.AutenticacaoEsqueciSenhaDTO;
 import com.knnsystem.api.dto.AutenticacaoProvisoriaDTO;
 import com.knnsystem.api.dto.TokenLoginDTO;
 import com.knnsystem.api.exceptions.ErroAutenticacao;
 import com.knnsystem.api.infrastructure.security.TokenService;
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.UsuarioRepository;
+import com.knnsystem.api.service.EsqueciSenhaEmailService;
+import com.knnsystem.api.service.EsqueciSenhaGerarSenhaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +36,12 @@ public class AutenticacaoController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private EsqueciSenhaEmailService esqueciSenhaEmailService;
+
+    @Autowired
+    private EsqueciSenhaGerarSenhaService esqueciSenhaGerarSenhaService;
 
 
     @PostMapping("/login")
@@ -63,6 +72,25 @@ public class AutenticacaoController {
 
         return ResponseEntity.ok(new TokenLoginDTO(token));
 
+    }
+
+    @PostMapping("/esqueci-senha")
+    public ResponseEntity geraSenhaProvisoria(
+            @RequestBody @Valid AutenticacaoEsqueciSenhaDTO dto
+    ) {
+        var usuarioOptional = repository.findByCpf(dto.cpf());
+
+        if (usuarioOptional.isPresent()) {
+            // Gera nova senha, envia link por e-mail, salva no banco a senha provisória
+            var usuario = usuarioOptional.get();
+            var senhaProvisoria = esqueciSenhaGerarSenhaService.gerarSenhaProvisoria();
+            esqueciSenhaEmailService.enviarLinkSenhaProvisoria(
+                    usuario.getEmail(),
+                    senhaProvisoria);
+            usuario.setSenha(senhaProvisoria);
+        }
+
+        return ResponseEntity.ok().build();
     }
 
     private String getToken(String cpf, String senha) {
