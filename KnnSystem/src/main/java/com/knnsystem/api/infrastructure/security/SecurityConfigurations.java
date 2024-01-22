@@ -28,8 +28,6 @@ import java.util.List;
 public class SecurityConfigurations {
 
     private static final String PAPEL_ADMINISTRADOR = Perfil.ADMINISTRADOR.name();
-    private static final String PAPEL_SECRETARIA = Perfil.SECRETARIA.name();
-
     private static final String PAPEL_SINDICO = Perfil.SINDICO.name();
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -42,6 +40,7 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,
                                 "/auth/api/login",
+                                        "/auth/api/esqueci-senha",
                                         "/auth/api/redefine").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/usuario/api/**").hasRole(PAPEL_ADMINISTRADOR)

@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping("/usuario/api")
 @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
-public class ManterUsuarioController {
+public class UsuarioController {
 
     @Autowired
     private UsuarioService service;
