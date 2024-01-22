@@ -193,11 +193,10 @@ public class TestDataBuilder {
 
         Fornecedor fornecedor = new Fornecedor();
         fornecedor.setRazaoSocial("Razão Social EIRELI");
-        fornecedor.setCnpj("00000000000111");
+        fornecedor.setCnpj("30126955000150");
         fornecedor.setEmailCorporativo("razaosocialeireli@rzeireli.com.br");
         fornecedor.setNaturezaServico("Natureza do serviço do Fornecedor A");
         fornecedor.setEnderecoCompleto("Endereço do Fornecedor A");
-        fornecedor.setDomicilioBancario(createDomicilioBancarioA());
         fornecedor.setStatusFornecedor(StatusGeral.ATIVO);
 
         return fornecedor;
@@ -226,7 +225,7 @@ public class TestDataBuilder {
 
         Fornecedor fornecedor = new Fornecedor();
         fornecedor.setRazaoSocial("Razão Social S.A;");
-        fornecedor.setCnpj("00000000000122");
+        fornecedor.setCnpj("35681130000111");
         fornecedor.setResponsavel(createResponsavelB());
         fornecedor.setEmailCorporativo("razaosocialsa@rzsa.com.br");
         fornecedor.setNaturezaServico("Natureza do serviço do Fornecedor B");

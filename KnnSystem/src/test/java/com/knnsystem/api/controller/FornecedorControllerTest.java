@@ -1,8 +1,10 @@
 package com.knnsystem.api.controller;
 
+import com.knnsystem.api.model.entity.DomicilioBancario;
 import com.knnsystem.api.model.entity.Fornecedor;
 import com.knnsystem.api.model.entity.Responsavel;
 import com.knnsystem.api.model.entity.Usuario;
+import com.knnsystem.api.model.repository.DomicilioBancarioRepository;
 import com.knnsystem.api.model.repository.FornecedorRepository;
 import com.knnsystem.api.model.repository.ResponsavelRepository;
 import org.hamcrest.Matchers;
@@ -33,6 +35,8 @@ class FornecedorControllerTest {
 
     private Responsavel responsavelA;
 
+    private DomicilioBancario domicilioBancarioA;
+
     private Usuario usuarioSecretaria;
 
     private final String ENDPOINT_CADASTRO = "/fornecedor/api/cadastra";
@@ -47,10 +51,14 @@ class FornecedorControllerTest {
     FornecedorRepository fornecedorRepository;
 
     @Autowired
+    DomicilioBancarioRepository domicilioBancarioRepository;
+
+    @Autowired
     private TestDataBuilder testDataBuilder;
 
     @BeforeEach
     void setUp(){
+        this.domicilioBancarioA = testDataBuilder.createDomicilioBancarioA();
         this.responsavelA = testDataBuilder.createResponsavelA();
         this.fornecedorA = testDataBuilder.createFornecedorA();
         this.usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
@@ -63,7 +71,10 @@ class FornecedorControllerTest {
         // Arrange
         responsavelA = responsavelRepository.save(responsavelA);
         fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
         fornecedorA = fornecedorRepository.save(fornecedorA);
+
         // Act
         this.mockMvc.perform(
                         post(ENDPOINT_CADASTRO)
@@ -72,13 +83,18 @@ class FornecedorControllerTest {
                                 .content(
                                         "{\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
                                                 "\"cnpj\": \"" + fornecedorA.getCnpj() + "\", " +
-                                                "\"domicilioBancario\": " + fornecedorA.getDomicilioBancario().getIdDomicilio() + ", " +
-                                                "\"nomeDoResponsavel\": \"" + fornecedorA.getResponsavel().getNome() + "\", " +
-                                                "\"cpfDoResponsavel\": \"" + fornecedorA.getResponsavel().getCpf() + "\", " +
-                                                "\"emailDoResponsavel\": \"" + fornecedorA.getResponsavel().getEmail() + "\", " +
-                                                "\"emailCorporativo\": \"" + fornecedorA.getEmailCorporativo() + "\", " +
-                                                "\"enderecoCompleto\": \"" + fornecedorA.getEnderecoCompleto() + "\", " +
-                                                "\"naturezaDoServico\": \"" + fornecedorA.getNaturezaServico() + "\"}"
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}, " +
+                                                "\"responsavel\": {" +
+                                                "\"nome\": \"" + fornecedorA.getResponsavel().getNome() + "\", " +
+                                                "\"cpf\": \"" + fornecedorA.getResponsavel().getCpf() + "\", " +
+                                                "\"email\": \"" + fornecedorA.getResponsavel().getEmail() + "\"}, " +
+                                                "\"enderecoCompleto\": \"" + fornecedorA.getEnderecoCompleto()+ "\", " +
+                                                "\"naturezaDoServico\": \"" + fornecedorA.getNaturezaServico() + "\", " +
+                                                "\"emailCorporativo\": \"" + fornecedorA.getEmailCorporativo() + "\"}"
                                 )
                 )
                 // Assert
