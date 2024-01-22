@@ -35,6 +35,8 @@ class AutenticacaoControllerTest {
 
     private final String ENDPOINT_REDEFINE = "/auth/api/redefine";
 
+    private final String ENDPOINT_ESQUECI_SENHA = "/auth/api/esqueci-senha";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -170,4 +172,21 @@ class AutenticacaoControllerTest {
                 // Assert
                 .andExpect(status().isForbidden());
     }
+
+    @DisplayName("Testa que retorna OK mesmo para cpf não existente")
+    @Test
+    @Transactional
+    void naoDeveRevelarQueCPFNaoEstaCadastrado() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_ESQUECI_SENHA)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"82018582046\"} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isOk());
+    }
+
 }
