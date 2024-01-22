@@ -1,6 +1,5 @@
 package com.knnsystem.api.dto;
 
-import com.knnsystem.api.model.entity.DomicilioBancario;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,24 +8,26 @@ import org.hibernate.validator.constraints.br.CNPJ;
 public record FornecedorDTO (
 		Integer id,
 
-		@NotBlank
+		@NotBlank(message = "razão social é obrigatório")
 		String razaoSocial,
 
+		@NotBlank(message = "CNPJ é obrigatório")
 		@CNPJ(message = "CNPJ inválido")
 		String cnpj,
 
-		@NotNull
+		@NotNull(message = "Domicílio bancário é obrigatório")
 		DomicilioBancarioDTO domicilioBancario,
 
-		@NotNull
+		@NotNull(message = "responsável pelo fornecedor é obrigatório")
 		ResponsavelDTO responsavel,
 
-		@NotBlank
+		@NotBlank(message = "endereço completo é obrigatório")
 		String enderecoCompleto,
 
-		@NotBlank
+		@NotBlank(message = "natureza do serviço é obrigatório")
 		String naturezaDoServico,
 
+		@NotBlank(message = "e-mail é obrigatório")
 		@Email(message = "e-mail inválido")
 		String emailCorporativo
 

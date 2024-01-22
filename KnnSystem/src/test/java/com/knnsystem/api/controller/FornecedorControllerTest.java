@@ -64,10 +64,10 @@ class FornecedorControllerTest {
         this.usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
     }
 
-    @DisplayName("Testa que não pode cadastrar morador mais de uma vez")
+    @DisplayName("Testa que não pode cadastrar fornecedor mais de uma vez")
     @Test
     @Transactional
-    void naoDeveCadastrarMoradorPelaSegundaVez() throws Exception {
+    void naoDeveCadastrarFornecedorPelaSegundaVez() throws Exception {
         // Arrange
         responsavelA = responsavelRepository.save(responsavelA);
         fornecedorA.setResponsavel(responsavelA);
@@ -102,6 +102,42 @@ class FornecedorControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Já há um fornecedor cadastrado para os dados informados")))
+        ;
+    }
+
+    @DisplayName("Testa que não pode cadastrar novo fornecedor sem preencher o formulario completo")
+    @Test
+    @Transactional
+    void naoDeveCadastrarFornecedorComDadosIncompletos() throws Exception {
+        // Arrange
+        fornecedorA.setResponsavel(responsavelA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}, " +
+                                                "\"responsavel\": {" +
+                                                "\"nome\": \"" + fornecedorA.getResponsavel().getNome() + "\", " +
+                                                "\"cpf\": \"" + fornecedorA.getResponsavel().getCpf() + "\", " +
+                                                "\"telefone\": \"" + fornecedorA.getResponsavel().getTelefone() + "\", " +
+                                                "\"email\": \"" + fornecedorA.getResponsavel().getEmail() + "\"}, " +
+                                                "\"enderecoCompleto\": \"" + fornecedorA.getEnderecoCompleto()+ "\", " +
+                                                "\"naturezaDoServico\": \"" + fornecedorA.getNaturezaServico() + "\", " +
+                                                "\"emailCorporativo\": \"" + fornecedorA.getEmailCorporativo() + "\"}"                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("CNPJ é obrigatório")))
         ;
     }
 
