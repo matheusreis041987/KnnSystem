@@ -38,6 +38,12 @@ class FornecedorControllerTest {
 
     private DomicilioBancario domicilioBancarioA;
 
+    private Fornecedor fornecedorB;
+
+    private  Responsavel responsavelB;
+
+    private DomicilioBancario domicilioBancarioB;
+
     private Usuario usuarioSecretaria;
 
     private final String ENDPOINT_CADASTRO = "/fornecedor/api/cadastra";
@@ -61,9 +67,15 @@ class FornecedorControllerTest {
 
     @BeforeEach
     void setUp(){
+
         this.domicilioBancarioA = testDataBuilder.createDomicilioBancarioA();
         this.responsavelA = testDataBuilder.createResponsavelA();
         this.fornecedorA = testDataBuilder.createFornecedorA();
+
+        this.domicilioBancarioB = testDataBuilder.createDomicilioBancarioB();
+        this.responsavelB = testDataBuilder.createResponsavelB();
+        this.fornecedorB = testDataBuilder.createFornecedorB();
+
         this.usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
     }
 
@@ -227,6 +239,28 @@ class FornecedorControllerTest {
         // Act
         this.mockMvc.perform(
                         get(ENDPOINT_CONSULTA)
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não existe fornecedor para os dados pesquisados")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra cnpj do fornecedor")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverFornecedorParaCNPJInformado() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("cnpj", fornecedorB.getCnpj())
                                 .with(user(usuarioSecretaria)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",
