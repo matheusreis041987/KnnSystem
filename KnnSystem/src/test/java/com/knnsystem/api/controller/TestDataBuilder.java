@@ -217,6 +217,7 @@ public class TestDataBuilder {
         responsavel.setCpf("41790617081");
         responsavel.setEmail("responsavela@knnsystem.com.br");
         responsavel.setNome("Responsável A do Fornecedor A");
+        responsavel.setTelefone("61123456789");
 
         return responsavel;
     }

@@ -12,7 +12,10 @@ public record ResponsavelDTO(
         String nome,
 
         @Email(message = "e-mail inválido")
-        String email
+        String email,
+
+        @NotBlank
+        String telefone
 
 ) {
 }

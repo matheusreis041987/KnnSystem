@@ -91,6 +91,7 @@ class FornecedorControllerTest {
                                                 "\"responsavel\": {" +
                                                 "\"nome\": \"" + fornecedorA.getResponsavel().getNome() + "\", " +
                                                 "\"cpf\": \"" + fornecedorA.getResponsavel().getCpf() + "\", " +
+                                                "\"telefone\": \"" + fornecedorA.getResponsavel().getTelefone() + "\", " +
                                                 "\"email\": \"" + fornecedorA.getResponsavel().getEmail() + "\"}, " +
                                                 "\"enderecoCompleto\": \"" + fornecedorA.getEnderecoCompleto()+ "\", " +
                                                 "\"naturezaDoServico\": \"" + fornecedorA.getNaturezaServico() + "\", " +
