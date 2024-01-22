@@ -370,4 +370,54 @@ class ManterUsuarioControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("Testa cadastro de usuário não permite senha só com letras")
+    @Test
+    @Transactional
+    void naoDeveCadastrarUsuarioComSenhaSohComLetras() throws Exception {
+        // Arrange
+        Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioAdministrador))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuarioNovo.getCpf() + "\", " +
+                                                "\"nome\": \"" + usuarioNovo.getNome() + "\", " +
+                                                "\"email\": \"" + usuarioNovo.getEmail() + "\", " +
+                                                "\"dataNascimento\": \"" + usuarioNovo.getDataNascimento() + "\", " +
+                                                "\"cargo\": \"" + usuarioNovo.getCargo() + "\", " +
+                                                "\"senha\": \"ABcdEFgh\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("Testa cadastro de usuário não permite senha só com números")
+    @Test
+    @Transactional
+    void naoDeveCadastrarUsuarioComSenhaSohComNumeros() throws Exception {
+        // Arrange
+        Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioAdministrador))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuarioNovo.getCpf() + "\", " +
+                                                "\"nome\": \"" + usuarioNovo.getNome() + "\", " +
+                                                "\"email\": \"" + usuarioNovo.getEmail() + "\", " +
+                                                "\"dataNascimento\": \"" + usuarioNovo.getDataNascimento() + "\", " +
+                                                "\"cargo\": \"" + usuarioNovo.getCargo() + "\", " +
+                                                "\"senha\": \"12345678\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest());
+    }
+
 }

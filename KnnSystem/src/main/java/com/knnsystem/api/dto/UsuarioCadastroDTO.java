@@ -2,7 +2,7 @@ package com.knnsystem.api.dto;
 
 import com.knnsystem.api.model.entity.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,7 +23,7 @@ public record UsuarioCadastroDTO(
 
         String cargo,
 
-        @Size(min = 8, message = "senha deve possuir no mínimo 8 posições, com letras e números")
+        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "senha deve possuir no mínimo 8 posições, com letras e números")
         String senha
 
 
