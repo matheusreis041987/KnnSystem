@@ -141,4 +141,42 @@ class FornecedorControllerTest {
         ;
     }
 
+    @DisplayName("Testa que não pode cadastrar novo fornecedor com algum dado inválido")
+    @Test
+    @Transactional
+    void naoDeveCadastrarFornecedorComDadosInvalidos() throws Exception {
+        // Arrange
+        fornecedorA.setResponsavel(responsavelA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"cnpj\": \"00000000000111\", " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}, " +
+                                                "\"responsavel\": {" +
+                                                "\"nome\": \"" + fornecedorA.getResponsavel().getNome() + "\", " +
+                                                "\"cpf\": \"" + fornecedorA.getResponsavel().getCpf() + "\", " +
+                                                "\"telefone\": \"" + fornecedorA.getResponsavel().getTelefone() + "\", " +
+                                                "\"email\": \"" + fornecedorA.getResponsavel().getEmail() + "\"}, " +
+                                                "\"enderecoCompleto\": \"" + fornecedorA.getEnderecoCompleto()+ "\", " +
+                                                "\"naturezaDoServico\": \"" + fornecedorA.getNaturezaServico() + "\", " +
+                                                "\"emailCorporativo\": \"" + fornecedorA.getEmailCorporativo() + "\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("CNPJ inválido")))
+        ;
+    }
+
 }
