@@ -29,7 +29,7 @@ public class TestDataBuilder {
 
         Usuario usuarioAtivo = new Usuario(pessoa);
         usuarioAtivo.setCargo(Cargo.SINDICO);
-        usuarioAtivo.setSenha(passwordEncoder.encode("123456"));
+        usuarioAtivo.setSenha(passwordEncoder.encode("123456Ab"));
         usuarioAtivo.setDataNascimento(LocalDate.of(1971,1 ,1));
 
         return usuarioAtivo;
@@ -49,7 +49,7 @@ public class TestDataBuilder {
 
         Usuario usuarioInativo = new Usuario(pessoa);
         usuarioInativo.setCargo(Cargo.FUNCIONARIO);
-        usuarioInativo.setSenha(passwordEncoder.encode("1234567"));
+        usuarioInativo.setSenha(passwordEncoder.encode("1234567y"));
         usuarioInativo.setDataNascimento(LocalDate.of(1980,12 ,13));
 
         return usuarioInativo;
