@@ -88,7 +88,7 @@ class ManterUsuarioControllerTest {
                                                 "\"email\": \"" + usuarioAtivo.getEmail() + "\", " +
                                                 "\"dataNascimento\": \"" + usuarioAtivo.getDataNascimento() + "\", " +
                                                 "\"cargo\": \"" + usuarioAtivo.getCargo() + "\", " +
-                                                "\"senha\": \"1234567\"}"
+                                                "\"senha\": \"1234567C\"}"
                                 )
                 )
                 // Assert
@@ -234,7 +234,7 @@ class ManterUsuarioControllerTest {
                                                 "\"telefone\": \"" + usuarioNovo.getPessoa().getTelefones().stream().findFirst().get() + "\", " +
                                                 "\"dataNascimento\": \"" + usuarioNovo.getDataNascimento() + "\", " +
                                                 "\"cargo\": \"" + usuarioNovo.getCargo() + "\", " +
-                                                "\"senha\": \"1234567\"}"
+                                                "\"senha\": \"1234567B\"}"
                                 )
                 )
                 // Assert
@@ -343,6 +343,31 @@ class ManterUsuarioControllerTest {
                 )
                 // Assert
                 .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("Testa cadastro de usuário com senha menor que 8 dígitos é recusada")
+    @Test
+    @Transactional
+    void naoDeveCadastrarUsuarioComSenhaInferiorAOitoPosicoes() throws Exception {
+        // Arrange
+        Usuario usuarioNovo = testDataBuilder.createUsuarioNovo();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioAdministrador))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"cpf\": \"" + usuarioNovo.getCpf() + "\", " +
+                                                "\"nome\": \"" + usuarioNovo.getNome() + "\", " +
+                                                "\"email\": \"" + usuarioNovo.getEmail() + "\", " +
+                                                "\"dataNascimento\": \"" + usuarioNovo.getDataNascimento() + "\", " +
+                                                "\"cargo\": \"" + usuarioNovo.getCargo() + "\", " +
+                                                "\"senha\": \"12A4567\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest());
     }
 
 }
