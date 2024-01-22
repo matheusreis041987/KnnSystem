@@ -74,7 +74,7 @@ class AutenticacaoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
-                                        "\"senha\": \"123456\"}"
+                                        "\"senha\": \"123456Ab\"}"
                         )
         )
         // Assert
@@ -91,7 +91,7 @@ class AutenticacaoControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
-                                                "\"senha\": \"1234567\"}"
+                                                "\"senha\": \"1234567xx\"}"
                                 )
                 )
                 // Assert
@@ -107,8 +107,8 @@ class AutenticacaoControllerTest {
                         post(ENDPOINT_LOGIN)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"cpf\": \"56214649170\", " +
-                                                "\"senha\": \"123456\"}"
+                                        "{\"cpf\": \"79791638004\", " +
+                                                "\"senha\": \"123456aC\"}"
                                 )
                 )
                 // Assert
@@ -125,8 +125,8 @@ class AutenticacaoControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
-                                                "\"senhaProvisoria\": \"123456\", " +
-                                                "\"novaSenha\": \"654321\"}"
+                                                "\"senhaProvisoria\": \"123456Ab\", " +
+                                                "\"novaSenha\": \"654321AB\"}"
                                 )
                 )
                 // Assert
@@ -134,7 +134,7 @@ class AutenticacaoControllerTest {
         var usuarioAtualizado = usuarioRepository.findByCpf(usuarioAtivo.getCpf());
 
         assertTrue(
-                passwordEncoder.matches("654321", usuarioAtualizado.get().getSenha())
+                passwordEncoder.matches("654321AB", usuarioAtualizado.get().getSenha())
         );
     }
 
@@ -149,7 +149,7 @@ class AutenticacaoControllerTest {
                                 .content(
                                         "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
                                                 "\"senhaProvisoria\": \"654321\", " +
-                                                "\"novaSenha\": \"123456\"}"
+                                                "\"novaSenha\": \"123456C8\"}"
                                 )
                 )
                 // Assert
@@ -166,7 +166,7 @@ class AutenticacaoControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         "{\"cpf\": \"" + usuarioInativo.getCpf() + "\", " +
-                                                "\"senha\": \"1234567\"}"
+                                                "\"senha\": \"1234567y\"}"
                                 )
                 )
                 // Assert
