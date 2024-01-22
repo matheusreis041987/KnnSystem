@@ -9,6 +9,8 @@ import com.knnsystem.api.service.FornecedorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FornecedorServiceImpl implements FornecedorService {
 
@@ -35,5 +37,10 @@ public class FornecedorServiceImpl implements FornecedorService {
         var fornecedorSalvo = fornecedorRepository.save(fornecedor);
 
         return new FornecedorDTO(fornecedorSalvo);
+    }
+
+    @Override
+    public List<FornecedorDTO> listar(String cnpj, String razaoSocial, Long numeroControle) {
+        return List.of();
     }
 }

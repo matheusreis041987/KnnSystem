@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +41,8 @@ class FornecedorControllerTest {
     private Usuario usuarioSecretaria;
 
     private final String ENDPOINT_CADASTRO = "/fornecedor/api/cadastra";
+
+    private final String ENDPOINT_CONSULTA = "/fornecedor/api/consulta";
 
     @Autowired
     private MockMvc mockMvc;
@@ -215,6 +218,20 @@ class FornecedorControllerTest {
                 // Assert
                 .andExpect(status().isCreated())
         ;
+    }
+
+    @DisplayName("Testa consulta para repositório de fornecedores vazio")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverFornecedores() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não existe fornecedor para os dados pesquisados")));
+
     }
 
 }
