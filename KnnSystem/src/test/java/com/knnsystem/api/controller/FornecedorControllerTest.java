@@ -179,4 +179,42 @@ class FornecedorControllerTest {
         ;
     }
 
+    @DisplayName("Testa cadastro de fornecedor com dados válidos")
+    @Test
+    @Transactional
+    void deveCadastrarFornecedorComDadosValidos() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"cnpj\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}, " +
+                                                "\"responsavel\": {" +
+                                                "\"nome\": \"" + fornecedorA.getResponsavel().getNome() + "\", " +
+                                                "\"cpf\": \"" + fornecedorA.getResponsavel().getCpf() + "\", " +
+                                                "\"telefone\": \"" + fornecedorA.getResponsavel().getTelefone() + "\", " +
+                                                "\"email\": \"" + fornecedorA.getResponsavel().getEmail() + "\"}, " +
+                                                "\"enderecoCompleto\": \"" + fornecedorA.getEnderecoCompleto()+ "\", " +
+                                                "\"naturezaDoServico\": \"" + fornecedorA.getNaturezaServico() + "\", " +
+                                                "\"emailCorporativo\": \"" + fornecedorA.getEmailCorporativo() + "\"}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isCreated())
+        ;
+    }
+
 }

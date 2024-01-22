@@ -2,12 +2,16 @@ package com.knnsystem.api.model.entity;
 
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 @Table(name = "fornecedor", schema = "sch_contratos")
 @SecondaryTable(name = "responsavel", schema = "sch_contratos")
+@EqualsAndHashCode
 public class Fornecedor {
 	
 	@Id
@@ -19,7 +23,7 @@ public class Fornecedor {
 	
 	@Column(name = "num_contr")
 	@Getter
-	private int numControle;
+	private Long numControle;
 	
 	@Column(name = "razao_social")
 	@Getter
@@ -80,30 +84,18 @@ public class Fornecedor {
 		this.emailResponsavel = responsavel.getEmail();
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((StatusFornecedor == null) ? 0 : StatusFornecedor.hashCode());
-		result = prime * result + ((cnpj == null) ? 0 : cnpj.hashCode());
-		result = prime * result + ((cpfResponsavel == null) ? 0 : cpfResponsavel.hashCode());
-		result = prime * result + ((domicilioBancario == null) ? 0 : domicilioBancario.hashCode());
-		result = prime * result + ((emailCorporativo == null) ? 0 : emailCorporativo.hashCode());
-		result = prime * result + ((emailResponsavel == null) ? 0 : emailResponsavel.hashCode());
-		result = prime * result + ((enderecoCompleto == null) ? 0 : enderecoCompleto.hashCode());
-		result = prime * result + idFornecedor;
-		result = prime * result + ((naturezaServico == null) ? 0 : naturezaServico.hashCode());
-		result = prime * result + ((nomeResponsavel == null) ? 0 : nomeResponsavel.hashCode());
-		result = prime * result + numControle;
-		result = prime * result + ((razaoSocial == null) ? 0 : razaoSocial.hashCode());
-		return result;
+	public void geraNumeroDeControle(){
+		// Número de controle gerado pelo sistema
+		this.numControle = ThreadLocalRandom
+				.current()
+				.nextLong(1000000000L, 9999999999L);
 	}
 
-	
+
 	public boolean equals(Fornecedor f) {
         return this.cnpj.equals(f.cnpj) &&
                 this.razaoSocial.equals(f.razaoSocial) &&
-				this.numControle == f.numControle;
+				this.numControle.equals(f.numControle);
 	}
 	
 	

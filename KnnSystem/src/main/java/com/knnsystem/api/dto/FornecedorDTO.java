@@ -1,5 +1,6 @@
 package com.knnsystem.api.dto;
 
+import com.knnsystem.api.model.entity.Fornecedor;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,4 +35,31 @@ public record FornecedorDTO (
 
 ) {
 
+	public FornecedorDTO(Fornecedor fornecedor) {
+		this(
+				fornecedor.getIdFornecedor(),
+				fornecedor.getRazaoSocial(),
+				fornecedor.getCnpj(),
+				new DomicilioBancarioDTO(fornecedor.getDomicilioBancario()),
+				new ResponsavelDTO(fornecedor.getResponsavel()),
+				fornecedor.getEnderecoCompleto(),
+				fornecedor.getNaturezaServico(),
+				fornecedor.getEmailCorporativo()
+		);
+	}
+
+	public Fornecedor toModel(boolean isInclusao) {
+		Fornecedor fornecedor = new Fornecedor();
+		fornecedor.setCnpj(cnpj());
+		fornecedor.setNaturezaServico(naturezaDoServico());
+		fornecedor.setEmailCorporativo(emailCorporativo());
+		fornecedor.setResponsavel(responsavel().toModel());
+		fornecedor.setDomicilioBancario(domicilioBancario().toModel(isInclusao));
+		fornecedor.setRazaoSocial(razaoSocial());
+		fornecedor.setEnderecoCompleto(enderecoCompleto());
+		fornecedor.geraNumeroDeControle();
+
+		return fornecedor;
+
+	}
 }
