@@ -23,4 +23,7 @@ public class Responsavel {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "telefone", nullable = false)
+    private String telefone;
+
 }
