@@ -194,7 +194,6 @@ public class TestDataBuilder {
         Fornecedor fornecedor = new Fornecedor();
         fornecedor.setRazaoSocial("Razão Social EIRELI");
         fornecedor.setCnpj("00000000000111");
-        fornecedor.setResponsavel(createResponsavelA());
         fornecedor.setEmailCorporativo("razaosocialeireli@rzeireli.com.br");
         fornecedor.setNaturezaServico("Natureza do serviço do Fornecedor A");
         fornecedor.setEnderecoCompleto("Endereço do Fornecedor A");
@@ -216,7 +215,7 @@ public class TestDataBuilder {
 
     public Responsavel createResponsavelA(){
         Responsavel responsavel = new Responsavel();
-        responsavel.setCpf("11111111111");
+        responsavel.setCpf("41790617081");
         responsavel.setEmail("responsavela@knnsystem.com.br");
         responsavel.setNome("Responsável A do Fornecedor A");
 

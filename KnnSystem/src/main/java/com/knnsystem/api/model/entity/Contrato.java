@@ -9,10 +9,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "contrato", schema = "sch_contratos")
-@SecondaryTable(name = "gestor", schema = "sch_contratos")
-@SecondaryTable(name = "sindico", schema = "sch_contratos")
-@SecondaryTable(name = "fornecedor", schema = "sch_contratos")
-@SecondaryTable(name = "rescisao", schema = "sch_contratos")
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -26,8 +22,8 @@ public class Contrato {
 	@Column(name = "num_contrato")
 	private String numContrato;
 
-	@ManyToOne
-	@JoinColumn(name = "fk_id_fornecedor", table = "fornecedor", referencedColumnName = "id")
+	@OneToOne
+	@JoinColumn(name = "fk_id_fornecedor", referencedColumnName = "id")
 	private Fornecedor fornecedor;
 
 	@Column(name = "status")
@@ -37,12 +33,12 @@ public class Contrato {
 	@Column(name = "pct_multa")
 	private String percMulta;
 
-	@ManyToOne
-	@JoinColumn(name = "fk_cpf_sindico", table = "sindico", referencedColumnName = "cpf")
+	@OneToOne
+	@JoinColumn(name = "fk_cpf_sindico", referencedColumnName = "cpf")
 	private Sindico sindico;
 
-	@ManyToOne
-	@JoinColumn(name = "fk_cpf_gestor", table = "gestor", referencedColumnName = "cpf")
+	@OneToOne
+	@JoinColumn(name = "fk_cpf_gestor", referencedColumnName = "cpf")
 	private Gestor gestor;
 
 	@Column(name = "vlr_mensal_atual")
@@ -61,7 +57,7 @@ public class Contrato {
 	private LocalDate vigenciaFinal;
 
 	@OneToOne
-	@JoinColumn(name = "fk_id_rescisao", table = "rescisao", referencedColumnName = "id")
+	@JoinColumn(name = "fk_id_rescisao", referencedColumnName = "id")
 	private Rescisao rescisao;
 
 }

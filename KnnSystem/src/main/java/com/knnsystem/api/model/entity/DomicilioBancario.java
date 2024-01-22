@@ -7,7 +7,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "domicilio_bancario", schema = "sch_contratos")
-@SecondaryTable(name = "fornecedor", schema = "sch_contratos")
 @Getter
 @Setter
 public class DomicilioBancario {
@@ -34,7 +33,7 @@ public class DomicilioBancario {
 	private StatusGeral statusDomicilio;
 	
 	@OneToOne
-	@JoinColumn(name = "fk_id_fornecedor", table = "fornecedor", referencedColumnName = "id")
+	@JoinColumn(name = "fk_id_fornecedor", referencedColumnName = "id")
 	private Fornecedor fornecedor;
 
 	@Override

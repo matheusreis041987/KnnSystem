@@ -1,10 +1,13 @@
 package com.knnsystem.api.controller;
 
 import com.knnsystem.api.model.entity.Fornecedor;
+import com.knnsystem.api.model.entity.Responsavel;
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.FornecedorRepository;
+import com.knnsystem.api.model.repository.ResponsavelRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +31,17 @@ class FornecedorControllerTest {
 
     private Fornecedor fornecedorA;
 
+    private Responsavel responsavelA;
+
     private Usuario usuarioSecretaria;
 
     private final String ENDPOINT_CADASTRO = "/fornecedor/api/cadastra";
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    ResponsavelRepository responsavelRepository;
 
     @Autowired
     FornecedorRepository fornecedorRepository;
@@ -43,6 +51,7 @@ class FornecedorControllerTest {
 
     @BeforeEach
     void setUp(){
+        this.responsavelA = testDataBuilder.createResponsavelA();
         this.fornecedorA = testDataBuilder.createFornecedorA();
         this.usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
     }
@@ -52,6 +61,8 @@ class FornecedorControllerTest {
     @Transactional
     void naoDeveCadastrarMoradorPelaSegundaVez() throws Exception {
         // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
         fornecedorA = fornecedorRepository.save(fornecedorA);
         // Act
         this.mockMvc.perform(
