@@ -1,8 +1,9 @@
 package com.knnsystem.api.service.impl;
 
 import com.knnsystem.api.dto.FornecedorDTO;
-import com.knnsystem.api.dto.MoradorDTO;
 import com.knnsystem.api.exceptions.EntidadeCadastradaException;
+import com.knnsystem.api.exceptions.RegraNegocioException;
+import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
 import com.knnsystem.api.model.repository.DomicilioBancarioRepository;
 import com.knnsystem.api.model.repository.FornecedorRepository;
 import com.knnsystem.api.model.repository.ResponsavelRepository;
@@ -24,12 +25,24 @@ public class FornecedorServiceImpl implements FornecedorService {
     @Autowired
     private DomicilioBancarioRepository domicilioBancarioRepository;
 
+    @Autowired
+    private ApiDocumentoFacade apiDocumentoFacade;
+
     @Override
     public FornecedorDTO salvar(FornecedorDTO dto) {
         if (fornecedorRepository.findByCnpj(dto.cnpj()).isPresent()){
             throw new EntidadeCadastradaException("Já há um fornecedor cadastrado para os dados informados");
         }
+
+        boolean isCnpjValido =  apiDocumentoFacade.validarDocumento(dto.cnpj());
+
+        if (!isCnpjValido) {
+            throw new RegraNegocioException("CNPJ inválido");
+        }
+
         var fornecedor = dto.toModel(true);
+
+
         // salva entidades relacionadas primeiro
         responsavelRepository.save(fornecedor.getResponsavel());
         domicilioBancarioRepository.save(fornecedor.getDomicilioBancario());
