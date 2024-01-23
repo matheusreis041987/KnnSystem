@@ -189,4 +189,72 @@ public class TestDataBuilder {
 
     }
 
+    public Fornecedor createFornecedorA(){
+
+        Fornecedor fornecedor = new Fornecedor();
+        fornecedor.setRazaoSocial("Razão Social EIRELI");
+        fornecedor.setCnpj("30126955000150");
+        fornecedor.setEmailCorporativo("razaosocialeireli@rzeireli.com.br");
+        fornecedor.setNaturezaServico("Natureza do serviço do Fornecedor A");
+        fornecedor.setEnderecoCompleto("Endereço do Fornecedor A");
+        fornecedor.setStatusFornecedor(StatusGeral.ATIVO);
+
+        return fornecedor;
+    }
+
+    public DomicilioBancario createDomicilioBancarioA(){
+        DomicilioBancario domicilioBancario = new DomicilioBancario();
+        domicilioBancario.setAgencia("1234");
+        domicilioBancario.setContaCorrente("4321");
+        domicilioBancario.setBanco("001");
+        domicilioBancario.setPix("407c1a87-d76c-4ae1-945b-0d1e91a68a93");
+        domicilioBancario.setStatusDomicilio(StatusGeral.ATIVO);
+        return domicilioBancario;
+    }
+
+    public Responsavel createResponsavelA(){
+        Responsavel responsavel = new Responsavel();
+        responsavel.setCpf("41790617081");
+        responsavel.setEmail("responsavela@knnsystem.com.br");
+        responsavel.setNome("Responsável A do Fornecedor A");
+        responsavel.setTelefone("61123456789");
+
+        return responsavel;
+    }
+
+    public Fornecedor createFornecedorB(){
+
+        Fornecedor fornecedor = new Fornecedor();
+        fornecedor.setRazaoSocial("Razão Social S.A;");
+        fornecedor.setCnpj("35681130000111");
+        fornecedor.setResponsavel(createResponsavelB());
+        fornecedor.setEmailCorporativo("razaosocialsa@rzsa.com.br");
+        fornecedor.setNaturezaServico("Natureza do serviço do Fornecedor B");
+        fornecedor.setEnderecoCompleto("Endereço do Fornecedor B");
+        fornecedor.setDomicilioBancario(createDomicilioBancarioB());
+        fornecedor.setStatusFornecedor(StatusGeral.ATIVO);
+
+        return fornecedor;
+    }
+
+    public DomicilioBancario createDomicilioBancarioB(){
+        DomicilioBancario domicilioBancario = new DomicilioBancario();
+        domicilioBancario.setAgencia("1234");
+        domicilioBancario.setContaCorrente("4321");
+        domicilioBancario.setBanco("001");
+        domicilioBancario.setPix("407c1a87-d76c-4ae1-945b-0d1e91a68a93");
+        domicilioBancario.setStatusDomicilio(StatusGeral.ATIVO);
+        return domicilioBancario;
+    }
+
+    public Responsavel createResponsavelB(){
+        Responsavel responsavel = new Responsavel();
+        responsavel.setCpf("09057238055");
+        responsavel.setEmail("responsavelb@knnsystem.com.br");
+        responsavel.setNome("Responsável B do Fornecedor B");
+        responsavel.setTelefone("11987654321");
+
+        return responsavel;
+    }
+
 }

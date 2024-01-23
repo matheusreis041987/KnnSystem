@@ -1,129 +1,68 @@
 package com.knnsystem.api.dto;
 
-import com.knnsystem.api.model.entity.StatusGeral;
+import com.knnsystem.api.model.entity.Fornecedor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.br.CNPJ;
 
-public class FornecedorDTO {
+public record FornecedorDTO (
+		Integer id,
 
-	
-private int idFornecedor;
-	
-	private int numControle;
+		@NotBlank(message = "razão social é obrigatório")
+		String razaoSocial,
 
-	private String razaoSocial;
-	
-	private String cnpj;
-	
-	private String cpfResponsavel;
+		@NotBlank(message = "CNPJ é obrigatório")
+		@CNPJ(message = "CNPJ inválido")
+		String cnpj,
 
-	private String nomeResponsavel;
-		
-	private String emailResponsavel;
-	
-	private String emailCorporativo;
+		@NotNull(message = "Domicílio bancário é obrigatório")
+		DomicilioBancarioDTO domicilioBancario,
 
-	private String naturezaServico;
-	
-	private String enderecoCompleto;
-	
-	private StatusGeral StatusFornecedor;
+		@NotNull(message = "responsável pelo fornecedor é obrigatório")
+		ResponsavelDTO responsavel,
 
-	private DomicilioBancarioDTO domicilioBancario;
+		@NotBlank(message = "endereço completo é obrigatório")
+		String enderecoCompleto,
 
-	public int getIdFornecedor() {
-		return idFornecedor;
+		@NotBlank(message = "natureza do serviço é obrigatório")
+		String naturezaDoServico,
+
+		@NotBlank(message = "e-mail é obrigatório")
+		@Email(message = "e-mail inválido")
+		String emailCorporativo,
+
+		Long numeroControle
+
+
+) {
+
+	public FornecedorDTO(Fornecedor fornecedor) {
+		this(
+				fornecedor.getIdFornecedor(),
+				fornecedor.getRazaoSocial(),
+				fornecedor.getCnpj(),
+				new DomicilioBancarioDTO(fornecedor.getDomicilioBancario()),
+				new ResponsavelDTO(fornecedor.getResponsavel()),
+				fornecedor.getEnderecoCompleto(),
+				fornecedor.getNaturezaServico(),
+				fornecedor.getEmailCorporativo(),
+				fornecedor.getNumControle()
+		);
 	}
 
-	public void setIdFornecedor(int idFornecedor) {
-		this.idFornecedor = idFornecedor;
-	}
+	public Fornecedor toModel(boolean isInclusao) {
+		Fornecedor fornecedor = new Fornecedor();
+		fornecedor.setCnpj(cnpj());
+		fornecedor.setNaturezaServico(naturezaDoServico());
+		fornecedor.setEmailCorporativo(emailCorporativo());
+		fornecedor.setResponsavel(responsavel().toModel());
+		fornecedor.setDomicilioBancario(domicilioBancario().toModel(isInclusao));
+		fornecedor.setRazaoSocial(razaoSocial());
+		fornecedor.setEnderecoCompleto(enderecoCompleto());
+		fornecedor.geraNumeroDeControle();
 
-	public int getNumControle() {
-		return numControle;
-	}
+		return fornecedor;
 
-	public void setNumControle(int numControle) {
-		this.numControle = numControle;
 	}
-
-	public String getRazaoSocial() {
-		return razaoSocial;
-	}
-
-	public void setRazaoSocial(String razaoSocial) {
-		this.razaoSocial = razaoSocial;
-	}
-
-	public String getCnpj() {
-		return cnpj;
-	}
-
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
-	}
-
-	public String getCpfResponsavel() {
-		return cpfResponsavel;
-	}
-
-	public void setCpfResponsavel(String cpfResponsavel) {
-		this.cpfResponsavel = cpfResponsavel;
-	}
-
-	public String getNomeResponsavel() {
-		return nomeResponsavel;
-	}
-
-	public void setNomeResponsavel(String nomeResponsavel) {
-		this.nomeResponsavel = nomeResponsavel;
-	}
-
-	public String getEmailResponsavel() {
-		return emailResponsavel;
-	}
-
-	public void setEmailResponsavel(String emailResponsavel) {
-		this.emailResponsavel = emailResponsavel;
-	}
-
-	public String getEmailCorporativo() {
-		return emailCorporativo;
-	}
-
-	public void setEmailCorporativo(String emailCorporativo) {
-		this.emailCorporativo = emailCorporativo;
-	}
-
-	public String getNaturezaServico() {
-		return naturezaServico;
-	}
-
-	public void setNaturezaServico(String naturezaServico) {
-		this.naturezaServico = naturezaServico;
-	}
-
-	public String getEnderecoCompleto() {
-		return enderecoCompleto;
-	}
-
-	public void setEnderecoCompleto(String enderecoCompleto) {
-		this.enderecoCompleto = enderecoCompleto;
-	}
-
-	public StatusGeral getStatusFornecedor() {
-		return StatusFornecedor;
-	}
-
-	public void setStatusFornecedor(StatusGeral statusFornecedor) {
-		StatusFornecedor = statusFornecedor;
-	}
-
-	public DomicilioBancarioDTO getDomicilioBancario() {
-		return domicilioBancario;
-	}
-
-	public void setDomicilioBancario(DomicilioBancarioDTO domicilioBancario) {
-		this.domicilioBancario = domicilioBancario;
-	}
-	
-	
 }
