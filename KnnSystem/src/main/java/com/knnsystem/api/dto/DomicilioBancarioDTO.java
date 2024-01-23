@@ -1,80 +1,39 @@
 package com.knnsystem.api.dto;
 
-import com.knnsystem.api.model.entity.Fornecedor;
+import com.knnsystem.api.model.entity.DomicilioBancario;
+import com.knnsystem.api.model.entity.StatusGeral;
+import jakarta.validation.constraints.NotBlank;
 
-public class DomicilioBancarioDTO {
+public record DomicilioBancarioDTO (
+		@NotBlank
+		String agencia,
+		@NotBlank
+		String contaCorrente,
+		@NotBlank
+		String banco,
+		@NotBlank
+		String pix
+) {
+    public DomicilioBancarioDTO(DomicilioBancario domicilioBancario) {
+		this(
+				domicilioBancario.getAgencia(),
+				domicilioBancario.getContaCorrente(),
+				domicilioBancario.getBanco(),
+				domicilioBancario.getPix()
+		);
+    }
 
+	public DomicilioBancario toModel(boolean isInclusao) {
+		DomicilioBancario domicilioBancario = new DomicilioBancario();
+		domicilioBancario.setPix(pix());
+		domicilioBancario.setAgencia(agencia());
+		domicilioBancario.setContaCorrente(contaCorrente());
+		domicilioBancario.setBanco(banco());
 
-	private int idDomicilio;
-	
-	private String agencia;
-	
-	private String contaCorrente;
-	
-	private String banco;
-	
-	private String pix;
-	
-	private String statusDomicilio;
+		if (isInclusao){
+			domicilioBancario.setStatusDomicilio(StatusGeral.ATIVO);
+		}
 
-	private Fornecedor fornecedor;
-
-	public int getIdDomicilio() {
-		return idDomicilio;
+		return domicilioBancario;
 	}
-
-	public void setIdDomicilio(int idDomicilio) {
-		this.idDomicilio = idDomicilio;
-	}
-
-	public String getAgencia() {
-		return agencia;
-	}
-
-	public void setAgencia(String agencia) {
-		this.agencia = agencia;
-	}
-
-	public String getContaCorrente() {
-		return contaCorrente;
-	}
-
-	public void setContaCorrente(String contaCorrente) {
-		this.contaCorrente = contaCorrente;
-	}
-
-	public String getBanco() {
-		return banco;
-	}
-
-	public void setBanco(String banco) {
-		this.banco = banco;
-	}
-
-	public String getPix() {
-		return pix;
-	}
-
-	public void setPix(String pix) {
-		this.pix = pix;
-	}
-
-	public String getStatusDomicilio() {
-		return statusDomicilio;
-	}
-
-	public void setStatusDomicilio(String statusDomicilio) {
-		this.statusDomicilio = statusDomicilio;
-	}
-
-	public Fornecedor getFornecedor() {
-		return fornecedor;
-	}
-
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
-	}
-	
-	
-	
 }

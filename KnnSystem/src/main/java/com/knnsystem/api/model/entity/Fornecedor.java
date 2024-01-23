@@ -2,173 +2,100 @@ package com.knnsystem.api.model.entity;
 
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 @Table(name = "fornecedor", schema = "sch_contratos")
 @SecondaryTable(name = "responsavel", schema = "sch_contratos")
+@EqualsAndHashCode
 public class Fornecedor {
 	
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Getter
+	@Setter
 	private int idFornecedor;
 	
 	@Column(name = "num_contr")
-	private int numControle;
+	@Getter
+	private Long numControle;
 	
 	@Column(name = "razao_social")
+	@Getter
+	@Setter
 	private String razaoSocial;
 	
 	@Column(name = "cnpj")
+	@Getter
+	@Setter
 	private String cnpj;
-	
+
+	@Transient
+	@Getter
+	private Responsavel responsavel;
+
 	@Column(name = "fk_cpf_responsavel")
+	@Getter
 	private String cpfResponsavel;
 	
 	@Column(name = "nome", table = "responsavel")
+	@Getter
 	private String nomeResponsavel;
 	
 	@Column(name = "email", table = "responsavel")
+	@Getter
 	private String emailResponsavel;
 	
 	@Column(name = "email_corporativo")
+	@Getter
+	@Setter
 	private String emailCorporativo;
 	
 	@Column(name = "natureza_servico")
+	@Getter
+	@Setter
 	private String naturezaServico;
 	
 	@Column(name = "endereco")
+	@Getter
+	@Setter
 	private String enderecoCompleto;
 	
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
+	@Getter
+	@Setter
 	private StatusGeral StatusFornecedor;
 
 	@OneToOne
+	@Getter
+	@Setter
 	private DomicilioBancario domicilioBancario;
 
-	public int getIdFornecedor() {
-		return idFornecedor;
+	public void setResponsavel(Responsavel responsavel) {
+		this.responsavel = responsavel;
+		this.cpfResponsavel = responsavel.getCpf();
+		this.nomeResponsavel = responsavel.getNome();
+		this.emailResponsavel = responsavel.getEmail();
 	}
 
-	public void setIdFornecedor(int idFornecedor) {
-		this.idFornecedor = idFornecedor;
+	public void geraNumeroDeControle(){
+		// Número de controle gerado pelo sistema
+		this.numControle = ThreadLocalRandom
+				.current()
+				.nextLong(1000000000L, 9999999999L);
 	}
 
-	public int getNumControle() {
-		return numControle;
-	}
 
-	public void setNumControle(int numControle) {
-		this.numControle = numControle;
-	}
-
-	public String getRazaoSocial() {
-		return razaoSocial;
-	}
-
-	public void setRazaoSocial(String razaoSocial) {
-		this.razaoSocial = razaoSocial;
-	}
-
-	public String getCnpj() {
-		return cnpj;
-	}
-
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
-	}
-
-	public String getCpfResponsavel() {
-		return cpfResponsavel;
-	}
-
-	public void setCpfResponsavel(String cpfResponsavel) {
-		this.cpfResponsavel = cpfResponsavel;
-	}
-
-	public String getNomeResponsavel() {
-		return nomeResponsavel;
-	}
-
-	public void setNomeResponsavel(String nomeResponsavel) {
-		this.nomeResponsavel = nomeResponsavel;
-	}
-
-	public String getEmailResponsavel() {
-		return emailResponsavel;
-	}
-
-	public void setEmailResponsavel(String emailResponsavel) {
-		this.emailResponsavel = emailResponsavel;
-	}
-
-	public String getEmailCorporativo() {
-		return emailCorporativo;
-	}
-
-	public void setEmailCorporativo(String emailCorporativo) {
-		this.emailCorporativo = emailCorporativo;
-	}
-
-	public String getNaturezaServico() {
-		return naturezaServico;
-	}
-
-	public void setNaturezaServico(String naturezaServico) {
-		this.naturezaServico = naturezaServico;
-	}
-
-	public String getEnderecoCompleto() {
-		return enderecoCompleto;
-	}
-
-	public void setEnderecoCompleto(String enderecoCompleto) {
-		this.enderecoCompleto = enderecoCompleto;
-	}
-
-	public StatusGeral getStatusFornecedor() {
-		return StatusFornecedor;
-	}
-
-	public void setStatusFornecedor(StatusGeral statusFornecedor) {
-		StatusFornecedor = statusFornecedor;
-	}
-
-	public DomicilioBancario getDomicilioBancario() {
-		return domicilioBancario;
-	}
-
-	public void setDomicilioBancario(DomicilioBancario domicilioBancario) {
-		this.domicilioBancario = domicilioBancario;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((StatusFornecedor == null) ? 0 : StatusFornecedor.hashCode());
-		result = prime * result + ((cnpj == null) ? 0 : cnpj.hashCode());
-		result = prime * result + ((cpfResponsavel == null) ? 0 : cpfResponsavel.hashCode());
-		result = prime * result + ((domicilioBancario == null) ? 0 : domicilioBancario.hashCode());
-		result = prime * result + ((emailCorporativo == null) ? 0 : emailCorporativo.hashCode());
-		result = prime * result + ((emailResponsavel == null) ? 0 : emailResponsavel.hashCode());
-		result = prime * result + ((enderecoCompleto == null) ? 0 : enderecoCompleto.hashCode());
-		result = prime * result + idFornecedor;
-		result = prime * result + ((naturezaServico == null) ? 0 : naturezaServico.hashCode());
-		result = prime * result + ((nomeResponsavel == null) ? 0 : nomeResponsavel.hashCode());
-		result = prime * result + numControle;
-		result = prime * result + ((razaoSocial == null) ? 0 : razaoSocial.hashCode());
-		return result;
-	}
-
-	
 	public boolean equals(Fornecedor f) {
-		if (this.cnpj == f.cnpj && this.razaoSocial == f.razaoSocial && this.numControle == f.numControle) {
-			return true;
-		} else {
-			return false;
-		}
+        return this.cnpj.equals(f.cnpj) &&
+                this.razaoSocial.equals(f.razaoSocial) &&
+				this.numControle.equals(f.numControle);
 	}
 	
 	

@@ -2,29 +2,22 @@ CREATE SCHEMA IF NOT EXISTS sch_pessoas;
 CREATE SCHEMA IF NOT EXISTS sch_contratos;
 CREATE SCHEMA IF NOT EXISTS sch_financeiro;
 
-
-drop table if exists sch_contratos.gestor;
-drop table if exists sch_contratos.sindico;
-drop table if exists sch_pessoas.apartamento;
-drop table if exists sch_pessoas.telefone;
-drop table if exists sch_pessoas.secretaria;
-drop table if exists sch_pessoas.morador;
-drop table if exists sch_pessoas.proprietario;
-drop table if exists sch_pessoas.usuario;
-drop table if exists sch_pessoas.pessoa;
-
-
 drop sequence if exists id_pessoas_seq;
 drop sequence if exists id_usuarios_seq;
 drop sequence if exists id_telefone_seq;
 drop sequence if exists id_apartamento_seq;
 drop sequence if exists id_proprietario_seq;
+drop sequence if exists id_fornecedor_seq;
+drop sequence if exists id_responsavel_seq;
+
 
 create sequence id_apartamento_seq;
 create sequence id_pessoas_seq;
 create sequence id_usuarios_seq;
 create sequence id_telefone_seq;
 create sequence id_proprietario_seq;
+create sequence id_fornecedor_seq;
+create sequence id_responsavel_seq;
 
 create table sch_pessoas.pessoa (
 	id bigint not null default nextval('id_pessoas_seq'),
@@ -129,4 +122,30 @@ create table sch_pessoas.apartamento (
 	on delete cascade
 	on update cascade
 
+);
+
+create table sch_contratos.responsavel (
+	cpf character varying(11) not null,
+	nome character varying(60) not null,
+	email character varying(60) not null,
+	constraint pk_responsavel primary key (cpf)
+
+);
+
+create table sch_contratos.fornecedor (
+	id bigint not null default nextval('id_fornecedor_seq'),
+	razao_social character varying(80) not null,
+	cnpj character varying(14) not null,
+	num_contr character varying(10),
+	natureza_servico character varying(30) not null,
+	status character varying(30) not null,
+	endereco character varying(80) not null,
+	email_corporativo character varying(60) not null,
+	fk_cpf_responsavel character varying(11) not null,
+	constraint pk_fornecedor primary key (id),
+
+	constraint fk_id_fornecedor foreign key (fk_cpf_responsavel)
+	references sch_contratos.responsavel (cpf)
+	on delete cascade
+	on update cascade
 );
