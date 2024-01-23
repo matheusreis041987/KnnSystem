@@ -2,8 +2,10 @@ package com.knnsystem.api.service.impl;
 
 import com.knnsystem.api.dto.FornecedorDTO;
 import com.knnsystem.api.exceptions.EntidadeCadastradaException;
+import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
+import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.repository.DomicilioBancarioRepository;
 import com.knnsystem.api.model.repository.FornecedorRepository;
 import com.knnsystem.api.model.repository.ResponsavelRepository;
@@ -60,5 +62,22 @@ public class FornecedorServiceImpl implements FornecedorService {
                 .stream()
                 .map(FornecedorDTO::new)
                 .toList();
+    }
+
+    @Override
+    public FornecedorDTO inativar(String cnpj, String razaoSocial, Long numeroControle) {
+        var fornecedor = fornecedorRepository.findByCnpjAndRazaoSocialAndNumControle(
+          cnpj, razaoSocial, numeroControle
+        );
+
+        if (fornecedor.isEmpty()) {
+            throw new EntidadeNaoEncontradaException("Não existe fornecedor para os dados pesquisados");
+        }
+
+        var fornecedorAInativar = fornecedor.get();
+        fornecedorAInativar.setStatusFornecedor(StatusGeral.INATIVO);
+        fornecedorRepository.save(fornecedorAInativar);
+
+        return new FornecedorDTO(fornecedorAInativar);
     }
 }

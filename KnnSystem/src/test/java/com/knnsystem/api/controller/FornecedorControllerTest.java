@@ -22,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,6 +48,8 @@ class FornecedorControllerTest {
     private final String ENDPOINT_CADASTRO = "/fornecedor/api/cadastra";
 
     private final String ENDPOINT_CONSULTA = "/fornecedor/api/consulta";
+
+    private final String ENDPOINT_INATIVA = "/fornecedor/api/inativa";
 
     @Autowired
     private MockMvc mockMvc;
@@ -127,6 +128,7 @@ class FornecedorControllerTest {
         // Arrange
         fornecedorA.setResponsavel(responsavelA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
 
         // Act
         this.mockMvc.perform(
@@ -163,6 +165,7 @@ class FornecedorControllerTest {
         // Arrange
         fornecedorA.setResponsavel(responsavelA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
 
         // Act
         this.mockMvc.perform(
@@ -320,6 +323,55 @@ class FornecedorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",
                         Matchers.hasSize(2)));
+
+    }
+
+    @DisplayName("Testa inativação de fornecedor dá erro quando não encontra")
+    @Test
+    @Transactional
+    void deveRetornarErroAoTentarInativarFornecedorNaoEncontrado() throws Exception {
+        // Arrange
+        fornecedorA.setResponsavel(responsavelA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
+
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_INATIVA)
+                                .param("cnpj", fornecedorA.getCnpj())
+                                .param("razaoSocial", fornecedorA.getRazaoSocial())
+                                .param("numeroControle", fornecedorA.getNumControle().toString())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não existe fornecedor para os dados pesquisados")));
+
+    }
+
+    @DisplayName("Testa inativação de fornecedor com sucesso")
+    @Test
+    @Transactional
+    void deveRetornarDadosDeFornecedorAoInativarComSucesso() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_INATIVA)
+                                .param("cnpj", fornecedorA.getCnpj())
+                                .param("razaoSocial", fornecedorA.getRazaoSocial())
+                                .param("numeroControle", fornecedorA.getNumControle().toString())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.razaoSocial",
+                        Matchers.is(fornecedorA.getRazaoSocial())))
+                .andExpect(jsonPath("$.cnpj",
+                        Matchers.is(fornecedorA.getCnpj())))
+        ;
 
     }
 

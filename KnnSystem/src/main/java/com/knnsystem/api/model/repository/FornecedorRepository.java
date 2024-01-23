@@ -14,4 +14,8 @@ public interface FornecedorRepository extends JpaRepository<Fornecedor, Integer>
 
     List<Fornecedor> findByCnpjOrRazaoSocialOrNumControle(
             @CNPJ String cnpj, String razaoSocial, Long numControle);
+
+    Optional<Fornecedor> findByCnpjAndRazaoSocialAndNumControle(
+            @CNPJ String cnpj, String razaoSocial, Long numControle
+    );
 }

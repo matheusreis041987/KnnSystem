@@ -44,5 +44,16 @@ public class FornecedorController {
 
     }
 
+    @PutMapping("/inativa")
+    public ResponseEntity<FornecedorDTO> inativar(
+            @RequestParam(value = "cnpj", required = false) @CNPJ String cnpj,
+            @RequestParam(value = "razaoSocial", required = false) String razaoSocial,
+            @RequestParam(value = "numeroControle", required = false) Long numeroControle
+    ){
+        FornecedorDTO fornecedor = service.inativar(cnpj, razaoSocial, numeroControle);
+        return ResponseEntity.ok(fornecedor);
+
+    }
+
 
 }
