@@ -1,6 +1,7 @@
 package com.knnsystem.api.service.impl;
 
 import com.knnsystem.api.dto.FornecedorDTO;
+import com.knnsystem.api.dto.MoradorDTO;
 import com.knnsystem.api.exceptions.EntidadeCadastradaException;
 import com.knnsystem.api.model.repository.DomicilioBancarioRepository;
 import com.knnsystem.api.model.repository.FornecedorRepository;
@@ -41,6 +42,10 @@ public class FornecedorServiceImpl implements FornecedorService {
 
     @Override
     public List<FornecedorDTO> listar(String cnpj, String razaoSocial, Long numeroControle) {
-        return List.of();
+        return fornecedorRepository
+                .findByCnpjOrRazaoSocialOrNumControle(cnpj, razaoSocial, numeroControle)
+                .stream()
+                .map(FornecedorDTO::new)
+                .toList();
     }
 }

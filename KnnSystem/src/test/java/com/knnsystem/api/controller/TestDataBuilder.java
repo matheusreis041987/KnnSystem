@@ -249,9 +249,10 @@ public class TestDataBuilder {
 
     public Responsavel createResponsavelB(){
         Responsavel responsavel = new Responsavel();
-        responsavel.setCpf("11111111111");
-        responsavel.setEmail("responsavela@knnsystem.com.br");
-        responsavel.setNome("Responsável A do Fornecedor A");
+        responsavel.setCpf("09057238055");
+        responsavel.setEmail("responsavelb@knnsystem.com.br");
+        responsavel.setNome("Responsável B do Fornecedor B");
+        responsavel.setTelefone("11987654321");
 
         return responsavel;
     }

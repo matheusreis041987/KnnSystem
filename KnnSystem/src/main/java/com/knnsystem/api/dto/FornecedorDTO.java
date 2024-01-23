@@ -30,7 +30,9 @@ public record FornecedorDTO (
 
 		@NotBlank(message = "e-mail é obrigatório")
 		@Email(message = "e-mail inválido")
-		String emailCorporativo
+		String emailCorporativo,
+
+		Long numeroControle
 
 
 ) {
@@ -44,7 +46,8 @@ public record FornecedorDTO (
 				new ResponsavelDTO(fornecedor.getResponsavel()),
 				fornecedor.getEnderecoCompleto(),
 				fornecedor.getNaturezaServico(),
-				fornecedor.getEmailCorporativo()
+				fornecedor.getEmailCorporativo(),
+				fornecedor.getNumControle()
 		);
 	}
 

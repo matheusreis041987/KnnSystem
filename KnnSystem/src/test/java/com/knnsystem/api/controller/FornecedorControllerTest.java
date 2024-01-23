@@ -255,6 +255,7 @@ class FornecedorControllerTest {
         fornecedorA.setResponsavel(responsavelA);
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
         fornecedorA = fornecedorRepository.save(fornecedorA);
 
         // Act
@@ -265,6 +266,60 @@ class FornecedorControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Não existe fornecedor para os dados pesquisados")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra razão social do fornecedor")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverFornecedorParaRazaoSocialInformada() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("razaoSocial", fornecedorB.getRazaoSocial())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não existe fornecedor para os dados pesquisados")));
+
+    }
+
+    @DisplayName("Testa consulta quando encontra tanto cnpj quanto número de controle")
+    @Test
+    @Transactional
+    void deveRetornarMoradoresQuePossuamCpfOuNome() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+
+        responsavelB = responsavelRepository.save(responsavelB);
+        fornecedorB.setResponsavel(responsavelB);
+        domicilioBancarioB = domicilioBancarioRepository.save(domicilioBancarioB);
+        fornecedorB.setDomicilioBancario(domicilioBancarioB);
+        fornecedorB.geraNumeroDeControle();
+        fornecedorB = fornecedorRepository.save(fornecedorB);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("cnpj", fornecedorB.getCnpj())
+                                .param("numeroControle", fornecedorA.getNumControle().toString())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.hasSize(2)));
 
     }
 
