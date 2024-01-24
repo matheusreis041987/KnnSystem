@@ -35,6 +35,7 @@ public class Contrato {
 	private StatusContrato statusContrato;
 
 	@Column(name = "pct_multa")
+	@Setter
 	private BigDecimal percMulta;
 
 	@OneToOne

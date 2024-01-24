@@ -3,6 +3,9 @@ package com.knnsystem.api.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.knnsystem.api.model.entity.Contrato;
+import com.knnsystem.api.model.entity.Fornecedor;
+import com.knnsystem.api.model.entity.Sindico;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +13,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record ContratoCadastroDTO(
 
-		Long id,
+		Integer id,
 		@NotBlank(message = "Número do contrato é obrigatório")
 		String numeroContrato,
 
@@ -43,4 +46,37 @@ public record ContratoCadastroDTO(
 		BigDecimal percentualMulta
 ) {
 
+	public ContratoCadastroDTO(Contrato contratoSalvo) {
+		this(
+				contratoSalvo.getIdContrato(),
+				contratoSalvo.getNumContrato(),
+				contratoSalvo.getFornecedor().getNumControle(),
+				contratoSalvo.getVigenciaInicial(),
+				contratoSalvo.getVigenciaFinal(),
+				contratoSalvo.getValorMensalAtual(),
+				contratoSalvo.getValorMensalInicial(),
+				contratoSalvo.getObjetoContratual(),
+				new GestorDTO(contratoSalvo.getGestor()),
+				contratoSalvo.getSindico().getEmail(),
+				contratoSalvo.getPercMulta()
+		);
+	}
+
+	public Contrato toModel(
+			boolean isInclusao,
+			Fornecedor fornecedor,
+			Sindico sindico) {
+		Contrato contrato = new Contrato();
+		contrato.setNumContrato(numeroContrato());
+		contrato.setFornecedor(fornecedor);
+		contrato.setSindico(sindico);
+		contrato.setPercMulta(percentualMulta());
+		contrato.setValorMensalInicial(valorMensalInicial());
+		contrato.setValorMensalAtual(valorMensalAtual());
+		contrato.setObjetoContratual(objetoContratual());
+		contrato.setVigenciaInicial(vigenciaInicial());
+		contrato.setVigenciaFinal(vigenciaFinal());
+
+		return contrato;
+	}
 }
