@@ -33,6 +33,8 @@ class ContratoControllerTest {
 
     private Fornecedor fornecedorA;
 
+    private Fornecedor fornecedorB;
+
     private Responsavel responsavelA;
 
     private DomicilioBancario domicilioBancarioA;
@@ -76,6 +78,7 @@ class ContratoControllerTest {
         this.gestorA = testDataBuilder.createGestorA();
         this.sindico = testDataBuilder.createSindico();
         this.contratoA = testDataBuilder.createContratoA();
+        this.fornecedorB = testDataBuilder.createFornecedorB();
 
 
         this.usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
@@ -228,6 +231,91 @@ class ContratoControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Não há um contrato cadastrado para os dados informados")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra cnpj do fornecedor")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverContratoParaCNPJInformado() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);
+        contratoRepository.save(contratoA);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("cnpjFornecedor", fornecedorB.getCnpj())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um contrato cadastrado para os dados informados")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra razão social do fornecedor")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverFornecedorParaRazaoSocialInformada() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);
+        contratoRepository.save(contratoA);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("razaoSocial", fornecedorB.getRazaoSocial())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um contrato cadastrado para os dados informados")));
+
+    }
+
+    @DisplayName("Testa consulta quando encontra tanto cnpj quanto número de controle")
+    @Test
+    @Transactional
+    void deveRetornarMoradoresQuePossuamCpfOuNome() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);
+        contratoRepository.save(contratoA);
+
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("cnpjFornecedor", fornecedorB.getCnpj())
+                                .param("razaoSocial", fornecedorA.getRazaoSocial())
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.hasSize(1)));
 
     }
 

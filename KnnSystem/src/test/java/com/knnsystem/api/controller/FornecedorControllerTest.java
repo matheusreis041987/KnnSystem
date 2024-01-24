@@ -294,7 +294,7 @@ class FornecedorControllerTest {
     @DisplayName("Testa consulta quando encontra tanto cnpj quanto número de controle")
     @Test
     @Transactional
-    void deveRetornarMoradoresQuePossuamCpfOuNome() throws Exception {
+    void deveRetornarFornecedoresQuePossuamCnpjOuNumeroControle() throws Exception {
         // Arrange
         responsavelA = responsavelRepository.save(responsavelA);
         fornecedorA.setResponsavel(responsavelA);

@@ -12,5 +12,6 @@ public interface ContratoRepository extends JpaRepository<Contrato, Integer> {
 
     Optional<Contrato> findByNumContrato(String numContrato);
 
-    List<Contrato> findByNumContratoOrFornecedor(String numContrato, Fornecedor fornecedor);
+    List<Contrato> findByFornecedor(Fornecedor fornecedor);
+
 }

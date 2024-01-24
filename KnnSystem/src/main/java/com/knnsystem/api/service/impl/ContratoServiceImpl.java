@@ -70,16 +70,28 @@ public class ContratoServiceImpl implements ContratoService {
 	}
 
 	@Override
-	public List<ContratoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroControle) {
-		Optional<Fornecedor> fornecedorOptional = Optional.empty();
+	public List<ContratoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroContrato) {
+		List<Fornecedor> fornecedores = new ArrayList<>();
 		if (cnpjFornecedor != null){
-			fornecedorOptional = fornecedorRepository.findByCnpj(cnpjFornecedor);
-		} else if (razaoSocial != null) {
-			fornecedorOptional = fornecedorRepository.findByRazaoSocial(razaoSocial);
+			var fornecedorOptional = fornecedorRepository.findByCnpj(cnpjFornecedor);
+            fornecedorOptional.ifPresent(fornecedores::add);
+		}
+		if (razaoSocial != null) {
+			var fornecedorOptional = fornecedorRepository.findByRazaoSocial(razaoSocial);
+			fornecedorOptional.ifPresent(fornecedores::add);
+
 		}
 		List<Contrato> contratos = new ArrayList<>();
-		if (fornecedorOptional.isPresent()){
-			contratos = contratoRepository.findByNumContratoOrFornecedor(numeroControle, fornecedorOptional.get());
+		for (Fornecedor fornecedor: fornecedores) {
+			contratos = contratoRepository.findByFornecedor(fornecedor);
+		}
+		Optional<Contrato> contratoPorNumeroOptional = Optional.empty();
+		if (numeroContrato != null){
+			contratoPorNumeroOptional = contratoRepository.findByNumContrato(numeroContrato);
+		}
+
+		if (contratoPorNumeroOptional.isPresent()){
+			contratos.add(contratoPorNumeroOptional.get());
 		}
 
 		return contratos.stream().map(ContratoDTO::new).toList();
