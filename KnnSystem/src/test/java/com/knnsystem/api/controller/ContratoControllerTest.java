@@ -4,7 +4,6 @@ import com.knnsystem.api.model.entity.*;
 import com.knnsystem.api.model.repository.*;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -123,6 +121,51 @@ class ContratoControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Já há um contrato cadastrado para os dados informados")))
+        ;
+    }
+
+    @DisplayName("Testa que não pode cadastrar novo contrato sem preencher o formulario completo")
+    @Test
+    @Transactional
+    void naoDeveCadastrarContratoComDadosIncompletos() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);
+        contratoRepository.save(contratoA);
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"vigenciaInicial\": \"" + contratoA.getVigenciaInicial() + "\", " +
+                                                "\"vigenciaFinal\": \"" + contratoA.getVigenciaFinal() + "\", " +
+                                                "\"valorMensalAtual\": " + contratoA.getValorMensalAtual() + ", " +
+                                                "\"valorMensalInicial\": " + contratoA.getValorMensalInicial() + ", " +
+                                                "\"objetoContratual\": \"" + contratoA.getObjetoContratual() + "\", " +
+                                                "\"gestor\": {" +
+                                                "\"nome\": \"" + contratoA.getGestor().getNome() + "\", " +
+                                                "\"cpf\": \"" + contratoA.getGestor().getCpf() + "\", " +
+                                                "\"email\": \"" + contratoA.getGestor().getEmail() + "\"}, " +
+                                                "\"emailSindico\": \"" + contratoA.getSindico().getEmail() + "\", " +
+                                                "\"percentualMulta\": " + contratoA.getPercMulta() + "}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Número de controle do fornecedor é obrigatório")))
         ;
     }
 

@@ -10,34 +10,34 @@ import jakarta.validation.constraints.NotNull;
 public record ContratoCadastroDTO(
 
 		Long id,
-		@NotBlank
+		@NotBlank(message = "Número do contrato é obrigatório")
 		String numeroContrato,
 
-		@NotNull
+		@NotNull(message = "Número de controle do fornecedor é obrigatório")
 		Long numeroControleFornecedor,
 
-		@NotNull
+		@NotNull(message = "Vigência inicial é obrigatória")
 		LocalDate vigenciaInicial,
 
-		@NotNull
+		@NotNull(message = "Vigência final é obrigatória")
 		LocalDate vigenciaFinal,
 
-		@NotNull
+		@NotNull(message = "valor mensal atual é obrigatório")
 		BigDecimal valorMensalAtual,
 
-		@NotNull
+		@NotNull(message = "valor mensal inicial é obrigatório")
 		BigDecimal valorMensalInicial,
 
-		@NotNull
+		@NotNull(message = "objeto contratual é obrigatório")
 		String objetoContratual,
 
-		@NotNull
+		@NotNull(message = "gestor é obrigatório")
 		GestorDTO gestor,
 
 		@Email(message = "e-mail inválido")
 		String emailSindico,
 
-		@NotNull
+		@NotNull(message = "percentual de multa é obrigatório")
 		BigDecimal percentualMulta
 ) {
 
