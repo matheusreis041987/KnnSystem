@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
@@ -255,6 +256,37 @@ public class TestDataBuilder {
         responsavel.setTelefone("11987654321");
 
         return responsavel;
+    }
+
+    public Gestor createGestorA(){
+        Gestor gestor = new Gestor();
+        gestor.setCpf("29487672028");
+        gestor.setNome("Gestor do Contrato A");
+        gestor.setEmail("emailgestora@knnsystem.com.br");
+
+        return gestor;
+    }
+
+    public Contrato createContratoA(){
+        Contrato contrato = new Contrato();
+        contrato.setNumContrato("123456789");
+        contrato.setValorMensalAtual(new BigDecimal("10000.23"));
+        contrato.setValorMensalInicial(new BigDecimal("999.05"));
+        contrato.setObjetoContratual("Serviço de reestruturação de colunas");
+        contrato.setVigenciaInicial(LocalDate.now());
+        contrato.setVigenciaFinal(LocalDate.now().plusYears(3));
+
+        return contrato;
+
+    }
+
+    public Sindico createSindico(){
+        Sindico sindico = new Sindico();
+        sindico.setCpf("88872129028");
+        sindico.setNome("Nome do síndico");
+        sindico.setEmail("emaildosindico@knnsystem.com.br");
+
+        return sindico;
     }
 
 }

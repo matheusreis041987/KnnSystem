@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.knnsystem.api.dto.ContratoCadastroDTO;
+import com.knnsystem.api.exceptions.EntidadeCadastradaException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,51 +18,16 @@ import com.knnsystem.api.service.ContratoService;
 @Service
 public class ContratoServiceImpl implements ContratoService {
 
-	private ContratoRepository repository;
-	
-	public ContratoServiceImpl (ContratoRepository repo) {
-		this.repository = repo;
-	}
-	
-	@Override
-	@Transactional
-	public Contrato salvar(Contrato contratoParam) {
-		
-		return repository.save(contratoParam);
-	}
+	@Autowired
+	private ContratoRepository contratoRepository;
+
 
 	@Override
 	@Transactional
-	public Contrato atualizar(Contrato contratoParam) {
-		
-		Objects.requireNonNull(contratoParam.getIdContrato());
-		
-		return repository.save(contratoParam);
+	public ContratoCadastroDTO salvar(ContratoCadastroDTO dto) {
+		if (contratoRepository.findByNumContrato(dto.numeroContrato()).isPresent()) {
+			throw new EntidadeCadastradaException("Já há um contrato cadastrado para os dados informados");
+		}
+		return null;
 	}
-
-	@Override
-	@Transactional
-	public void deletar(Contrato contratoParam) {
-		
-		Objects.requireNonNull(contratoParam.getIdContrato());
-		repository.delete(contratoParam);
-		
-	}
-
-	@Override
-	@Transactional
-	public List<Contrato> buscar(Contrato contratoParam) {
-		
-		Example example = Example.of(contratoParam);
-		return repository.findAll(example);
-	}
-
-	@Override
-	@Transactional
-	public Optional<Contrato> consultarPorId(Integer idContrato) {
-		
-		
-		return repository.findById(idContrato);
-	}
-
 }
