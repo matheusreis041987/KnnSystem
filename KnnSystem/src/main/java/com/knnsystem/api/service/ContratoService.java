@@ -1,16 +1,14 @@
 package com.knnsystem.api.service;
 
+import com.knnsystem.api.dto.ContratoDTO;
+
 import java.util.List;
-import java.util.Optional;
-
-import com.knnsystem.api.dto.ContratoCadastroDTO;
-import com.knnsystem.api.model.entity.Contrato;
-
 
 
 public interface ContratoService {
 
-	ContratoCadastroDTO salvar (ContratoCadastroDTO dto);
-	
+	ContratoDTO salvar (ContratoDTO dto);
 
+
+	List<ContratoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroControle);
 }

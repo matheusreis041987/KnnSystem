@@ -63,7 +63,6 @@ public record FornecedorDTO (
 		fornecedor.setDomicilioBancario(domicilioBancario().toModel(isInclusao));
 		fornecedor.setRazaoSocial(razaoSocial());
 		fornecedor.setEnderecoCompleto(enderecoCompleto());
-		fornecedor.geraNumeroDeControle();
 
 		return fornecedor;
 

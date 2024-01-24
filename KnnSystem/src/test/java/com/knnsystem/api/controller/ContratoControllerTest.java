@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,6 +40,8 @@ class ContratoControllerTest {
     private Usuario usuarioSecretaria;
 
     private final String ENDPOINT_CADASTRO = "/contrato/api/cadastra";
+
+    private final String ENDPOINT_CONSULTA = "/contrato/api/consulta";
 
     @Autowired
     private MockMvc mockMvc;
@@ -78,52 +81,6 @@ class ContratoControllerTest {
         this.usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
     }
 
-    @DisplayName("Testa que não pode cadastrar contrato mais de uma vez")
-    @Test
-    @Transactional
-    void naoDeveCadastrarContratoPelaSegundaVez() throws Exception {
-        // Arrange
-        responsavelA = responsavelRepository.save(responsavelA);
-        fornecedorA.setResponsavel(responsavelA);
-        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
-        fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
-        fornecedorA = fornecedorRepository.save(fornecedorA);
-        gestorA = gestorRepository.save(gestorA);
-        sindico = sindicoRepository.save(sindico);
-        contratoA.setFornecedor(fornecedorA);
-        contratoA.setGestor(gestorA);
-        contratoA.setSindico(sindico);
-        contratoRepository.save(contratoA);
-
-        // Act
-        this.mockMvc.perform(
-                        post(ENDPOINT_CADASTRO)
-                                .with(user(usuarioSecretaria))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
-                                                "\"numeroControleFornecedor\": \"" + contratoA.getFornecedor().getNumControle() + "\", " +
-                                                "\"vigenciaInicial\": \"" + contratoA.getVigenciaInicial() + "\", " +
-                                                "\"vigenciaFinal\": \"" + contratoA.getVigenciaFinal() + "\", " +
-                                                "\"valorMensalAtual\": " + contratoA.getValorMensalAtual() + ", " +
-                                                "\"valorMensalInicial\": " + contratoA.getValorMensalInicial() + ", " +
-                                                "\"objetoContratual\": \"" + contratoA.getObjetoContratual() + "\", " +
-                                                "\"gestor\": {" +
-                                                "\"nome\": \"" + contratoA.getGestor().getNome() + "\", " +
-                                                "\"cpf\": \"" + contratoA.getGestor().getCpf() + "\", " +
-                                                "\"email\": \"" + contratoA.getGestor().getEmail() + "\"}, " +
-                                                "\"emailSindico\": \"" + contratoA.getSindico().getEmail() + "\", " +
-                                                "\"percentualMulta\": " + contratoA.getPercMulta() + "}"
-                                )
-                )
-                // Assert
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.mensagem",
-                        Matchers.is("Já há um contrato cadastrado para os dados informados")))
-        ;
-    }
-
     @DisplayName("Testa que não pode cadastrar novo contrato sem preencher o formulario completo")
     @Test
     @Transactional
@@ -133,7 +90,6 @@ class ContratoControllerTest {
         fornecedorA.setResponsavel(responsavelA);
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
         fornecedorA = fornecedorRepository.save(fornecedorA);
         gestorA = gestorRepository.save(gestorA);
         sindico = sindicoRepository.save(sindico);
@@ -147,12 +103,11 @@ class ContratoControllerTest {
                                 .with(user(usuarioSecretaria))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                        "{\"numeroControleFornecedor\": \"" + contratoA.getFornecedor().getNumControle() + "\", " +
                                                 "\"vigenciaInicial\": \"" + contratoA.getVigenciaInicial() + "\", " +
                                                 "\"vigenciaFinal\": \"" + contratoA.getVigenciaFinal() + "\", " +
                                                 "\"valorMensalAtual\": " + contratoA.getValorMensalAtual() + ", " +
                                                 "\"valorMensalInicial\": " + contratoA.getValorMensalInicial() + ", " +
-                                                "\"objetoContratual\": \"" + contratoA.getObjetoContratual() + "\", " +
                                                 "\"gestor\": {" +
                                                 "\"nome\": \"" + contratoA.getGestor().getNome() + "\", " +
                                                 "\"cpf\": \"" + contratoA.getGestor().getCpf() + "\", " +
@@ -164,7 +119,7 @@ class ContratoControllerTest {
                 // Assert
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.mensagem",
-                        Matchers.is("Número de controle do fornecedor é obrigatório")))
+                        Matchers.is("objeto contratual é obrigatório")))
         ;
     }
 
@@ -177,7 +132,6 @@ class ContratoControllerTest {
         fornecedorA.setResponsavel(responsavelA);
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
         fornecedorA = fornecedorRepository.save(fornecedorA);
         gestorA = gestorRepository.save(gestorA);
         sindico = sindicoRepository.save(sindico);
@@ -188,7 +142,6 @@ class ContratoControllerTest {
         fornecedorA.setResponsavel(responsavelA);
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
         fornecedorA = fornecedorRepository.save(fornecedorA);
         gestorA = gestorRepository.save(gestorA);
         sindico = sindicoRepository.save(sindico);
@@ -202,8 +155,7 @@ class ContratoControllerTest {
                                 .with(user(usuarioSecretaria))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
-                                                "\"numeroControleFornecedor\": \"" + contratoA.getFornecedor().getNumControle() + "\", " +
+                                        "{\"numeroControleFornecedor\": \"" + contratoA.getFornecedor().getNumControle() + "\", " +
                                                 "\"vigenciaInicial\": \"" + contratoA.getVigenciaInicial() + "\", " +
                                                 "\"vigenciaFinal\": \"" + contratoA.getVigenciaFinal() + "\", " +
                                                 "\"valorMensalAtual\": " + contratoA.getValorMensalAtual() + ", " +
@@ -233,7 +185,6 @@ class ContratoControllerTest {
         fornecedorA.setResponsavel(responsavelA);
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
         fornecedorA = fornecedorRepository.save(fornecedorA);
         gestorA = gestorRepository.save(gestorA);
         sindico = sindicoRepository.save(sindico);
@@ -247,8 +198,7 @@ class ContratoControllerTest {
                                 .with(user(usuarioSecretaria))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
-                                                "\"numeroControleFornecedor\": \"" + contratoA.getFornecedor().getNumControle() + "\", " +
+                                        "{\"numeroControleFornecedor\": \"" + contratoA.getFornecedor().getNumControle() + "\", " +
                                                 "\"vigenciaInicial\": \"" + contratoA.getVigenciaInicial() + "\", " +
                                                 "\"vigenciaFinal\": \"" + contratoA.getVigenciaFinal() + "\", " +
                                                 "\"valorMensalAtual\": " + contratoA.getValorMensalAtual() + ", " +
@@ -265,6 +215,20 @@ class ContratoControllerTest {
                 // Assert
                 .andExpect(status().isCreated())
         ;
+    }
+
+    @DisplayName("Testa consulta para repositório de contratos vazio")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverContrato() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um contrato cadastrado para os dados informados")));
+
     }
 
 }

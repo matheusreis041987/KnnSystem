@@ -128,7 +128,6 @@ class FornecedorControllerTest {
         // Arrange
         fornecedorA.setResponsavel(responsavelA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
 
         // Act
         this.mockMvc.perform(
@@ -165,7 +164,6 @@ class FornecedorControllerTest {
         // Arrange
         fornecedorA.setResponsavel(responsavelA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
 
         // Act
         this.mockMvc.perform(
@@ -258,7 +256,6 @@ class FornecedorControllerTest {
         fornecedorA.setResponsavel(responsavelA);
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
         fornecedorA = fornecedorRepository.save(fornecedorA);
 
         // Act
@@ -281,7 +278,6 @@ class FornecedorControllerTest {
         fornecedorA.setResponsavel(responsavelA);
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
         fornecedorA = fornecedorRepository.save(fornecedorA);
 
         // Act
@@ -304,14 +300,12 @@ class FornecedorControllerTest {
         fornecedorA.setResponsavel(responsavelA);
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
         fornecedorA = fornecedorRepository.save(fornecedorA);
 
         responsavelB = responsavelRepository.save(responsavelB);
         fornecedorB.setResponsavel(responsavelB);
         domicilioBancarioB = domicilioBancarioRepository.save(domicilioBancarioB);
         fornecedorB.setDomicilioBancario(domicilioBancarioB);
-        fornecedorB.geraNumeroDeControle();
         fornecedorB = fornecedorRepository.save(fornecedorB);
 
         // Act
@@ -333,7 +327,6 @@ class FornecedorControllerTest {
         // Arrange
         fornecedorA.setResponsavel(responsavelA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
 
         // Act
         this.mockMvc.perform(
@@ -357,7 +350,6 @@ class FornecedorControllerTest {
         fornecedorA.setResponsavel(responsavelA);
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
-        fornecedorA.geraNumeroDeControle();
         fornecedorA = fornecedorRepository.save(fornecedorA);
         // Act
         this.mockMvc.perform(

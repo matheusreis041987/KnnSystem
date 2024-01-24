@@ -1,15 +1,16 @@
 package com.knnsystem.api.controller;
 
-import com.knnsystem.api.dto.ContratoCadastroDTO;
+import com.knnsystem.api.dto.ContratoDTO;
+import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.service.ContratoService;
 import jakarta.validation.Valid;
+import org.hibernate.validator.constraints.br.CNPJ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/contrato/api")
@@ -19,12 +20,27 @@ public class ContratoController {
     private ContratoService service;
 
     @PostMapping("/cadastra")
-    public ResponseEntity<ContratoCadastroDTO> cadastra(
-            @RequestBody @Valid ContratoCadastroDTO dto,
+    public ResponseEntity<ContratoDTO> cadastra(
+            @RequestBody @Valid ContratoDTO dto,
             UriComponentsBuilder uriComponentsBuilder
     ) {
         var contratoSalvo = service.salvar(dto);
         var uri = uriComponentsBuilder.path("/fornecedor/api/cadastra/{id}").buildAndExpand(contratoSalvo.id()).toUri();
         return ResponseEntity.created(uri).body(contratoSalvo);
     }
+
+    @GetMapping("/consulta")
+    public ResponseEntity<List<ContratoDTO>> listar(
+            @RequestParam(value = "cnpjFornecedor", required = false) @CNPJ String cnpjFornecedor,
+            @RequestParam(value = "razaoSocial", required = false) String razaoSocial,
+            @RequestParam(value = "numeroControle", required = false) String numeroControle
+    ){
+        List<ContratoDTO> contratos = service.listar(cnpjFornecedor, razaoSocial, numeroControle);
+        if (contratos.isEmpty()) {
+            throw new EntidadeNaoEncontradaException("Não há um contrato cadastrado para os dados informados");
+        }
+        return ResponseEntity.ok(contratos);
+
+    }
+
 }

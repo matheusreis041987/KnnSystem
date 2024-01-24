@@ -269,7 +269,6 @@ public class TestDataBuilder {
 
     public Contrato createContratoA(){
         Contrato contrato = new Contrato();
-        contrato.setNumContrato("123456789");
         contrato.setValorMensalAtual(new BigDecimal("10000.23"));
         contrato.setValorMensalInicial(new BigDecimal("999.05"));
         contrato.setObjetoContratual("Serviço de reestruturação de colunas");

@@ -2,6 +2,7 @@ package com.knnsystem.api.model.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.concurrent.ThreadLocalRandom;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -21,7 +22,6 @@ public class Contrato {
 	private Integer idContrato;
 
 	@Column(name = "num_contrato")
-	@Setter
 	private String numContrato;
 
 	@OneToOne
@@ -80,6 +80,11 @@ public class Contrato {
 		situacaoContrato = new SituacaoContratoAtivo();
 		situacaoContrato.ativar(this);
 		percMulta = new BigDecimal("30.00");
+		// Número de controle gerado pelo sistema
+		var numControle = ThreadLocalRandom
+				.current()
+				.nextLong(1000000000L, 9999999999L);
+		this.numContrato = Long.toString(numControle);
 	}
 
 }

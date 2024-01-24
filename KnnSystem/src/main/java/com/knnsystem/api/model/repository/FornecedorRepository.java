@@ -20,4 +20,6 @@ public interface FornecedorRepository extends JpaRepository<Fornecedor, Integer>
     );
 
     Optional<Fornecedor> findByNumControle(Long numControle);
+
+    Optional<Fornecedor> findByRazaoSocial(String razaoSocial);
 }

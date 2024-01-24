@@ -11,10 +11,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record ContratoCadastroDTO(
+public record ContratoDTO(
 
 		Integer id,
-		@NotBlank(message = "Número do contrato é obrigatório")
+
 		String numeroContrato,
 
 		@NotNull(message = "Número de controle do fornecedor é obrigatório")
@@ -46,7 +46,7 @@ public record ContratoCadastroDTO(
 		BigDecimal percentualMulta
 ) {
 
-	public ContratoCadastroDTO(Contrato contratoSalvo) {
+	public ContratoDTO(Contrato contratoSalvo) {
 		this(
 				contratoSalvo.getIdContrato(),
 				contratoSalvo.getNumContrato(),
@@ -67,7 +67,6 @@ public record ContratoCadastroDTO(
 			Fornecedor fornecedor,
 			Sindico sindico) {
 		Contrato contrato = new Contrato();
-		contrato.setNumContrato(numeroContrato());
 		contrato.setFornecedor(fornecedor);
 		contrato.setSindico(sindico);
 		contrato.setPercMulta(percentualMulta());

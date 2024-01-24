@@ -1,26 +1,25 @@
 package com.knnsystem.api.service.impl;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import com.knnsystem.api.dto.ContratoCadastroDTO;
+import com.knnsystem.api.dto.ContratoDTO;
 import com.knnsystem.api.exceptions.EntidadeCadastradaException;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
-import com.knnsystem.api.model.entity.Gestor;
+import com.knnsystem.api.model.entity.Contrato;
+import com.knnsystem.api.model.entity.Fornecedor;
 import com.knnsystem.api.model.repository.FornecedorRepository;
 import com.knnsystem.api.model.repository.GestorRepository;
 import com.knnsystem.api.model.repository.SindicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.knnsystem.api.model.entity.Contrato;
 import com.knnsystem.api.model.repository.ContratoRepository;
 import com.knnsystem.api.service.ContratoService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContratoServiceImpl implements ContratoService {
@@ -41,11 +40,7 @@ public class ContratoServiceImpl implements ContratoService {
 
 	@Override
 	@Transactional
-	public ContratoCadastroDTO salvar(ContratoCadastroDTO dto) {
-		if (contratoRepository.findByNumContrato(dto.numeroContrato()).isPresent()) {
-			throw new EntidadeCadastradaException("Já há um contrato cadastrado para os dados informados");
-		}
-
+	public ContratoDTO salvar(ContratoDTO dto) {
 		boolean isCpfValido = apiDocumentoFacade.validarDocumento(dto.gestor().cpf());
 
 		if (!isCpfValido) {
@@ -71,6 +66,22 @@ public class ContratoServiceImpl implements ContratoService {
 		// salva o contrato
 		var contratoSalvo = contratoRepository.save(contrato);
 
-		return new ContratoCadastroDTO(contratoSalvo);
+		return new ContratoDTO(contratoSalvo);
+	}
+
+	@Override
+	public List<ContratoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroControle) {
+		Optional<Fornecedor> fornecedorOptional = Optional.empty();
+		if (cnpjFornecedor != null){
+			fornecedorOptional = fornecedorRepository.findByCnpj(cnpjFornecedor);
+		} else if (razaoSocial != null) {
+			fornecedorOptional = fornecedorRepository.findByRazaoSocial(razaoSocial);
+		}
+		List<Contrato> contratos = new ArrayList<>();
+		if (fornecedorOptional.isPresent()){
+			contratos = contratoRepository.findByNumContratoOrFornecedor(numeroControle, fornecedorOptional.get());
+		}
+
+		return contratos.stream().map(ContratoDTO::new).toList();
 	}
 }
