@@ -46,6 +46,8 @@ class ContratoControllerTest {
 
     private final String ENDPOINT_INATIVA = "/contrato/api/inativa";
 
+    private final String ENDPOINT_REAJUSTA = "/contrato/api/reajusta";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -327,6 +329,20 @@ class ContratoControllerTest {
         // Act
         this.mockMvc.perform(
                         put(ENDPOINT_INATIVA + "/1")
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um contrato cadastrado para os dados informados")));
+
+    }
+
+    @DisplayName("Testa reajuste de contrato dá erro quando não encontra")
+    @Test
+    @Transactional
+    void deveRetornarErroAoTentarReajustarContratoNaoEncontrado() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_REAJUSTA + "/1")
                                 .with(user(usuarioSecretaria)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",

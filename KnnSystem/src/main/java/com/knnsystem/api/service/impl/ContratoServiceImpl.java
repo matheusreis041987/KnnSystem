@@ -101,11 +101,23 @@ public class ContratoServiceImpl implements ContratoService {
 	@Override
 	@Transactional
 	public void inativar(Long id) {
+		var contrato = obtemContratoPorId(id);
+		contrato.inativar();
+	}
+
+	@Override
+	@Transactional
+	public void reajustar(Long id) {
+		var contrato = obtemContratoPorId(id);
+	}
+
+	private Contrato obtemContratoPorId(Long id){
 		Optional<Contrato> contratoOptional = contratoRepository.findById(id);
 		if (contratoOptional.isEmpty()) {
 			throw new EntidadeNaoEncontradaException("Não há um contrato cadastrado para os dados informados");
 		}
-		var contrato = contratoOptional.get();
-		contrato.inativar();
+		return contratoOptional.get();
 	}
+
+
 }

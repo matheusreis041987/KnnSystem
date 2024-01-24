@@ -51,4 +51,14 @@ public class ContratoController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/reajusta/{id}")
+    public ResponseEntity reajustar(
+            @PathVariable Long id
+    ) {
+        service.reajustar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 }
