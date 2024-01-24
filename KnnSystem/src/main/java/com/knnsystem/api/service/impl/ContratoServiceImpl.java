@@ -1,7 +1,7 @@
 package com.knnsystem.api.service.impl;
 
 import com.knnsystem.api.dto.ContratoDTO;
-import com.knnsystem.api.exceptions.EntidadeCadastradaException;
+import com.knnsystem.api.dto.ReajusteParametrosDTO;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
@@ -10,6 +10,7 @@ import com.knnsystem.api.model.entity.Fornecedor;
 import com.knnsystem.api.model.repository.FornecedorRepository;
 import com.knnsystem.api.model.repository.GestorRepository;
 import com.knnsystem.api.model.repository.SindicoRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,7 +108,7 @@ public class ContratoServiceImpl implements ContratoService {
 
 	@Override
 	@Transactional
-	public void reajustar(Long id) {
+	public void reajustar(Long id, @Valid ReajusteParametrosDTO dto) {
 		var contrato = obtemContratoPorId(id);
 	}
 

@@ -1,6 +1,7 @@
 package com.knnsystem.api.controller;
 
 import com.knnsystem.api.dto.ContratoDTO;
+import com.knnsystem.api.dto.ReajusteParametrosDTO;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.service.ContratoService;
 import jakarta.validation.Valid;
@@ -53,9 +54,10 @@ public class ContratoController {
 
     @PutMapping("/reajusta/{id}")
     public ResponseEntity reajustar(
-            @PathVariable Long id
-    ) {
-        service.reajustar(id);
+            @PathVariable Long id,
+            @RequestBody @Valid ReajusteParametrosDTO dto
+            ) {
+        service.reajustar(id, dto);
         return ResponseEntity.noContent().build();
     }
 

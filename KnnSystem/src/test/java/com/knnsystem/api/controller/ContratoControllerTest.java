@@ -343,7 +343,13 @@ class ContratoControllerTest {
         // Act
         this.mockMvc.perform(
                         put(ENDPOINT_REAJUSTA + "/1")
-                                .with(user(usuarioSecretaria)))
+                                .with(user(usuarioSecretaria))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                        "{\"ipcaAcumulado\": 4.56, " +
+                                "\"data\": \"2023-11-30\"}"
+                )
+                )
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Não há um contrato cadastrado para os dados informados")));
