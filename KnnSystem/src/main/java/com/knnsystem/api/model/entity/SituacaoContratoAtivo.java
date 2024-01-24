@@ -1,11 +1,12 @@
 package com.knnsystem.api.model.entity;
 
+import com.knnsystem.api.exceptions.RegraNegocioException;
 import lombok.Setter;
 
 public class SituacaoContratoAtivo extends SituacaoContrato{
     @Override
     void ativar(Contrato contrato) {
-        contrato.setStatusContrato(StatusContrato.ATIVO);
+        throw new RegraNegocioException("Erro - contrato não pode ser ativado");
     }
 
     @Override

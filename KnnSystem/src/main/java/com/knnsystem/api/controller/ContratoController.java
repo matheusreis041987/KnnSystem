@@ -43,4 +43,12 @@ public class ContratoController {
 
     }
 
+    @PutMapping("/inativa/{id}")
+    public ResponseEntity inativar(
+            @PathVariable Long id
+    ) {
+        service.inativar(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

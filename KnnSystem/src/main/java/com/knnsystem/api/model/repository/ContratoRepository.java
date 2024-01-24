@@ -8,7 +8,7 @@ import com.knnsystem.api.model.entity.Contrato;
 import java.util.List;
 import java.util.Optional;
 
-public interface ContratoRepository extends JpaRepository<Contrato, Integer> {
+public interface ContratoRepository extends JpaRepository<Contrato, Long> {
 
     Optional<Contrato> findByNumContrato(String numContrato);
 

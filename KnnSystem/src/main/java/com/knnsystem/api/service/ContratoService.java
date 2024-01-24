@@ -11,4 +11,6 @@ public interface ContratoService {
 
 
 	List<ContratoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroControle);
+
+	void inativar(Long id);
 }

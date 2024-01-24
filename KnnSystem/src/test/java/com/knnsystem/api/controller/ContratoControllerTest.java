@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,6 +43,8 @@ class ContratoControllerTest {
     private final String ENDPOINT_CADASTRO = "/contrato/api/cadastra";
 
     private final String ENDPOINT_CONSULTA = "/contrato/api/consulta";
+
+    private final String ENDPOINT_INATIVA = "/contrato/api/inativa";
 
     @Autowired
     private MockMvc mockMvc;
@@ -290,10 +291,10 @@ class ContratoControllerTest {
 
     }
 
-    @DisplayName("Testa consulta quando encontra tanto cnpj quanto número de controle")
+    @DisplayName("Testa consulta quando encontra tanto cnpj quanto número de contrato")
     @Test
     @Transactional
-    void deveRetornarMoradoresQuePossuamCpfOuNome() throws Exception {
+    void deveRetornarContratosQuePossuamParametros() throws Exception {
         // Arrange
         responsavelA = responsavelRepository.save(responsavelA);
         fornecedorA.setResponsavel(responsavelA);
@@ -316,6 +317,20 @@ class ContratoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",
                         Matchers.hasSize(1)));
+
+    }
+
+    @DisplayName("Testa inativação de contrato dá erro quando não encontra")
+    @Test
+    @Transactional
+    void deveRetornarErroAoTentarInativarContratoNaoEncontrado() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_INATIVA + "/1")
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um contrato cadastrado para os dados informados")));
 
     }
 

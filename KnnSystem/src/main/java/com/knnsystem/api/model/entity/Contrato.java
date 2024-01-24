@@ -19,7 +19,7 @@ public class Contrato {
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Setter
-	private Integer idContrato;
+	private Long idContrato;
 
 	@Column(name = "num_contrato")
 	private String numContrato;
@@ -77,8 +77,8 @@ public class Contrato {
 	private  SituacaoContrato situacaoContrato;
 
 	public Contrato(){
+		this.setStatusContrato(StatusContrato.ATIVO);
 		situacaoContrato = new SituacaoContratoAtivo();
-		situacaoContrato.ativar(this);
 		percMulta = new BigDecimal("30.00");
 		// Número de controle gerado pelo sistema
 		var numControle = ThreadLocalRandom
@@ -87,4 +87,8 @@ public class Contrato {
 		this.numContrato = Long.toString(numControle);
 	}
 
+	public void inativar() {
+		situacaoContrato.inativar(this);
+		situacaoContrato = new SituacaoContratoInativo();
+	}
 }

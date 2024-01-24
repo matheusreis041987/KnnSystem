@@ -39,6 +39,7 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 	}
 
 	@Override
+	@Transactional
 	public List<ApartamentoFormularioDTO> listar(Integer numero, String bloco) {
 		return repository
 				.findByNumAptOrBlocoApt(numero, bloco)
@@ -67,6 +68,7 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 	}
 
 	@Override
+	@Transactional
 	public ApartamentoFormularioDTO inativar(Integer numero, String bloco) {
 		var apartamentoAInativar = repository.findByNumAptAndBlocoApt(numero, bloco);
 

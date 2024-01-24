@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record ContratoDTO(
 
-		Integer id,
+		Long id,
 
 		String numeroContrato,
 

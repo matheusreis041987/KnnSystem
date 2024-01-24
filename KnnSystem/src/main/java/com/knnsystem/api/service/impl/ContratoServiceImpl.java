@@ -70,6 +70,7 @@ public class ContratoServiceImpl implements ContratoService {
 	}
 
 	@Override
+	@Transactional
 	public List<ContratoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroContrato) {
 		List<Fornecedor> fornecedores = new ArrayList<>();
 		if (cnpjFornecedor != null){
@@ -95,5 +96,16 @@ public class ContratoServiceImpl implements ContratoService {
 		}
 
 		return contratos.stream().map(ContratoDTO::new).toList();
+	}
+
+	@Override
+	@Transactional
+	public void inativar(Long id) {
+		Optional<Contrato> contratoOptional = contratoRepository.findById(id);
+		if (contratoOptional.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não há um contrato cadastrado para os dados informados");
+		}
+		var contrato = contratoOptional.get();
+		contrato.inativar();
 	}
 }
