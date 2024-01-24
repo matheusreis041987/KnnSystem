@@ -3,6 +3,7 @@ package com.knnsystem.api.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,7 @@ public record ContratoCadastroDTO(
 		String objetoContratual,
 
 		@NotNull(message = "gestor é obrigatório")
+				@Valid
 		GestorDTO gestor,
 
 		@Email(message = "e-mail inválido")

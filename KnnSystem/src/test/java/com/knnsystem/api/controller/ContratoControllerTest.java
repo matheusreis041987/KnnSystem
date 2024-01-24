@@ -140,7 +140,6 @@ class ContratoControllerTest {
         contratoA.setFornecedor(fornecedorA);
         contratoA.setGestor(gestorA);
         contratoA.setSindico(sindico);
-        contratoRepository.save(contratoA);
 
         // Act
         this.mockMvc.perform(
@@ -166,6 +165,62 @@ class ContratoControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Número de controle do fornecedor é obrigatório")))
+        ;
+    }
+
+    @DisplayName("Testa que não pode cadastrar novo contrato com algum dado inválido")
+    @Test
+    @Transactional
+    void naoDeveCadastrarContratoComDadosInvalidos() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA.geraNumeroDeControle();
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"numeroControleFornecedor\": \"" + contratoA.getFornecedor().getNumControle() + "\", " +
+                                                "\"vigenciaInicial\": \"" + contratoA.getVigenciaInicial() + "\", " +
+                                                "\"vigenciaFinal\": \"" + contratoA.getVigenciaFinal() + "\", " +
+                                                "\"valorMensalAtual\": " + contratoA.getValorMensalAtual() + ", " +
+                                                "\"valorMensalInicial\": " + contratoA.getValorMensalInicial() + ", " +
+                                                "\"objetoContratual\": \"" + contratoA.getObjetoContratual() + "\", " +
+                                                "\"gestor\": {" +
+                                                "\"nome\": \"" + contratoA.getGestor().getNome() + "\", " +
+                                                "\"cpf\": \"11111111111\", " +
+                                                "\"email\": \"" + contratoA.getGestor().getEmail() + "\"}, " +
+                                                "\"emailSindico\": \"" + contratoA.getSindico().getEmail() + "\", " +
+                                                "\"percentualMulta\": " + contratoA.getPercMulta() + "}"
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("CPF inválido")))
         ;
     }
 
