@@ -55,7 +55,6 @@ public class Contrato {
 	private BigDecimal valorMensalAtual;
 
 	@Column(name = "vlr_mensal_inicial")
-	@Setter
 	private BigDecimal valorMensalInicial;
 
 	@Column(name = "objeto")
@@ -80,9 +79,14 @@ public class Contrato {
 	@Transient
 	private  SituacaoContrato situacaoContrato;
 
-	public void setVigenciaInicial(LocalDate vigenciaInicial) {
-		this.vigenciaInicial = vigenciaInicial;
-		this.dataUltimoReajuste = vigenciaInicial;
+	public void setVigenciaInicial(LocalDate vigencia) {
+		this.vigenciaInicial = vigencia;
+		this.dataUltimoReajuste = this.vigenciaInicial;
+	}
+
+	public void setValorMensalInicial(BigDecimal valor){
+		this.valorMensalInicial = valor;
+		this.valorMensalAtual = this.valorMensalInicial;
 	}
 
 	public Contrato(){
@@ -110,9 +114,8 @@ public class Contrato {
 
 		this.valorMensalAtual = this.valorMensalAtual.multiply(
 				BigDecimal.ONE.add(
-						ipcaAcumulado.divide(new BigDecimal("100"),
-								RoundingMode.HALF_UP))
-		);
+						ipcaAcumulado.divide(new BigDecimal("100.0000"), 4, RoundingMode.HALF_UP))
+		).setScale(2, RoundingMode.HALF_UP);
 		this.dataUltimoReajuste = dataReajuste;
 	}
 }
