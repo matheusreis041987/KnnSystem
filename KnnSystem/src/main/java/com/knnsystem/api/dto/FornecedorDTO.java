@@ -1,6 +1,7 @@
 package com.knnsystem.api.dto;
 
 import com.knnsystem.api.model.entity.Fornecedor;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,9 +18,11 @@ public record FornecedorDTO (
 		String cnpj,
 
 		@NotNull(message = "Domicílio bancário é obrigatório")
+				@Valid
 		DomicilioBancarioDTO domicilioBancario,
 
 		@NotNull(message = "responsável pelo fornecedor é obrigatório")
+				@Valid
 		ResponsavelDTO responsavel,
 
 		@NotBlank(message = "endereço completo é obrigatório")
@@ -60,7 +63,6 @@ public record FornecedorDTO (
 		fornecedor.setDomicilioBancario(domicilioBancario().toModel(isInclusao));
 		fornecedor.setRazaoSocial(razaoSocial());
 		fornecedor.setEnderecoCompleto(enderecoCompleto());
-		fornecedor.geraNumeroDeControle();
 
 		return fornecedor;
 

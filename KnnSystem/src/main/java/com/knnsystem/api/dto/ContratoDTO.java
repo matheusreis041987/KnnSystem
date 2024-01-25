@@ -1,184 +1,81 @@
 package com.knnsystem.api.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.knnsystem.api.model.entity.Contrato;
 import com.knnsystem.api.model.entity.Fornecedor;
-import com.knnsystem.api.model.entity.Rescisao;
-import com.knnsystem.api.model.entity.StatusGeral;
+import com.knnsystem.api.model.entity.Sindico;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public class ContratoDTO {
+public record ContratoDTO(
 
-	private Integer idContrato;
-	
-	private String numContrato;
-	
-	private Fornecedor fornecedor;
-	
-	private StatusGeral statusContrato;
-	
-	private String percMulta;
-	
-	private String cpfSindico;
+		Long id,
 
-	private String nomeSindico;
+		String numeroContrato,
 
-	private String emailSindico;
-	
-	private String emailGestor;
+		@NotNull(message = "Número de controle do fornecedor é obrigatório")
+		Long numeroControleFornecedor,
 
-	private String cpfGestor;
-	
-	private String nomeGestor;
-	
-	private double valorMensalAtual;
-	
-	private double valorMensalInicial;
-	
-	private String objetoContratual;
-	
-	private LocalDate vigenciaInicial;
+		@NotNull(message = "Vigência inicial é obrigatória")
+		LocalDate vigenciaInicial,
 
-	private LocalDate vigenciaFinal;
+		@NotNull(message = "Vigência final é obrigatória")
+		LocalDate vigenciaFinal,
 
-	private Rescisao rescisao;
+		@NotNull(message = "valor mensal atual é obrigatório")
+		BigDecimal valorMensalAtual,
 
-	public Integer getIdContrato() {
-		return idContrato;
+		@NotNull(message = "valor mensal inicial é obrigatório")
+		BigDecimal valorMensalInicial,
+
+		@NotNull(message = "objeto contratual é obrigatório")
+		String objetoContratual,
+
+		@NotNull(message = "gestor é obrigatório")
+				@Valid
+		GestorDTO gestor,
+
+		@Email(message = "e-mail inválido")
+		String emailSindico,
+
+		@NotNull(message = "percentual de multa é obrigatório")
+		BigDecimal percentualMulta
+) {
+
+	public ContratoDTO(Contrato contratoSalvo) {
+		this(
+				contratoSalvo.getIdContrato(),
+				contratoSalvo.getNumContrato(),
+				contratoSalvo.getFornecedor().getNumControle(),
+				contratoSalvo.getVigenciaInicial(),
+				contratoSalvo.getVigenciaFinal(),
+				contratoSalvo.getValorMensalAtual(),
+				contratoSalvo.getValorMensalInicial(),
+				contratoSalvo.getObjetoContratual(),
+				new GestorDTO(contratoSalvo.getGestor()),
+				contratoSalvo.getSindico().getEmail(),
+				contratoSalvo.getPercMulta()
+		);
 	}
 
-	public void setIdContrato(Integer idContrato) {
-		this.idContrato = idContrato;
-	}
+	public Contrato toModel(
+			boolean isInclusao,
+			Fornecedor fornecedor,
+			Sindico sindico) {
+		Contrato contrato = new Contrato();
+		contrato.setFornecedor(fornecedor);
+		contrato.setSindico(sindico);
+		contrato.setPercMulta(percentualMulta());
+		contrato.setValorMensalInicial(valorMensalInicial());
+		contrato.setValorMensalAtual(valorMensalAtual());
+		contrato.setObjetoContratual(objetoContratual());
+		contrato.setVigenciaInicial(vigenciaInicial());
+		contrato.setVigenciaFinal(vigenciaFinal());
 
-	public String getNumContrato() {
-		return numContrato;
+		return contrato;
 	}
-
-	public void setNumContrato(String numContrato) {
-		this.numContrato = numContrato;
-	}
-
-	public Fornecedor getFornecedor() {
-		return fornecedor;
-	}
-
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
-	}
-
-	public StatusGeral getStatusContrato() {
-		return statusContrato;
-	}
-
-	public void setStatusContrato(StatusGeral statusContrato) {
-		this.statusContrato = statusContrato;
-	}
-
-	public String getPercMulta() {
-		return percMulta;
-	}
-
-	public void setPercMulta(String percMulta) {
-		this.percMulta = percMulta;
-	}
-
-	public String getCpfSindico() {
-		return cpfSindico;
-	}
-
-	public void setCpfSindico(String cpfSindico) {
-		this.cpfSindico = cpfSindico;
-	}
-
-	public String getNomeSindico() {
-		return nomeSindico;
-	}
-
-	public void setNomeSindico(String nomeSindico) {
-		this.nomeSindico = nomeSindico;
-	}
-
-	public String getEmailSindico() {
-		return emailSindico;
-	}
-
-	public void setEmailSindico(String emailSindico) {
-		this.emailSindico = emailSindico;
-	}
-
-	public String getEmailGestor() {
-		return emailGestor;
-	}
-
-	public void setEmailGestor(String emailGestor) {
-		this.emailGestor = emailGestor;
-	}
-
-	public String getCpfGestor() {
-		return cpfGestor;
-	}
-
-	public void setCpfGestor(String cpfGestor) {
-		this.cpfGestor = cpfGestor;
-	}
-
-	public String getNomeGestor() {
-		return nomeGestor;
-	}
-
-	public void setNomeGestor(String nomeGestor) {
-		this.nomeGestor = nomeGestor;
-	}
-
-	public double getValorMensalAtual() {
-		return valorMensalAtual;
-	}
-
-	public void setValorMensalAtual(double valorMensalAtual) {
-		this.valorMensalAtual = valorMensalAtual;
-	}
-
-	public double getValorMensalInicial() {
-		return valorMensalInicial;
-	}
-
-	public void setValorMensalInicial(double valorMensalInicial) {
-		this.valorMensalInicial = valorMensalInicial;
-	}
-
-	public String getObjetoContratual() {
-		return objetoContratual;
-	}
-
-	public void setObjetoContratual(String objetoContratual) {
-		this.objetoContratual = objetoContratual;
-	}
-
-	public LocalDate getVigenciaInicial() {
-		return vigenciaInicial;
-	}
-
-	public void setVigenciaInicial(LocalDate vigenciaInicial) {
-		this.vigenciaInicial = vigenciaInicial;
-	}
-
-	public LocalDate getVigenciaFinal() {
-		return vigenciaFinal;
-	}
-
-	public void setVigenciaFinal(LocalDate vigenciaFinal) {
-		this.vigenciaFinal = vigenciaFinal;
-	}
-
-	public Rescisao getRescisao() {
-		return rescisao;
-	}
-
-	public void setRescisao(Rescisao rescisao) {
-		this.rescisao = rescisao;
-	}
-	
-	
-	
-	
 }
