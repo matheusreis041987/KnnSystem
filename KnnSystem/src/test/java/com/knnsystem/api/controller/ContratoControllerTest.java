@@ -388,4 +388,35 @@ class ContratoControllerTest {
                         Matchers.is("Erro - Data inválida. O reajuste é feito anualmente")));
 
     }
+
+    @DisplayName("Testa reajuste de contrato com sucesso quando data superior a um ano da data inicial da vigência")
+    @Test
+    @Transactional
+    void deveTerSucessoAoTentarReajustarContratoAposUmAnoDaVigenciaInicial() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);
+        contratoRepository.save(contratoA);
+
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_REAJUSTA + "/" + contratoA.getIdContrato())
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"ipcaAcumulado\": 4.56, " +
+                                                "\"data\": \"" + contratoA.getVigenciaInicial().plusYears(1).plusDays(1) + "\"}"
+                                )
+                )
+                .andExpect(status().isNoContent());
+
+    }
 }
