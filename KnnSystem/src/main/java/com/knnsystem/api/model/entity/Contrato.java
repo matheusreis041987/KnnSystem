@@ -118,4 +118,9 @@ public class Contrato {
 		).setScale(2, RoundingMode.HALF_UP);
 		this.dataUltimoReajuste = dataReajuste;
 	}
+
+	public void rescindir() {
+		situacaoContrato.rescindir(this);
+		situacaoContrato = new SituacaoContratoRescindido();
+	}
 }

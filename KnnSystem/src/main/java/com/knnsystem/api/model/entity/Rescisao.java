@@ -49,6 +49,7 @@ public class Rescisao {
 
 	public Rescisao(Contrato contrato){
 		pctMulta = new BigDecimal("30.00");
+		contrato.rescindir();
 		this.contrato = contrato;
 	}
 
