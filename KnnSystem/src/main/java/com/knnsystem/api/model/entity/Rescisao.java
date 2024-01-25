@@ -1,6 +1,7 @@
 package com.knnsystem.api.model.entity;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -9,6 +10,8 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Entity
 @Table(name = "rescisao", schema = "sch_contratos")
@@ -50,15 +53,17 @@ public class Rescisao {
 	}
 
 	public void calcularRescisao () {
-		
-//		double dataRescisao =  Double.parseDouble(dtRescisao);
-//		DateFormat formatoData = new SimpleDateFormat("dd-MM-yyyy");
-//		String dataInicialString = formatoData.format(contrato.getVigenciaFinal());
-//		double dataInicial = Double.parseDouble(dataInicialString);
-//		double tempoMeses = (dataRescisao - dataInicial) / 30;
-//		double percMulta = Double.parseDouble(contrato.getPercMulta());
-//		valorRescisao = tempoMeses * contrato.getValorMensalAtual() * percMulta;
-		this.valorRescisao = BigDecimal.ZERO;
+
+		var diasAntecipacaoTermino = new BigDecimal(DAYS.between(
+				dtRescisao, contrato.getVigenciaFinal()));
+		var mesesComerciaisAntecipados = diasAntecipacaoTermino.divide(
+				new BigDecimal("30.00"), 15, RoundingMode.HALF_UP
+		);
+		this.valorRescisao = mesesComerciaisAntecipados
+				.multiply(contrato.getValorMensalAtual())
+				.multiply(this.pctMulta.multiply(new BigDecimal("0.01")))
+				.setScale(2, RoundingMode.HALF_UP)
+		;
 	}
 
 }
