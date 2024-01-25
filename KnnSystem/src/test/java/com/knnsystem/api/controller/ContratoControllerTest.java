@@ -48,6 +48,8 @@ class ContratoControllerTest {
 
     private final String ENDPOINT_REAJUSTA = "/contrato/api/reajusta";
 
+    private final String ENDPOINT_RESCINDE = "/contrato/api/rescinde";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -419,4 +421,59 @@ class ContratoControllerTest {
                 .andExpect(status().isNoContent());
 
     }
+
+
+    @DisplayName("Testa rescisão de contrato dá erro quando não encontra")
+    @Test
+    @Transactional
+    void deveRetornarErroAoTentarRescindirContratoNaoEncontrado() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_RESCINDE + "/1")
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"causador\": \"FORNECEDOR\", " +
+                                                "\"dataRescisao\": \"2024-01-15\"}"
+                                )
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há um contrato cadastrado para os dados informados")));
+
+    }
+
+    @DisplayName("Testa rescisão de contrato dá erro quando informa causador não permitido")
+    @Test
+    @Transactional
+    void deveRetornarErroAoTentarRescindirContratoInformandoCausadorInvalido() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);
+        contratoRepository.save(contratoA);
+
+        // Act
+        this.mockMvc.perform(
+                        put(ENDPOINT_RESCINDE + "/" + contratoA.getIdContrato())
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"causador\": \"VENDEDOR\", " +
+                                                "\"dataRescisao\": \"2024-01-15\"}"
+                                )
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Causador deve ser 'FORNECEDOR' ou 'CONTRATANTE'")));
+
+    }
+
 }

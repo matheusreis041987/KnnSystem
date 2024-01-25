@@ -3,6 +3,7 @@ package com.knnsystem.api.model.entity;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -12,28 +13,43 @@ import lombok.Setter;
 @Entity
 @Table(name = "rescisao", schema = "sch_contratos")
 @Getter
-@Setter
 @EqualsAndHashCode
 public class Rescisao {
 
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	@Setter
+	private Long id;
 	
 	@Column(name = "causador")
-	private String causador;
+	@Enumerated(EnumType.STRING)
+	@Setter
+	private CausadorRescisao causador;
 	
 	@Column(name = "valor")
-	private double valorRescisao;
+	private BigDecimal valorRescisao;
 	
 	@Column(name = "dt_pgto")
-	private String dtRescisao;
-	
+	@Setter
+	private LocalDate dtRescisao;
+
+	@Column(name = "pct_multa")
+	private BigDecimal pctMulta;
+
 	@OneToOne
 	private Contrato contrato;
 
-	public BigDecimal CalcularRescisao () {
+	public Rescisao(){
+		pctMulta = new BigDecimal("30.00");
+	}
+
+	public Rescisao(Contrato contrato){
+		pctMulta = new BigDecimal("30.00");
+		this.contrato = contrato;
+	}
+
+	public void calcularRescisao () {
 		
 //		double dataRescisao =  Double.parseDouble(dtRescisao);
 //		DateFormat formatoData = new SimpleDateFormat("dd-MM-yyyy");
@@ -42,8 +58,7 @@ public class Rescisao {
 //		double tempoMeses = (dataRescisao - dataInicial) / 30;
 //		double percMulta = Double.parseDouble(contrato.getPercMulta());
 //		valorRescisao = tempoMeses * contrato.getValorMensalAtual() * percMulta;
-		
-		return BigDecimal.ZERO;
+		this.valorRescisao = BigDecimal.ZERO;
 	}
 
 }

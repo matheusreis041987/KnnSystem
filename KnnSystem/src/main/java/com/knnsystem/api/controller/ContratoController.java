@@ -2,6 +2,7 @@ package com.knnsystem.api.controller;
 
 import com.knnsystem.api.dto.ContratoDTO;
 import com.knnsystem.api.dto.ReajusteParametrosDTO;
+import com.knnsystem.api.dto.RescisaoCadastroDTO;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.service.ContratoService;
 import jakarta.validation.Valid;
@@ -61,6 +62,14 @@ public class ContratoController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/rescinde/{id}")
+    public ResponseEntity rescindir(
+            @PathVariable Long id,
+            @RequestBody @Valid RescisaoCadastroDTO dto
+    ) {
+        service.rescindir(id, dto);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }

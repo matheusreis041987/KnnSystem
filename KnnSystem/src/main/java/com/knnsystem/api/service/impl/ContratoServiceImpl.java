@@ -2,28 +2,31 @@ package com.knnsystem.api.service.impl;
 
 import com.knnsystem.api.dto.ContratoDTO;
 import com.knnsystem.api.dto.ReajusteParametrosDTO;
+import com.knnsystem.api.dto.RescisaoCadastroDTO;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
+import com.knnsystem.api.model.entity.CausadorRescisao;
 import com.knnsystem.api.model.entity.Contrato;
 import com.knnsystem.api.model.entity.Fornecedor;
-import com.knnsystem.api.model.repository.FornecedorRepository;
-import com.knnsystem.api.model.repository.GestorRepository;
-import com.knnsystem.api.model.repository.SindicoRepository;
+import com.knnsystem.api.model.entity.Rescisao;
+import com.knnsystem.api.model.repository.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.knnsystem.api.model.repository.ContratoRepository;
 import com.knnsystem.api.service.ContratoService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ContratoServiceImpl implements ContratoService {
+	@Autowired
+	private RescisaoRepository rescisaoRepository;
 
 	@Autowired
 	private ContratoRepository contratoRepository;
@@ -111,6 +114,21 @@ public class ContratoServiceImpl implements ContratoService {
 	public void reajustar(Long id, @Valid ReajusteParametrosDTO dto) {
 		var contrato = obtemContratoPorId(id);
 		contrato.reajustar(dto.ipcaAcumulado(), dto.data());
+	}
+
+	@Override
+	public void rescindir(Long id, RescisaoCadastroDTO dto) {
+		var contrato = obtemContratoPorId(id);
+
+		CausadorRescisao causador = dto.criaCausador();
+		Rescisao rescisao = new Rescisao(contrato);
+		rescisao.setDtRescisao(dto.dataRescisao());
+		rescisao.setCausador(causador);
+
+		rescisao.calcularRescisao();
+
+		rescisaoRepository.save(rescisao);
+
 	}
 
 	private Contrato obtemContratoPorId(Long id){
