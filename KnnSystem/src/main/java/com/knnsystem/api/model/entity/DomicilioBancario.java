@@ -1,25 +1,18 @@
 package com.knnsystem.api.model.entity;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.Objects;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Table(name = "tbl_domicilio_bancario", schema = "sch_contratos")
+@Table(name = "domicilio_bancario", schema = "sch_contratos")
+@Getter
+@Setter
 public class DomicilioBancario {
 
 	@Id
-	@Column(name = "pk_id")
+	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idDomicilio;
 	
@@ -36,67 +29,12 @@ public class DomicilioBancario {
 	private String pix;
 	
 	@Column(name = "status")
-	private String statusDomicilio;
+	@Enumerated(EnumType.STRING)
+	private StatusGeral statusDomicilio;
 	
 	@OneToOne
-	@JoinColumn(name = "fk_id_fornecedor", table = "tbl_fornecedor", referencedColumnName = "pk_id")
+	@JoinColumn(name = "fk_id_fornecedor", referencedColumnName = "id")
 	private Fornecedor fornecedor;
-
-	public int getIdDomicilio() {
-		return idDomicilio;
-	}
-
-	public void setIdDomicilio(int idDomicilio) {
-		this.idDomicilio = idDomicilio;
-	}
-
-	public String getAgencia() {
-		return agencia;
-	}
-
-	public void setAgencia(String agencia) {
-		this.agencia = agencia;
-	}
-
-	public String getContaCorrente() {
-		return contaCorrente;
-	}
-
-	public void setContaCorrente(String contaCorrente) {
-		this.contaCorrente = contaCorrente;
-	}
-
-	public String getBanco() {
-		return banco;
-	}
-
-	public void setBanco(String banco) {
-		this.banco = banco;
-	}
-
-	public String getPix() {
-		return pix;
-	}
-
-	public void setPix(String pix) {
-		this.pix = pix;
-	}
-
-	public String getStatusDomicilio() {
-		return statusDomicilio;
-	}
-
-	public void setStatusDomicilio(String statusDomicilio) {
-		this.statusDomicilio = statusDomicilio;
-	}
-
-	public Fornecedor getFornecedor() {
-		return fornecedor;
-	}
-
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
-	}
 
 	@Override
 	public int hashCode() {
@@ -114,17 +52,11 @@ public class DomicilioBancario {
 
 	
 	public boolean equals(DomicilioBancario d) {
-		
-		if (this.idDomicilio == d.idDomicilio && this.agencia == d.agencia 
-				&& this.banco == d.banco && this.contaCorrente == d.contaCorrente && this.pix == d.pix) {
-			return true;
-		} else {
-			return false;
-		}
+        return this.idDomicilio == d.idDomicilio && this.agencia.equals(d.agencia)
+                && this.banco.equals(d.banco) && this.contaCorrente.equals(d.contaCorrente)
+				&& this.pix.equals(d.pix);
 		
 	}
 	
-	
-	
-	
+
 }
