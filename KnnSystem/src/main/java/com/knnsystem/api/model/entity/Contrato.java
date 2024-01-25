@@ -1,9 +1,11 @@
 package com.knnsystem.api.model.entity;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.knnsystem.api.exceptions.RegraNegocioException;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -61,12 +63,14 @@ public class Contrato {
 	private String objetoContratual;
 
 	@Column(name = "vigencia_inicial")
-	@Setter
 	private LocalDate vigenciaInicial;
 
 	@Column(name = "vigencia_final")
 	@Setter
 	private LocalDate vigenciaFinal;
+
+	@Column(name = "data_ultimo_reajuste")
+	private LocalDate dataUltimoReajuste;
 
 	@OneToOne
 	@JoinColumn(name = "fk_id_rescisao", referencedColumnName = "id")
@@ -75,6 +79,11 @@ public class Contrato {
 
 	@Transient
 	private  SituacaoContrato situacaoContrato;
+
+	public void setVigenciaInicial(LocalDate vigenciaInicial) {
+		this.vigenciaInicial = vigenciaInicial;
+		this.dataUltimoReajuste = vigenciaInicial;
+	}
 
 	public Contrato(){
 		this.setStatusContrato(StatusContrato.ATIVO);
@@ -90,5 +99,20 @@ public class Contrato {
 	public void inativar() {
 		situacaoContrato.inativar(this);
 		situacaoContrato = new SituacaoContratoInativo();
+	}
+
+	public void reajustar(BigDecimal ipcaAcumulado, LocalDate dataReajuste) {
+		var dataBase = (dataUltimoReajuste == null) ? this.vigenciaInicial : this.dataUltimoReajuste;
+
+		if (dataBase.plusYears(1).isAfter(dataReajuste)) {
+			throw new RegraNegocioException("Erro - Data inválida. O reajuste é feito anualmente");
+		}
+
+		this.valorMensalAtual = this.valorMensalAtual.multiply(
+				BigDecimal.ONE.add(
+						ipcaAcumulado.divide(new BigDecimal("100"),
+								RoundingMode.HALF_UP))
+		);
+		this.dataUltimoReajuste = dataReajuste;
 	}
 }

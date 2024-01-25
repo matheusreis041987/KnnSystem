@@ -110,6 +110,7 @@ public class ContratoServiceImpl implements ContratoService {
 	@Transactional
 	public void reajustar(Long id, @Valid ReajusteParametrosDTO dto) {
 		var contrato = obtemContratoPorId(id);
+		contrato.reajustar(dto.ipcaAcumulado(), dto.data());
 	}
 
 	private Contrato obtemContratoPorId(Long id){

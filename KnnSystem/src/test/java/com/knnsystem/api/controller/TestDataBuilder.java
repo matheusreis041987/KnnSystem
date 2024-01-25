@@ -272,8 +272,8 @@ public class TestDataBuilder {
         contrato.setValorMensalAtual(new BigDecimal("10000.23"));
         contrato.setValorMensalInicial(new BigDecimal("999.05"));
         contrato.setObjetoContratual("Serviço de reestruturação de colunas");
-        contrato.setVigenciaInicial(LocalDate.now());
-        contrato.setVigenciaFinal(LocalDate.now().plusYears(3));
+        contrato.setVigenciaInicial(LocalDate.of(2023, 1, 2));
+        contrato.setVigenciaFinal(LocalDate.of(2026, 1, 2));
 
         return contrato;
 

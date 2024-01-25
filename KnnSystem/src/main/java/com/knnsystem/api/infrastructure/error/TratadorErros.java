@@ -1,9 +1,6 @@
 package com.knnsystem.api.infrastructure.error;
 
-import com.knnsystem.api.exceptions.ErroAutenticacao;
-import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
-import com.knnsystem.api.exceptions.EntidadeCadastradaException;
-import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
+import com.knnsystem.api.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -28,7 +25,7 @@ public class TratadorErros {
         );
     }
 
-    @ExceptionHandler({IllegalArgumentException.class})
+    @ExceptionHandler({IllegalArgumentException.class, RegraNegocioException.class})
     public ResponseEntity trataErro400ComMensagem(Exception exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErroSoComMensagemValidacao(exception.getMessage())
