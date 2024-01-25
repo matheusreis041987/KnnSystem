@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.knnsystem.api.model.repository.MoradorRepository;
 import com.knnsystem.api.service.MoradorService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,7 +15,9 @@ import java.util.List;
 public class MoradorServiceImpl implements MoradorService {
 	@Autowired
 	private MoradorRepository repository;
+
 	@Override
+	@Transactional
 	public MoradorDTO salvar(MoradorDTO moradorDTO) {
 		if (repository.findByCpf(moradorDTO.cpf()).isPresent()) {
 			throw new EntidadeCadastradaException("Já há um morador cadastrado para os dados informados");
@@ -29,6 +32,7 @@ public class MoradorServiceImpl implements MoradorService {
 	}
 
 	@Override
+	@Transactional
 	public List<MoradorDTO> listar(String cpf, String nome) {
 		return repository
 				.findByCpfOrNome(cpf, nome)

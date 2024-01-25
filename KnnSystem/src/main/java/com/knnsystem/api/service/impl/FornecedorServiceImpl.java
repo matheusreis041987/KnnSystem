@@ -12,6 +12,7 @@ import com.knnsystem.api.model.repository.ResponsavelRepository;
 import com.knnsystem.api.service.FornecedorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     private ApiDocumentoFacade apiDocumentoFacade;
 
     @Override
+    @Transactional
     public FornecedorDTO salvar(FornecedorDTO dto) {
         if (fornecedorRepository.findByCnpj(dto.cnpj()).isPresent()){
             throw new EntidadeCadastradaException("Já há um fornecedor cadastrado para os dados informados");
@@ -56,6 +58,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     }
 
     @Override
+    @Transactional
     public List<FornecedorDTO> listar(String cnpj, String razaoSocial, Long numeroControle) {
         return fornecedorRepository
                 .findByCnpjOrRazaoSocialOrNumControle(cnpj, razaoSocial, numeroControle)
@@ -65,6 +68,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     }
 
     @Override
+    @Transactional
     public FornecedorDTO inativar(String cnpj, String razaoSocial, Long numeroControle) {
         var fornecedor = fornecedorRepository.findByCnpjAndRazaoSocialAndNumControle(
           cnpj, razaoSocial, numeroControle

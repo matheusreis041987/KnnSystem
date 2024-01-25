@@ -84,7 +84,11 @@ public class Fornecedor {
 		this.emailResponsavel = responsavel.getEmail();
 	}
 
-	public void geraNumeroDeControle(){
+	public Fornecedor() {
+		geraNumeroDeControle();
+	}
+
+	private void geraNumeroDeControle(){
 		// Número de controle gerado pelo sistema
 		this.numControle = ThreadLocalRandom
 				.current()

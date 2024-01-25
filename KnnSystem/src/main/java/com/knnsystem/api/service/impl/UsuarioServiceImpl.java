@@ -63,6 +63,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
+	@Transactional
 	public UsuarioConsultaDTO ativar(String cpf) {
 		var usuario = consultarUsuarioPorCPF(cpf);
 		usuario.getPessoa().setStatus(StatusGeral.ATIVO);
@@ -70,6 +71,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
+	@Transactional
 	public UsuarioConsultaDTO inativar(String cpf) {
 		var usuario = consultarUsuarioPorCPF(cpf);
 		usuario.getPessoa().setStatus(StatusGeral.INATIVO);
