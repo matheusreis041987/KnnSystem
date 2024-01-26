@@ -113,7 +113,7 @@ class FaturaControllerTest {
                                                 "\"numeroFatura\": 10004321, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now().toString() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now() + "\", " +
                                                 "\"valor\": 1234.56, " +
                                                 "\"domicilioBancario\": {" +
                                                 "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
@@ -132,7 +132,7 @@ class FaturaControllerTest {
     @DisplayName("Testa valor acima de 30 mil encaminha pagamento para aprovação")
     @Test
     @Transactional
-    void deveAguardarAprovacaoSeValorMaiorQueTrintaMil() throws Exception {
+    void deveAguardarAprovacaoSeValorMaiorQueTrintaMilEntreDezETrintaDias() throws Exception {
         // Arrange
         when(apiIF.efetuarPagamento(any()))
                 .thenReturn(
@@ -152,7 +152,7 @@ class FaturaControllerTest {
                                                 "\"numeroFatura\": 10004321, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now().toString() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(10) + "\", " +
                                                 "\"valor\": 30000.01, " +
                                                 "\"domicilioBancario\": {" +
                                                 "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
@@ -165,6 +165,162 @@ class FaturaControllerTest {
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.statusPagamento",
                         Matchers.is("AGUARDANDO_APROVACAO")))
+        ;
+    }
+
+    @DisplayName("Testa valor acima de 10 mil com vencimento antes de 10 dias corridos")
+    @Test
+    @Transactional
+    void deveNaoPermitirPagamentoAcimaDeDezMilComMenosDeDezDiasDeVencimento() throws Exception {
+        // Arrange
+        when(apiIF.efetuarPagamento(any()))
+                .thenReturn(
+                        new ResultadoPagamentoDTO(
+                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
+                        )
+                );
+        setDadosContratoA();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"numeroFatura\": 10004321, " +
+                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(9) + "\", " +
+                                                "\"valor\": 10000.01, " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - Pagamentos acima de R$ 10 mil devem ter vencimento entre 10 e 30 dias corridos da data atual")))
+        ;
+    }
+
+    @DisplayName("Testa valor acima de 10 mil com vencimento após 30 dias corridos")
+    @Test
+    @Transactional
+    void deveNaoPermitirPagamentoAcimaDeDezMilComMaisDeTrintaDiasDeVencimento() throws Exception {
+        // Arrange
+        when(apiIF.efetuarPagamento(any()))
+                .thenReturn(
+                        new ResultadoPagamentoDTO(
+                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
+                        )
+                );
+        setDadosContratoA();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"numeroFatura\": 10004321, " +
+                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(31) + "\", " +
+                                                "\"valor\": 10000.01, " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - Pagamentos acima de R$ 10 mil devem ter vencimento entre 10 e 30 dias corridos da data atual")))
+        ;
+    }
+
+    @DisplayName("Testa valor abaixo de 10 mil com vencimento antes de 10 dias corridos")
+    @Test
+    @Transactional
+    void devePermitirPagamentoAbaixoDeDezMilComMenosDeDezDiasDeVencimento() throws Exception {
+        // Arrange
+        when(apiIF.efetuarPagamento(any()))
+                .thenReturn(
+                        new ResultadoPagamentoDTO(
+                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
+                        )
+                );
+        setDadosContratoA();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"numeroFatura\": 10004321, " +
+                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(9) + "\", " +
+                                                "\"valor\": 9999.99, " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.statusPagamento",
+                        Matchers.is("ENVIADO_PARA_PAGAMENTO")))
+        ;
+    }
+
+    @DisplayName("Testa valor abaixo de 10 mil com vencimento após 30 dias corridos")
+    @Test
+    @Transactional
+    void devePermitirPagamentoAbaixoDeDezMilComMaisDeTrintaDiasDeVencimento() throws Exception {
+        // Arrange
+        when(apiIF.efetuarPagamento(any()))
+                .thenReturn(
+                        new ResultadoPagamentoDTO(
+                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
+                        )
+                );
+        setDadosContratoA();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"numeroFatura\": 10004321, " +
+                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(31) + "\", " +
+                                                "\"valor\": 9999.99, " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.statusPagamento",
+                        Matchers.is("ENVIADO_PARA_PAGAMENTO")))
         ;
     }
 
