@@ -1,5 +1,6 @@
 package com.knnsystem.api.controller;
 
+import com.knnsystem.api.dto.ResultadoPagamentoDTO;
 import com.knnsystem.api.exceptions.ErroComunicacaoComBancoException;
 import com.knnsystem.api.infrastructure.api.financeiro.ApiInsituicaoFinanceiraService;
 import com.knnsystem.api.model.entity.*;
@@ -125,6 +126,45 @@ class FaturaControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Operação não realizada - tente mais tarde")))
+        ;
+    }
+
+    @DisplayName("Testa valor acima de 30 mil encaminha pagamento para aprovação")
+    @Test
+    @Transactional
+    void deveAguardarAprovacaoSeValorMaiorQueTrintaMil() throws Exception {
+        // Arrange
+        when(apiIF.efetuarPagamento(any()))
+                .thenReturn(
+                        new ResultadoPagamentoDTO(
+                                StatusPagamento.AGUARDANDO_APROVACAO
+                        )
+                );
+        setDadosContratoA();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"numeroFatura\": 10004321, " +
+                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().toString() + "\", " +
+                                                "\"valor\": 30000.01, " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.statusPagamento",
+                        Matchers.is("AGUARDANDO_APROVACAO")))
         ;
     }
 
