@@ -113,7 +113,7 @@ class FaturaControllerTest {
                                                 "\"numeroFatura\": 10004321, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(9) + "\", " +
                                                 "\"valor\": 1234.56, " +
                                                 "\"domicilioBancario\": {" +
                                                 "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
@@ -360,6 +360,45 @@ class FaturaControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Não há contrato para o número informado")))
+        ;
+    }
+
+    @DisplayName("Testa vencimento abaixo de 5 dias úteis")
+    @Test
+    @Transactional
+    void naoDevePermitirPagamentoComMenosDeCincoDiasUteis() throws Exception {
+        // Arrange
+        when(apiIF.efetuarPagamento(any()))
+                .thenReturn(
+                        new ResultadoPagamentoDTO(
+                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
+                        )
+                );
+        setDadosContratoA();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"numeroFatura\": 10004321, " +
+                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now() + "\", " +
+                                                "\"valor\": 9999.99, " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não pode haver pagamento com menos de 5 dias úteis")))
         ;
     }
 

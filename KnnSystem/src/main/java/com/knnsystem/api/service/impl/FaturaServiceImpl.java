@@ -9,6 +9,7 @@ import com.knnsystem.api.infrastructure.api.financeiro.ApiInsituicaoFinanceiraSe
 import com.knnsystem.api.model.entity.StatusPagamento;
 import com.knnsystem.api.model.repository.ContratoRepository;
 import com.knnsystem.api.model.repository.PagamentoRepository;
+import com.knnsystem.api.utils.CalculadoraDiasUteis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,12 +45,16 @@ public class FaturaServiceImpl implements FaturaService  {
 	@Override
 	@Transactional
 	public ResultadoPagamentoDTO salvar(FaturaCadastroDTO dto) {
-		var dadosParaInstituicaoFinanceira = dto.getDadosPagamentos();
+		// validação dados dias úteis
+		if (!isAposPrazoMinimo(dto)){
+			throw new RegraNegocioException("Não pode haver pagamento com menos de 5 dias úteis");
+		}
 
 		// validação a partir de 10 mil, entre 10 e 30 dias
 		if (!isNaJanelaDePagamento(dto)){
 			throw new RegraNegocioException("Erro - Pagamentos acima de R$ 10 mil devem ter vencimento entre 10 e 30 dias corridos da data atual");
 		}
+		var dadosParaInstituicaoFinanceira = dto.getDadosPagamentos();
 		var contratoOptional = contratoRepository.findByNumContrato(dto.numeroContrato());
 		if (contratoOptional.isEmpty()){
 			throw new EntidadeNaoEncontradaException("Não há contrato para o número informado");
@@ -76,5 +81,13 @@ public class FaturaServiceImpl implements FaturaService  {
 			return DAYS.between(LocalDate.now(), dto.dataPagamento()) >= 10 &&
 					DAYS.between(LocalDate.now(), dto.dataPagamento()) <= 30;
 		}
+	}
+
+	private boolean isAposPrazoMinimo(FaturaCadastroDTO dto) {
+		var diasUteisParaVencimento = CalculadoraDiasUteis.calculaDiasUteisEntre(
+				LocalDate.now(),
+				dto.dataPagamento()
+		);
+		return diasUteisParaVencimento >= 5;
 	}
 }
