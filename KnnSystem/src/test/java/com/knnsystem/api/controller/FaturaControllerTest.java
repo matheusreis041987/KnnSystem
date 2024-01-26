@@ -368,6 +368,45 @@ class FaturaControllerTest {
         ;
     }
 
+    @DisplayName("Testa vencimento no passado")
+    @Test
+    @Transactional
+    void naoDevePermitirPagamentoComVencimentoNoPassado() throws Exception {
+        // Arrange
+        when(apiIF.efetuarPagamento(any()))
+                .thenReturn(
+                        new ResultadoPagamentoDTO(
+                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
+                        )
+                );
+        setDadosContratoA();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"numeroFatura\": 10004321, " +
+                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(-1) + "\", " +
+                                                "\"valor\": 9999.99, " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - favor escolher uma data futura")))
+        ;
+    }
+
     private void setDadosContratoA(){
         responsavelA = responsavelRepository.save(responsavelA);
         fornecedorA.setResponsavel(responsavelA);

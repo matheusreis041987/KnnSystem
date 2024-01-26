@@ -45,19 +45,9 @@ public class FaturaServiceImpl implements FaturaService  {
 	@Override
 	@Transactional
 	public ResultadoPagamentoDTO salvar(FaturaCadastroDTO dto) {
-		// validação mesmo mês
-		if (!isNoMesmoMes(dto)){
-			throw new RegraNegocioException("Erro - favor escolher uma data futura do mês corrente");
-		}
-		// validação dados dias úteis
-		if (!isAposPrazoMinimo(dto)){
-			throw new RegraNegocioException("Não pode haver pagamento com menos de 5 dias úteis");
-		}
 
-		// validação a partir de 10 mil, entre 10 e 30 dias
-		if (!isNaJanelaDePagamento(dto)){
-			throw new RegraNegocioException("Erro - Pagamentos acima de R$ 10 mil devem ter vencimento entre 10 e 30 dias corridos da data atual");
-		}
+		validaRegrasNegocioDeDatas(dto);
+
 		var dadosParaInstituicaoFinanceira = dto.getDadosPagamentos();
 		var contratoOptional = contratoRepository.findByNumContrato(dto.numeroContrato());
 		if (contratoOptional.isEmpty()){
@@ -72,6 +62,26 @@ public class FaturaServiceImpl implements FaturaService  {
 		}
 		return apiInsituicaoFinanceiraService
 				.efetuarPagamento(dadosParaInstituicaoFinanceira);
+	}
+
+	private void validaRegrasNegocioDeDatas(FaturaCadastroDTO dto){
+		// validação vencimento futuro
+		if (!isNoFuturo(dto)){
+			throw new RegraNegocioException("Erro - favor escolher uma data futura");
+		}
+		// validação mesmo mês
+		if (!isNoMesmoMes(dto)){
+			throw new RegraNegocioException("Erro - favor escolher uma data futura do mês corrente");
+		}
+		// validação dados dias úteis
+		if (!isAposPrazoMinimo(dto)){
+			throw new RegraNegocioException("Não pode haver pagamento com menos de 5 dias úteis");
+		}
+
+		// validação a partir de 10 mil, entre 10 e 30 dias
+		if (!isNaJanelaDePagamento(dto)){
+			throw new RegraNegocioException("Erro - Pagamentos acima de R$ 10 mil devem ter vencimento entre 10 e 30 dias corridos da data atual");
+		}
 	}
 
 	private boolean isNecessariaAprovacaoSindico(FaturaCadastroDTO dto){
@@ -98,6 +108,10 @@ public class FaturaServiceImpl implements FaturaService  {
 	private boolean isNoMesmoMes(FaturaCadastroDTO dto){
 		return dto.dataPagamento().getMonth().equals(dto.getDataCadastro().getMonth()) &&
 				dto.dataPagamento().getYear() == dto.getDataCadastro().getYear();
+	}
 
+	private boolean isNoFuturo(FaturaCadastroDTO dto) {
+		return  dto.dataPagamento().isAfter(dto.getDataCadastro()) ||
+				dto.dataPagamento().isEqual(dto.getDataCadastro());
 	}
 }
