@@ -324,6 +324,45 @@ class FaturaControllerTest {
         ;
     }
 
+    @DisplayName("Testa número de contrato inválido retorna erro")
+    @Test
+    @Transactional
+    void naoDevePermitirPagamentoParaNumeroDeContratoInvalido() throws Exception {
+        // Arrange
+        when(apiIF.efetuarPagamento(any()))
+                .thenReturn(
+                        new ResultadoPagamentoDTO(
+                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
+                        )
+                );
+        setDadosContratoA();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"123789456\", " +
+                                                "\"numeroFatura\": 10004321, " +
+                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(31) + "\", " +
+                                                "\"valor\": 9999.99, " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Não há contrato para o número informado")))
+        ;
+    }
+
     private void setDadosContratoA(){
         responsavelA = responsavelRepository.save(responsavelA);
         fornecedorA.setResponsavel(responsavelA);
@@ -335,6 +374,7 @@ class FaturaControllerTest {
         contratoA.setFornecedor(fornecedorA);
         contratoA.setGestor(gestorA);
         contratoA.setSindico(sindico);
+        contratoRepository.save(contratoA);
     }
 
 }
