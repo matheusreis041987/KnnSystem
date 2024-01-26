@@ -113,7 +113,8 @@ class FaturaControllerTest {
                                                 "\"numeroFatura\": 10004321, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(9) + "\", " +
+                                                "\"dataCadastro\": \"" + LocalDate.of(2021, 1, 1) + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.of(2021, 1, 1).plusDays(9) + "\", " +
                                                 "\"valor\": 1234.56, " +
                                                 "\"domicilioBancario\": {" +
                                                 "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
@@ -152,7 +153,8 @@ class FaturaControllerTest {
                                                 "\"numeroFatura\": 10004321, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(10) + "\", " +
+                                                "\"dataCadastro\": \"" + LocalDate.of(2023, 2, 1) + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.of(2023, 2, 1).plusDays(10) + "\", " +
                                                 "\"valor\": 30000.01, " +
                                                 "\"domicilioBancario\": {" +
                                                 "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
@@ -191,46 +193,8 @@ class FaturaControllerTest {
                                                 "\"numeroFatura\": 10004321, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(9) + "\", " +
-                                                "\"valor\": 10000.01, " +
-                                                "\"domicilioBancario\": {" +
-                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
-                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
-                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
-                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
-                                )
-                )
-                // Assert
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.mensagem",
-                        Matchers.is("Erro - Pagamentos acima de R$ 10 mil devem ter vencimento entre 10 e 30 dias corridos da data atual")))
-        ;
-    }
-
-    @DisplayName("Testa valor acima de 10 mil com vencimento após 30 dias corridos")
-    @Test
-    @Transactional
-    void deveNaoPermitirPagamentoAcimaDeDezMilComMaisDeTrintaDiasDeVencimento() throws Exception {
-        // Arrange
-        when(apiIF.efetuarPagamento(any()))
-                .thenReturn(
-                        new ResultadoPagamentoDTO(
-                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
-                        )
-                );
-        setDadosContratoA();
-
-        // Act
-        this.mockMvc.perform(
-                        post(ENDPOINT_CADASTRO)
-                                .with(user(usuarioSecretaria))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
-                                                "\"numeroFatura\": 10004321, " +
-                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
-                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(31) + "\", " +
+                                                "\"dataCadastro\": \"" + LocalDate.of(2021, 1, 1) + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.of(2021, 1, 1).plusDays(9) + "\", " +
                                                 "\"valor\": 10000.01, " +
                                                 "\"domicilioBancario\": {" +
                                                 "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
@@ -269,46 +233,8 @@ class FaturaControllerTest {
                                                 "\"numeroFatura\": 10004321, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(9) + "\", " +
-                                                "\"valor\": 9999.99, " +
-                                                "\"domicilioBancario\": {" +
-                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
-                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
-                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
-                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
-                                )
-                )
-                // Assert
-                .andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.statusPagamento",
-                        Matchers.is("ENVIADO_PARA_PAGAMENTO")))
-        ;
-    }
-
-    @DisplayName("Testa valor abaixo de 10 mil com vencimento após 30 dias corridos")
-    @Test
-    @Transactional
-    void devePermitirPagamentoAbaixoDeDezMilComMaisDeTrintaDiasDeVencimento() throws Exception {
-        // Arrange
-        when(apiIF.efetuarPagamento(any()))
-                .thenReturn(
-                        new ResultadoPagamentoDTO(
-                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
-                        )
-                );
-        setDadosContratoA();
-
-        // Act
-        this.mockMvc.perform(
-                        post(ENDPOINT_CADASTRO)
-                                .with(user(usuarioSecretaria))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
-                                                "\"numeroFatura\": 10004321, " +
-                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
-                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(31) + "\", " +
+                                                "\"dataCadastro\": \"" + LocalDate.of(2023, 1, 1) + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.of(2023, 1, 1).plusDays(9) + "\", " +
                                                 "\"valor\": 9999.99, " +
                                                 "\"domicilioBancario\": {" +
                                                 "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
@@ -347,7 +273,8 @@ class FaturaControllerTest {
                                                 "\"numeroFatura\": 10004321, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
-                                                "\"dataPagamento\": \"" + LocalDate.now().plusDays(31) + "\", " +
+                                                "\"dataCadastro\": \"" + LocalDate.of(2022, 1, 1) + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.of(2022, 1, 1).plusDays(11) + "\", " +
                                                 "\"valor\": 9999.99, " +
                                                 "\"domicilioBancario\": {" +
                                                 "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
@@ -399,6 +326,45 @@ class FaturaControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Não pode haver pagamento com menos de 5 dias úteis")))
+        ;
+    }
+
+    @DisplayName("Testa vencimento fora do mês")
+    @Test
+    @Transactional
+    void naoDevePermitirPagamentoComVencimentoAposOMesCorrente() throws Exception {
+        // Arrange
+        when(apiIF.efetuarPagamento(any()))
+                .thenReturn(
+                        new ResultadoPagamentoDTO(
+                                StatusPagamento.ENVIADO_PARA_PAGAMENTO
+                        )
+                );
+        setDadosContratoA();
+
+        // Act
+        this.mockMvc.perform(
+                        post(ENDPOINT_CADASTRO)
+                                .with(user(usuarioSecretaria))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
+                                                "\"numeroFatura\": 10004321, " +
+                                                "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
+                                                "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
+                                                "\"dataPagamento\": \"" + LocalDate.now().plusMonths(1) + "\", " +
+                                                "\"valor\": 9999.99, " +
+                                                "\"domicilioBancario\": {" +
+                                                "\"agencia\": \"" + fornecedorA.getDomicilioBancario().getAgencia() + "\", " +
+                                                "\"contaCorrente\": \"" + fornecedorA.getDomicilioBancario().getContaCorrente() + "\", " +
+                                                "\"banco\": \"" + fornecedorA.getDomicilioBancario().getBanco() + "\", " +
+                                                "\"pix\": \"" + fornecedorA.getDomicilioBancario().getPix() + "\"}} "
+                                )
+                )
+                // Assert
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - favor escolher uma data futura do mês corrente")))
         ;
     }
 

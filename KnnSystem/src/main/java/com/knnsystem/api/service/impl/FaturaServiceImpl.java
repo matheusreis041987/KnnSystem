@@ -45,6 +45,10 @@ public class FaturaServiceImpl implements FaturaService  {
 	@Override
 	@Transactional
 	public ResultadoPagamentoDTO salvar(FaturaCadastroDTO dto) {
+		// validação mesmo mês
+		if (!isNoMesmoMes(dto)){
+			throw new RegraNegocioException("Erro - favor escolher uma data futura do mês corrente");
+		}
 		// validação dados dias úteis
 		if (!isAposPrazoMinimo(dto)){
 			throw new RegraNegocioException("Não pode haver pagamento com menos de 5 dias úteis");
@@ -78,16 +82,22 @@ public class FaturaServiceImpl implements FaturaService  {
 		if (dto.valor().compareTo(LIMIAR_VALOR_JANELA_PAGAMENTO) <= 0) {
 			return true;
 		} else {
-			return DAYS.between(LocalDate.now(), dto.dataPagamento()) >= 10 &&
-					DAYS.between(LocalDate.now(), dto.dataPagamento()) <= 30;
+			return DAYS.between(dto.getDataCadastro(), dto.dataPagamento()) >= 10 &&
+					DAYS.between(dto.getDataCadastro(), dto.dataPagamento()) <= 30;
 		}
 	}
 
 	private boolean isAposPrazoMinimo(FaturaCadastroDTO dto) {
 		var diasUteisParaVencimento = CalculadoraDiasUteis.calculaDiasUteisEntre(
-				LocalDate.now(),
+				dto.getDataCadastro(),
 				dto.dataPagamento()
 		);
 		return diasUteisParaVencimento >= 5;
+	}
+
+	private boolean isNoMesmoMes(FaturaCadastroDTO dto){
+		return dto.dataPagamento().getMonth().equals(dto.getDataCadastro().getMonth()) &&
+				dto.dataPagamento().getYear() == dto.getDataCadastro().getYear();
+
 	}
 }

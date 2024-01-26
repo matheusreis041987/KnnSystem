@@ -33,7 +33,9 @@ public record FaturaCadastroDTO(
         LocalDate dataPagamento,
 
         @NotNull(message = "Domícilio bancário deve ser informado")
-        DomicilioBancarioDTO domicilioBancario
+        DomicilioBancarioDTO domicilioBancario,
+
+        LocalDate dataCadastro
 
 ) {
         public DadosPagamentoDTO getDadosPagamentos() {
@@ -41,5 +43,9 @@ public record FaturaCadastroDTO(
                         dataPagamento(),
                         valor(),
                         domicilioBancario());
+        }
+
+        public LocalDate getDataCadastro(){
+                return dataCadastro() == null ? LocalDate.now() : dataCadastro();
         }
 }
