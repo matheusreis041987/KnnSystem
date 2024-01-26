@@ -4,6 +4,7 @@ package com.knnsystem.api.service.impl;
 import com.knnsystem.api.dto.FaturaCadastroDTO;
 import com.knnsystem.api.dto.FaturaResultadoDTO;
 import com.knnsystem.api.dto.ResultadoPagamentoDTO;
+import com.knnsystem.api.exceptions.EntidadeCadastradaException;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.infrastructure.api.financeiro.ApiInsituicaoFinanceiraService;
@@ -57,6 +58,10 @@ public class FaturaServiceImpl implements FaturaService  {
 	@Override
 	@Transactional
 	public ResultadoPagamentoDTO salvar(FaturaCadastroDTO dto) {
+
+		if (faturaRepository.findByNumero(dto.numeroFatura()).isPresent()) {
+			throw new EntidadeCadastradaException("Erro - já existe fatura cadastrada para esses dados");
+		}
 
 		validaRegrasNegocioDeDatas(dto);
 
@@ -155,6 +160,13 @@ public class FaturaServiceImpl implements FaturaService  {
 		return resultado;
 	}
 
+	@Override
+	@Transactional
+	public void inativar(Long id) {
+		var fatura = obtemFaturaPorId(id);
+		fatura.setStatusPagamento(StatusPagamento.INATIVO);
+	}
+
 	private void validaRegrasNegocioDeDatas(FaturaCadastroDTO dto){
 		// validação vencimento futuro
 		if (!isNoFuturo(dto)){
@@ -204,5 +216,13 @@ public class FaturaServiceImpl implements FaturaService  {
 	private boolean isNoFuturo(FaturaCadastroDTO dto) {
 		return  dto.dataPagamento().isAfter(dto.getDataCadastro()) ||
 				dto.dataPagamento().isEqual(dto.getDataCadastro());
+	}
+
+	private Fatura obtemFaturaPorId(Long id) {
+		Optional<Fatura> faturaOptional = faturaRepository.findById(id);
+		if (faturaOptional.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Fatura não encontrada");
+		}
+		return faturaOptional.get();
 	}
 }

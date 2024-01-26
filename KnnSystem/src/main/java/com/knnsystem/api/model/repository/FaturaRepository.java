@@ -9,7 +9,7 @@ import javax.crypto.spec.OAEPParameterSpec;
 import java.util.List;
 import java.util.Optional;
 
-public interface FaturaRepository extends JpaRepository<Fatura, Integer> {
+public interface FaturaRepository extends JpaRepository<Fatura, Long> {
 
     Optional<Fatura> findByNumero(Long numero);
 

@@ -38,7 +38,7 @@ public class Fatura {
 
 
 	public boolean equals(Fatura f) {
-		 return this.idFatura == f.idFatura && this.numero.equals(f.numero);
+		 return this.idFatura.equals(f.idFatura) && this.numero.equals(f.numero);
 	}
 	
 	
