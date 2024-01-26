@@ -1,199 +1,67 @@
 package com.knnsystem.api.model.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Table (name = "pagamento", schema = "sch_financeiro")
+@Table(name = "pagamento", schema = "sch_financeiro" )
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @SecondaryTable(name = "sch_financeiro_contratos", schema = "sch_financeiro")
 @SecondaryTable(name = "sch_pessoas_usuario", schema = "sch_pessoas")
-abstract public class Pagamento {
+@Getter
+@Setter
+public abstract class Pagamento {
 
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idPagamento;
-	
-		
-	@ManyToOne
+	private Long idPagamento;
+
+	@OneToOne
 	@JoinColumn(name = "fk_contrato", table = "sch_financeiro.contratos", referencedColumnName = "id")
-	private Contrato idContrato;
-	
+	private Contrato contrato;
+
 	@Column(name = "data_hora")
 	private Date dataPagamento;
-	
+
 	@Column(name = "aprovacao")
 	private boolean temAprovacao;
-	
+
 	@Column(name = "valor_pagamento")
-	private double valorPagamento;
-	
+	private BigDecimal valorPagamento;
+
 	@Column(name = "valor_juros")
-	private double valorJuros;
-	
+	private BigDecimal valorJuros;
+
 	@Column(name = "pct_juros")
-	private String percJuros;
-	
+	private BigDecimal percJuros;
+
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
 	private StatusPagamento statusPagamento;
-	
-	private double valorTotal;
+
+	@Transient
+	private BigDecimal valorTotal;
 	
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "fk_usuario", table = "sch_pessoas.usuario", referencedColumnName = "id")
 	private Usuario usuario;
-	
-	
-	public abstract double  efetuarPagamento(); 
-		
-		/*double percentualJuros = Double.parseDouble(percJuros);
-		valorJuros = valorPagamento * percentualJuros;
-		valorTotal = valorPagamento + valorJuros;
-		return valorTotal;*/
-		
-	
 
-
-	public double getIdPagamento() {
-		return idPagamento;
+	public final void efetuarPagamento() {
+		BigDecimal valorJuros = this.getValorPagamento().multiply(
+			percJuros.multiply(new BigDecimal("0.01"))
+		);
+		this.valorTotal = this.getValorTotal().add(
+				valorJuros
+		);
+		efetuarOperacoesAuxiliaresEmPagamento();
 	}
 
-
-	public void setIdPagamento(int idPagamento) {
-		this.idPagamento = idPagamento;
-	}
-
-
-	public Contrato getIdContrato() {
-		return idContrato;
-	}
-
-
-	public void setIdContrato(Contrato idContrato) {
-		this.idContrato = idContrato;
-	}
-
-
-	public Date getDataPagamento() {
-		return dataPagamento;
-	}
-
-
-	public void setDataPagamento(Date dataPagamento) {
-		this.dataPagamento = dataPagamento;
-	}
-
-
-	public boolean isTemAprovacao() {
-		return temAprovacao;
-	}
-
-
-	public void setTemAprovacao(boolean temAprovacao) {
-		this.temAprovacao = temAprovacao;
-	}
-
-
-	public double getValorPagamento() {
-		return valorPagamento;
-	}
-
-
-	public void setValorPagamento(double valorPagamento) {
-		this.valorPagamento = valorPagamento;
-	}
-
-
-	public double getValorJuros() {
-		return valorJuros;
-	}
-
-
-	public void setValorJuros(double valorJuros) {
-		this.valorJuros = valorJuros;
-	}
-
-
-	public String getPercJuros() {
-		return percJuros;
-	}
-
-
-	public void setPercJuros(String percJuros) {
-		this.percJuros = percJuros;
-	}
-
-
-	public StatusPagamento getStatusPagamento() {
-		return statusPagamento;
-	}
-
-
-	public void setStatusPagamento(StatusPagamento statusPagamento) {
-		this.statusPagamento = statusPagamento;
-	}
-
-
-	public double getValorTotal() {
-		return valorTotal;
-	}
-
-
-	public void setValorTotal(double valorTotal) {
-		this.valorTotal = valorTotal;
-	}
-
-
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((dataPagamento == null) ? 0 : dataPagamento.hashCode());
-		
-		result = prime * result + ((idContrato == null) ? 0 : idContrato.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(idPagamento);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((percJuros == null) ? 0 : percJuros.hashCode());
-		result = prime * result + ((statusPagamento == null) ? 0 : statusPagamento.hashCode());
-		result = prime * result + (temAprovacao ? 1231 : 1237);
-		result = prime * result + ((usuario == null) ? 0 : usuario.hashCode());
-		temp = Double.doubleToLongBits(valorJuros);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(valorPagamento);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(valorTotal);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
-	}
-
-
-	
-	public boolean equals(Pagamento p) {
-		
-		if (this.idContrato == p.getIdContrato() && this.idPagamento == p.getIdPagamento() 
-				&& this.dataPagamento == p.getDataPagamento()) {
-			return true;
-		} else {
-			return false;
-		}
-		
-	}
-	
-	
-	
+	protected abstract void efetuarOperacoesAuxiliaresEmPagamento();
 	
 }

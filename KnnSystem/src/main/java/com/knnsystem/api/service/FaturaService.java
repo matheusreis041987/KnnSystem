@@ -1,22 +1,12 @@
 package com.knnsystem.api.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.knnsystem.api.model.entity.Fatura;
+import com.knnsystem.api.dto.FaturaCadastroDTO;
+import com.knnsystem.api.dto.ResultadoPagamentoDTO;
 
 
 
 public interface FaturaService {
 
-	Fatura salvar (Fatura FaturaParm);
-	
-	Fatura atualizar (Fatura FaturaParm);
-	
-	void deletar (Fatura FaturaParm);
-	
-	List<Fatura> buscar(Fatura FaturaParm);
+	ResultadoPagamentoDTO salvar (FaturaCadastroDTO dto);
 
-	Optional<Fatura> consultarPorId (Integer idFatura);
-	
 }

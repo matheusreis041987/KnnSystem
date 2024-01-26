@@ -1,66 +1,36 @@
 package com.knnsystem.api.service.impl;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
-import org.springframework.data.domain.Example;
+import com.knnsystem.api.dto.FaturaCadastroDTO;
+import com.knnsystem.api.dto.ResultadoPagamentoDTO;
+import com.knnsystem.api.infrastructure.api.financeiro.ApiInsituicaoFinanceiraService;
+import com.knnsystem.api.model.repository.PagamentoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.knnsystem.api.model.entity.Fatura;
+
 import com.knnsystem.api.model.repository.FaturaRepository;
 import com.knnsystem.api.service.FaturaService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FaturaServiceImpl implements FaturaService  {
 
-	private FaturaRepository repository;
-	
-	public FaturaServiceImpl (FaturaRepository repo) {
-		this.repository = repo;
-	}
-	
-	
-	@Override
-	@Transactional
-	public Fatura salvar(Fatura FaturaParm) {
-		
-		
-		return repository.save(FaturaParm);
-	}
+
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
+
+	@Autowired
+	private FaturaRepository faturaRepository;
+
+	@Autowired
+	private ApiInsituicaoFinanceiraService apiInsituicaoFinanceiraService;
 
 	@Override
 	@Transactional
-	public Fatura atualizar(Fatura FaturaParm) {
-		
-		Objects.requireNonNull(FaturaParm.getIdFatura());
-		return repository.save(FaturaParm);
+	public ResultadoPagamentoDTO salvar(FaturaCadastroDTO dto) {
+		var dadosParaInstituicaoFinanceira = dto.getDadosPagamentos();
+		return apiInsituicaoFinanceiraService
+				.efetuarPagamento(dadosParaInstituicaoFinanceira);
 	}
-
-	@Override
-	@Transactional
-	public void deletar(Fatura FaturaParm) {
-		
-		Objects.requireNonNull(FaturaParm.getIdFatura());
-		repository.delete(FaturaParm);
-		
-	}
-
-	@Override
-	@Transactional
-	public List<Fatura> buscar(Fatura FaturaParm) {
-		
-		Example example = Example.of(FaturaParm);
-		return repository.findAll(example);
-	}
-
-	@Override
-	@Transactional
-	public Optional<Fatura> consultarPorId(Integer idFatura) {
-		
-		
-		return repository.findById(idFatura);
-	}
-
 }
