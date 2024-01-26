@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,6 +50,8 @@ class FaturaControllerTest {
     private Usuario usuarioSecretaria;
 
     private final String ENDPOINT_CADASTRO = "/fatura/api/cadastra";
+
+    private final String ENDPOINT_CONSULTA = "/fatura/api/consulta";
 
     @Autowired
     private MockMvc mockMvc;
@@ -421,6 +424,54 @@ class FaturaControllerTest {
                 .andExpect(jsonPath("$.mensagem",
                         Matchers.is("Erro - favor escolher uma data futura")))
         ;
+    }
+
+    @DisplayName("Testa consulta para repositório de faturas vazio")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverFaturas() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - fatura não encontrada para os dados apresentados")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra cnpj do fornecedor")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverFaturaParaCNPJInformado() throws Exception {
+        // Arrange
+        setDadosContratoA();
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("cnpjFornecedor", "68308725000185")
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - fatura não encontrada para os dados apresentados")));
+
+    }
+
+    @DisplayName("Testa consulta quando não encontra numero de contrato")
+    @Test
+    @Transactional
+    void deveRetornarErroSeNaoHouverFaturaParaNumeroDeContrato() throws Exception {
+        // Arrange
+        setDadosContratoA();
+        // Act
+        this.mockMvc.perform(
+                        get(ENDPOINT_CONSULTA)
+                                .param("numeroContrato", "68308725000185")
+                                .with(user(usuarioSecretaria)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro - fatura não encontrada para os dados apresentados")));
+
     }
 
     private void setDadosContratoA(){

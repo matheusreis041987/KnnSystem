@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.service.ContratoService;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -88,7 +87,7 @@ public class ContratoServiceImpl implements ContratoService {
 		}
 		List<Contrato> contratos = new ArrayList<>();
 		for (Fornecedor fornecedor: fornecedores) {
-			contratos = contratoRepository.findByFornecedor(fornecedor);
+			contratos = contratoRepository.findAllByFornecedor(fornecedor);
 		}
 		Optional<Contrato> contratoPorNumeroOptional = Optional.empty();
 		if (numeroContrato != null){

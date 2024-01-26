@@ -2,15 +2,14 @@ package com.knnsystem.api.service.impl;
 
 
 import com.knnsystem.api.dto.FaturaCadastroDTO;
+import com.knnsystem.api.dto.FaturaResultadoDTO;
 import com.knnsystem.api.dto.ResultadoPagamentoDTO;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.infrastructure.api.financeiro.ApiInsituicaoFinanceiraService;
-import com.knnsystem.api.model.entity.Fatura;
-import com.knnsystem.api.model.entity.Pagamento;
-import com.knnsystem.api.model.entity.PagamentoFactory;
-import com.knnsystem.api.model.entity.StatusPagamento;
+import com.knnsystem.api.model.entity.*;
 import com.knnsystem.api.model.repository.ContratoRepository;
+import com.knnsystem.api.model.repository.FornecedorRepository;
 import com.knnsystem.api.model.repository.PagamentoRepository;
 import com.knnsystem.api.service.UsuarioService;
 import com.knnsystem.api.utils.CalculadoraDiasUteis;
@@ -23,6 +22,9 @@ import com.knnsystem.api.service.FaturaService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -48,6 +50,9 @@ public class FaturaServiceImpl implements FaturaService  {
 
 	@Autowired
 	private UsuarioService usuarioService;
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
+
 
 	@Override
 	@Transactional
@@ -97,6 +102,57 @@ public class FaturaServiceImpl implements FaturaService  {
 
 		return apiInsituicaoFinanceiraService
 				.efetuarPagamento(dadosParaInstituicaoFinanceira);
+	}
+
+	@Override
+	@Transactional
+	public List<FaturaResultadoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroContrato, Long numeroFatura) {
+
+		// TODO: Solução mais escalável que a atual
+
+		List<Fornecedor> fornecedores = fornecedorRepository.findByCnpjOrRazaoSocialOrNumControle(cnpjFornecedor, razaoSocial, null);
+		Optional<Fatura> faturaOptional = faturaRepository.findByNumero(numeroFatura);
+		Optional<Contrato> contratoOptional = contratoRepository.findByNumContrato(numeroContrato);
+
+		List<FaturaResultadoDTO> resultado = new ArrayList<>();
+
+		if (faturaOptional.isPresent()){
+			var fatura = faturaOptional.get();
+			resultado.add(new FaturaResultadoDTO(
+					fatura.getPagamento().getContrato().getNumContrato(),
+					fatura.getNumero(),
+					fatura.getPagamento().getContrato().getFornecedor().getCnpj(),
+					fatura.getPagamento().getContrato().getFornecedor().getRazaoSocial(),
+					fatura.getValor(),
+					fatura.getVencimento()
+					));
+		}
+
+		for (Fornecedor fornecedor: fornecedores){
+			var contratos = contratoRepository.findAllByFornecedor(fornecedor);
+            contratoOptional.ifPresent(contratos::add);
+			for (Contrato contrato: contratos){
+				var pagamentos = pagamentoRepository.findAllByContrato(contrato);
+				for (Pagamento pagamento: pagamentos) {
+					faturaOptional = faturaRepository.findByPagamento(pagamento);
+					faturaOptional.ifPresent(fatura -> resultado.add(
+                            new FaturaResultadoDTO(
+                                    contrato.getNumContrato(),
+                                    fatura.getNumero(),
+                                    fornecedor.getCnpj(),
+                                    fornecedor.getRazaoSocial(),
+                                    fatura.getValor(),
+                                    fatura.getVencimento()
+                            )
+                    ));
+
+				}
+			}
+
+		}
+
+
+		return resultado;
 	}
 
 	private void validaRegrasNegocioDeDatas(FaturaCadastroDTO dto){
