@@ -1,7 +1,5 @@
 package com.knnsystem.api.service;
 
-import java.util.List;
-import java.util.Optional;
 
 import com.knnsystem.api.dto.UsuarioCadastroDTO;
 import com.knnsystem.api.dto.UsuarioConsultaDTO;
@@ -20,5 +18,7 @@ public interface UsuarioService {
 	UsuarioConsultaDTO ativar(@CPF String cpf);
 
 	UsuarioConsultaDTO inativar(@CPF String cpf);
+
+	Usuario getUsuarioLogado();
 
 }

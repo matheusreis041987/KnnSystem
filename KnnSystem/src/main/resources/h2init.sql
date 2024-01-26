@@ -19,7 +19,7 @@ create sequence id_proprietario_seq;
 create sequence id_fornecedor_seq;
 create sequence id_responsavel_seq;
 
-create table sch_pessoas.pessoa (
+CREATE TABLE IF NOT EXISTS sch_pessoas.pessoa (
 	id bigint not null default nextval('id_pessoas_seq'),
 	cpf character varying(11) not null unique,
 	nome character varying(60) not null,
@@ -28,7 +28,7 @@ create table sch_pessoas.pessoa (
 	constraint pk_pessoa primary key (id)
 );
 
-create table sch_pessoas.usuario (
+CREATE TABLE IF NOT EXISTS sch_pessoas.usuario (
 	id bigint not null default nextval('id_usuarios_seq'),
 	cpf character varying(11) not null unique,
 	nome character varying(60) not null,
@@ -44,7 +44,7 @@ create table sch_pessoas.usuario (
 	on update cascade
 );
 
-create table sch_pessoas.secretaria (
+CREATE TABLE IF NOT EXISTS sch_pessoas.secretaria (
 	id bigint not null,
 	constraint pk_secretaria primary key (id),
 	constraint fk_id_secretaria foreign key (id)
@@ -53,7 +53,7 @@ create table sch_pessoas.secretaria (
 	on update cascade
 );
 
-create table sch_pessoas.proprietario (
+CREATE TABLE IF NOT EXISTS sch_pessoas.proprietario (
 	id bigint not null default nextval('id_proprietario_seq'),
 	num_rgi integer not null unique,
 	constraint pk_proprietario primary key (id),
@@ -63,7 +63,7 @@ create table sch_pessoas.proprietario (
 	on update cascade
 );
 
-create table sch_pessoas.morador (
+CREATE TABLE IF NOT EXISTS sch_pessoas.morador (
 	id bigint not null,
 	num_apt integer not null,
 	bloco character varying(10) not null,
@@ -74,7 +74,7 @@ create table sch_pessoas.morador (
 	on update cascade
 );
 
-create table sch_pessoas.telefone (
+CREATE TABLE IF NOT EXISTS sch_pessoas.telefone (
 	id bigint not null default nextval('id_telefone_seq'),
 	numero character varying(15) not null,
 	pessoa_id bigint not null,
@@ -87,7 +87,7 @@ create table sch_pessoas.telefone (
 
 
 
-create table sch_contratos.sindico (
+CREATE TABLE IF NOT EXISTS sch_contratos.sindico (
 	cpf character varying(11) not null,
 	nome character varying(60) not null,
 	email character varying(60) not null,
@@ -95,14 +95,14 @@ create table sch_contratos.sindico (
 
 );
 
-create table sch_contratos.gestor (
+CREATE TABLE IF NOT EXISTS sch_contratos.gestor (
 	cpf character varying(11) not null,
 	nome character varying(60) not null,
 	email character varying(60) not null,
 	constraint pk_gestor primary key (cpf)
 );
 
-create table sch_pessoas.apartamento (
+CREATE TABLE IF NOT EXISTS sch_pessoas.apartamento (
 	id bigint not null default nextval('id_apartamento_seq'),
 	fk_proprietario integer not null,
 	fk_morador integer not null,
@@ -124,7 +124,7 @@ create table sch_pessoas.apartamento (
 
 );
 
-create table sch_contratos.responsavel (
+CREATE TABLE IF NOT EXISTS sch_contratos.responsavel (
 	cpf character varying(11) not null,
 	nome character varying(60) not null,
 	email character varying(60) not null,
@@ -132,7 +132,7 @@ create table sch_contratos.responsavel (
 
 );
 
-create table sch_contratos.fornecedor (
+CREATE TABLE IF NOT EXISTS sch_contratos.fornecedor (
 	id bigint not null default nextval('id_fornecedor_seq'),
 	razao_social character varying(80) not null,
 	cnpj character varying(14) not null,

@@ -9,6 +9,7 @@ import com.knnsystem.api.model.entity.Cargo;
 import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.entity.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,6 +92,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 		}
 
 		return usuario.get();
+	}
+	@Override
+	public Usuario getUsuarioLogado(){
+		return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 }
 
