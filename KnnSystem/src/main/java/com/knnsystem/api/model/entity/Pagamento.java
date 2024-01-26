@@ -1,15 +1,17 @@
 package com.knnsystem.api.model.entity;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DiscriminatorFormula;
 
 @Entity
 @Table(name = "pagamento", schema = "sch_financeiro" )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula("Case when contrato.fornecedor.domicilio_bancario.pix is not null then 'PagamentoPix' else 'PagamentoDeposito' end")
 @SecondaryTable(name = "sch_financeiro_contratos", schema = "sch_financeiro")
 @SecondaryTable(name = "sch_pessoas_usuario", schema = "sch_pessoas")
 @Getter
@@ -26,7 +28,7 @@ public abstract class Pagamento {
 	private Contrato contrato;
 
 	@Column(name = "data_hora")
-	private Date dataPagamento;
+	private LocalDate dataPagamento;
 
 	@Column(name = "aprovacao")
 	private boolean temAprovacao;
@@ -53,10 +55,10 @@ public abstract class Pagamento {
 	private Usuario usuario;
 
 	public final void efetuarPagamento() {
-		BigDecimal valorJuros = this.getValorPagamento().multiply(
+		this.valorJuros = this.getValorPagamento().multiply(
 			percJuros.multiply(new BigDecimal("0.01"))
 		);
-		this.valorTotal = this.getValorTotal().add(
+		this.valorTotal = this.getValorPagamento().add(
 				valorJuros
 		);
 		efetuarOperacoesAuxiliaresEmPagamento();

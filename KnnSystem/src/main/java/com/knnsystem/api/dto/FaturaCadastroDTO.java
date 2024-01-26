@@ -29,6 +29,10 @@ public record FaturaCadastroDTO(
         @Positive
         BigDecimal valor,
 
+        @NotNull(message = "Valor de percentual de juros deve ser informado")
+        @Positive
+        BigDecimal percentualJuros,
+
         @NotNull(message = "Data de pagamento deve ser informada")
         LocalDate dataPagamento,
 

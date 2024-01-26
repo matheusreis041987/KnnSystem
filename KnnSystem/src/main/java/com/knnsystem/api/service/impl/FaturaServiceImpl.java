@@ -6,9 +6,13 @@ import com.knnsystem.api.dto.ResultadoPagamentoDTO;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.infrastructure.api.financeiro.ApiInsituicaoFinanceiraService;
+import com.knnsystem.api.model.entity.Fatura;
+import com.knnsystem.api.model.entity.Pagamento;
+import com.knnsystem.api.model.entity.PagamentoFactory;
 import com.knnsystem.api.model.entity.StatusPagamento;
 import com.knnsystem.api.model.repository.ContratoRepository;
 import com.knnsystem.api.model.repository.PagamentoRepository;
+import com.knnsystem.api.service.UsuarioService;
 import com.knnsystem.api.utils.CalculadoraDiasUteis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +23,7 @@ import com.knnsystem.api.service.FaturaService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -42,6 +46,9 @@ public class FaturaServiceImpl implements FaturaService  {
 	@Autowired
 	private ApiInsituicaoFinanceiraService apiInsituicaoFinanceiraService;
 
+	@Autowired
+	private UsuarioService usuarioService;
+
 	@Override
 	@Transactional
 	public ResultadoPagamentoDTO salvar(FaturaCadastroDTO dto) {
@@ -54,12 +61,40 @@ public class FaturaServiceImpl implements FaturaService  {
 			throw new EntidadeNaoEncontradaException("Não há contrato para o número informado");
 		}
 
+		// salva fatura e pagamento
+		Pagamento pagamento = PagamentoFactory.createPagamento(
+				dto.domicilioBancario());
+		pagamento.setDataPagamento(dto.dataPagamento());
+		pagamento.setContrato(contratoOptional.get());
+		pagamento.setUsuario(usuarioService.getUsuarioLogado());
+		pagamento.setValorPagamento(dto.valor());
+		pagamento.setPercJuros(dto.percentualJuros());
+		pagamento.efetuarPagamento();
+
+		Fatura fatura = new Fatura();
+		fatura.setNumero(dto.numeroFatura());
+		fatura.setValor(dto.valor());
+		fatura.setVencimento(dto.dataPagamento());
+
+
 		// validação a partir de 30 mil, entre 10 e 30 dias
 		if (isNecessariaAprovacaoSindico(dto)){
+			pagamento.setTemAprovacao(true);
+			pagamento.setStatusPagamento(StatusPagamento.AGUARDANDO_APROVACAO);
+			fatura.setStatusPagamento(StatusPagamento.AGUARDANDO_APROVACAO);
+			faturaRepository.save(fatura);
+			pagamentoRepository.save(pagamento);
 			return new ResultadoPagamentoDTO(
 					StatusPagamento.AGUARDANDO_APROVACAO
 			);
 		}
+		pagamento.setTemAprovacao(false);
+		pagamento.setStatusPagamento(StatusPagamento.ENVIADO_PARA_PAGAMENTO);
+		fatura.setStatusPagamento(StatusPagamento.ENVIADO_PARA_PAGAMENTO);
+		faturaRepository.save(fatura);
+		pagamentoRepository.save(pagamento);
+
+
 		return apiInsituicaoFinanceiraService
 				.efetuarPagamento(dadosParaInstituicaoFinanceira);
 	}

@@ -75,6 +75,12 @@ class FaturaControllerTest {
     private SindicoRepository sindicoRepository;
 
     @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PessoaRepository pessoaRepository;
+
+    @Autowired
     private TestDataBuilder testDataBuilder;
 
 
@@ -89,6 +95,8 @@ class FaturaControllerTest {
         this.contratoA = testDataBuilder.createContratoA();
 
         this.usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
+        pessoaRepository.save(this.usuarioSecretaria.getPessoa());
+        usuarioRepository.save(this.usuarioSecretaria);
     }
 
     @DisplayName("Testa erro de comunicação com Banco informa erro")
@@ -111,6 +119,7 @@ class FaturaControllerTest {
                                 .content(
                                         "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
                                                 "\"numeroFatura\": 10004321, " +
+                                                "\"percentualJuros\": 7.3, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
                                                 "\"dataCadastro\": \"" + LocalDate.of(2021, 1, 1) + "\", " +
@@ -151,6 +160,7 @@ class FaturaControllerTest {
                                 .content(
                                         "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
                                                 "\"numeroFatura\": 10004321, " +
+                                                "\"percentualJuros\": 7.3, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
                                                 "\"dataCadastro\": \"" + LocalDate.of(2023, 2, 1) + "\", " +
@@ -191,6 +201,7 @@ class FaturaControllerTest {
                                 .content(
                                         "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
                                                 "\"numeroFatura\": 10004321, " +
+                                                "\"percentualJuros\": 7.3, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
                                                 "\"dataCadastro\": \"" + LocalDate.of(2021, 1, 1) + "\", " +
@@ -231,6 +242,7 @@ class FaturaControllerTest {
                                 .content(
                                         "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
                                                 "\"numeroFatura\": 10004321, " +
+                                                "\"percentualJuros\": 7.3, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
                                                 "\"dataCadastro\": \"" + LocalDate.of(2023, 1, 1) + "\", " +
@@ -271,6 +283,7 @@ class FaturaControllerTest {
                                 .content(
                                         "{\"numeroContrato\": \"123789456\", " +
                                                 "\"numeroFatura\": 10004321, " +
+                                                "\"percentualJuros\": 7.3, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
                                                 "\"dataCadastro\": \"" + LocalDate.of(2022, 1, 1) + "\", " +
@@ -311,6 +324,7 @@ class FaturaControllerTest {
                                 .content(
                                         "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
                                                 "\"numeroFatura\": 10004321, " +
+                                                "\"percentualJuros\": 7.3, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
                                                 "\"dataPagamento\": \"" + LocalDate.now() + "\", " +
@@ -350,6 +364,7 @@ class FaturaControllerTest {
                                 .content(
                                         "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
                                                 "\"numeroFatura\": 10004321, " +
+                                                "\"percentualJuros\": 7.3, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
                                                 "\"dataPagamento\": \"" + LocalDate.now().plusMonths(1) + "\", " +
@@ -389,6 +404,7 @@ class FaturaControllerTest {
                                 .content(
                                         "{\"numeroContrato\": \"" + contratoA.getNumContrato() + "\", " +
                                                 "\"numeroFatura\": 10004321, " +
+                                                "\"percentualJuros\": 7.3, " +
                                                 "\"cnpjFornecedor\": \"" + fornecedorA.getCnpj() + "\", " +
                                                 "\"razaoSocial\": \"" + fornecedorA.getRazaoSocial() + "\", " +
                                                 "\"dataPagamento\": \"" + LocalDate.now().plusDays(-1) + "\", " +

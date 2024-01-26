@@ -1,6 +1,7 @@
 package com.knnsystem.api.model.entity;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,16 +17,16 @@ public class Fatura {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idFatura;
+	private Long idFatura;
 	
 	@Column(name = "numero")
 	private Long numero;
 	
 	@Column(name = "valor")
-	private double valor;
+	private BigDecimal valor;
 	
 	@Column(name = "vencimento")
-	private Date vencimento;
+	private LocalDate vencimento;
 	
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
