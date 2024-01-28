@@ -58,6 +58,8 @@ public class SecurityConfigurations {
                                 "/relatorio/api/**").hasAnyRole(PAPEL_ADMINISTRADOR, PAPEL_SINDICO)
                         .requestMatchers(HttpMethod.DELETE,
                                 "/fornecedor/api/exclui/**").hasAnyRole(PAPEL_ADMINISTRADOR)
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/contrato/api/exclui/**").hasAnyRole(PAPEL_ADMINISTRADOR)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

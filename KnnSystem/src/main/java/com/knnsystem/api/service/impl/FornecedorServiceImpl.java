@@ -90,7 +90,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     public void excluir(Long id) {
         var entidadeAExcluir = fornecedorRepository.findByIdFornecedor(id);
         if (entidadeAExcluir.isEmpty()) {
-            throw new EntidadeNaoEncontradaException("Não existe o fornecedor solicitado");
+            throw new EntidadeNaoEncontradaException("Não existe o registro solicitado");
         }
         entidadeAExcluir.ifPresent(fornecedorRepository::delete);
     }

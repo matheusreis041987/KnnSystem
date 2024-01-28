@@ -130,6 +130,16 @@ public class ContratoServiceImpl implements ContratoService {
 
 	}
 
+	@Override
+	@Transactional
+	public void excluir(Long id) {
+		var entidadeAExcluir = contratoRepository.findById(id);
+		if (entidadeAExcluir.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não existe o registro solicitado");
+		}
+		entidadeAExcluir.ifPresent(contratoRepository::delete);
+	}
+
 	private Contrato obtemContratoPorId(Long id){
 		Optional<Contrato> contratoOptional = contratoRepository.findById(id);
 		if (contratoOptional.isEmpty()) {

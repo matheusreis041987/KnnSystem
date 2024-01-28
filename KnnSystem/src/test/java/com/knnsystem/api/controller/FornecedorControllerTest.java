@@ -372,10 +372,10 @@ class FornecedorControllerTest {
 
     }
 
-    @DisplayName("Testa exclusão de regristro de fornecedor que não está na base")
+    @DisplayName("Testa exclusão de regristro que não está na base")
     @Test
     @Transactional
-    void deveInformarErroAoTentarExcluirRegistroInexistenteDeFornecedor() throws Exception {
+    void deveInformarErroAoTentarExcluirRegistroInexistente() throws Exception {
         // Act
         this.mockMvc.perform(
             delete(ENDPOINT_EXCLUSAO + "/123456")
@@ -385,10 +385,10 @@ class FornecedorControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @DisplayName("Testa exclusão de regristro de fornecedor que está na base por administrador")
+    @DisplayName("Testa exclusão de regristro que está na base por administrador")
     @Test
     @Transactional
-    void deveExcluirRegistroInexistenteDeFornecedorSeAdministrador() throws Exception {
+    void deveExcluirRegistroInexistenteSeAdministrador() throws Exception {
         // Arrange
         responsavelA = responsavelRepository.save(responsavelA);
         fornecedorA.setResponsavel(responsavelA);
@@ -404,10 +404,10 @@ class FornecedorControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    @DisplayName("Testa exclusão de regristro de fornecedor que está na base por secretaria")
+    @DisplayName("Testa exclusão de regristro que está na base por secretaria")
     @Test
     @Transactional
-    void deveProibirExcluirRegistroInexistenteDeFornecedorSeNaoAdministrador() throws Exception {
+    void deveProibirExcluirRegistroInexistenteSeNaoAdministrador() throws Exception {
         // Arrange
         responsavelA = responsavelRepository.save(responsavelA);
         fornecedorA.setResponsavel(responsavelA);

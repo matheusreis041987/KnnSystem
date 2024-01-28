@@ -20,4 +20,6 @@ public interface ContratoService {
 	void reajustar(Long id, @Valid ReajusteParametrosDTO dto);
 
     void rescindir(Long id, @Valid RescisaoCadastroDTO dto);
+
+    void excluir(Long id);
 }
