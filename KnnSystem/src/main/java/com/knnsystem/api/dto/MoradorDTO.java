@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.br.CPF;
 
 public record MoradorDTO (
-		Integer id,
+		Long id,
 
 		@NotBlank(message = "nome do morador é obrigatório")
 		String nome,
