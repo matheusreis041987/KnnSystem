@@ -61,19 +61,19 @@ class ContratoControllerTest {
     private SindicoRepository sindicoRepository;
 
     @Autowired
-    ResponsavelRepository responsavelRepository;
+    private ResponsavelRepository responsavelRepository;
 
     @Autowired
-    FornecedorRepository fornecedorRepository;
+    private FornecedorRepository fornecedorRepository;
 
     @Autowired
-    DomicilioBancarioRepository domicilioBancarioRepository;
+    private DomicilioBancarioRepository domicilioBancarioRepository;
 
     @Autowired
-    GestorRepository gestorRepository;
+    private GestorRepository gestorRepository;
 
     @Autowired
-    ContratoRepository contratoRepository;
+    private ContratoRepository contratoRepository;
 
     @Autowired
     private TestDataBuilder testDataBuilder;

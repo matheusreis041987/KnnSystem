@@ -5,11 +5,9 @@ import com.knnsystem.api.dto.ReajusteParametrosDTO;
 import com.knnsystem.api.dto.RescisaoCadastroDTO;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
+import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
-import com.knnsystem.api.model.entity.CausadorRescisao;
-import com.knnsystem.api.model.entity.Contrato;
-import com.knnsystem.api.model.entity.Fornecedor;
-import com.knnsystem.api.model.entity.Rescisao;
+import com.knnsystem.api.model.entity.*;
 import com.knnsystem.api.model.repository.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.service.ContratoService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -138,6 +137,31 @@ public class ContratoServiceImpl implements ContratoService {
 			throw new EntidadeNaoEncontradaException("Não existe o registro solicitado");
 		}
 		entidadeAExcluir.ifPresent(contratoRepository::delete);
+	}
+
+	@Override
+	@Transactional
+	public List<ContratoDTO> listarVigentes() {
+		return listarContratosPorStatus(StatusContrato.ATIVO);
+	}
+
+	@Override
+	@Transactional
+	public List<ContratoDTO> listarVencidos() {
+		return listarContratosPorStatus(StatusContrato.VENCIDO);
+	}
+
+	private List<ContratoDTO> listarContratosPorStatus(StatusContrato statusContrato) {
+		var contratos = contratoRepository
+				.findAllByStatusContrato(statusContrato)
+				.stream()
+				.map(ContratoDTO::new)
+				.toList();
+
+		if (contratos.isEmpty()) {
+			throw new RelatorioSemResultadoException("Erro -  não há dados para o relatório");
+		}
+		return contratos;
 	}
 
 	private Contrato obtemContratoPorId(Long id){

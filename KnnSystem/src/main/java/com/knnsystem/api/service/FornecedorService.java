@@ -12,4 +12,6 @@ public interface FornecedorService {
     FornecedorDTO inativar(String cnpj, String razaoSocial, Long numeroControle);
 
     void excluir(Long id);
+
+    List<FornecedorDTO> listarAtivos();
 }
