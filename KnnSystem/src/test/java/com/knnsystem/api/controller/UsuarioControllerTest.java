@@ -48,6 +48,8 @@ class UsuarioControllerTest {
 
     private final String ENDPOINT_INATIVAR = "/usuario/api/inativa";
 
+    private final String ENDPOINT_EXCLUSAO = "/usuario/api/exclui";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -418,6 +420,46 @@ class UsuarioControllerTest {
                 )
                 // Assert
                 .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("Testa exclusão de regristro que não está na base")
+    @Test
+    @Transactional
+    void deveInformarErroAoTentarExcluirRegistroInexistente() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/123456")
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("Testa exclusão de regristro que está na base por administrador")
+    @Test
+    @Transactional
+    void deveExcluirRegistroInexistenteSeAdministrador() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/" + usuarioAtivo.getId())
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("Testa exclusão de regristro que está na base por secretaria")
+    @Test
+    @Transactional
+    void deveProibirExcluirRegistroInexistenteSeNaoAdministrador() throws Exception {
+
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/" + usuarioAtivo.getId())
+                                .with(user(usuarioSecretaria))
+                )
+                // Assert
+                .andExpect(status().isForbidden());
     }
 
 }

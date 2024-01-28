@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.br.CPF;
 
 public record UsuarioResumoDTO(
 
-        Integer id,
+        Long id,
         String nome,
 
         @CPF

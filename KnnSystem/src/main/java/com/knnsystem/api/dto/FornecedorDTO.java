@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.br.CNPJ;
 
 public record FornecedorDTO (
-		Integer id,
+		Long id,
 
 		@NotBlank(message = "razão social é obrigatório")
 		String razaoSocial,

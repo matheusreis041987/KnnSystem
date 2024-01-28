@@ -63,4 +63,11 @@ public class UsuarioController {
         return ResponseEntity.ok(dto);
     }
 
+    @DeleteMapping("/exclui/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
+    public ResponseEntity excluir(@PathVariable Long id){
+        service.excluir(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

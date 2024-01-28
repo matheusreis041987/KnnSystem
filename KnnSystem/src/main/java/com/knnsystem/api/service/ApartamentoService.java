@@ -13,4 +13,6 @@ public interface ApartamentoService {
 	ApartamentoFormularioDTO salvar(ApartamentoFormularioDTO apartamentoFormularioDTO);
 
 	ApartamentoFormularioDTO inativar(Integer numero, String bloco);
+
+    void excluir(Long id);
 }

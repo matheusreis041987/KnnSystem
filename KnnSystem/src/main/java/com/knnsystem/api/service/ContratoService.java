@@ -12,7 +12,8 @@ public interface ContratoService {
 
 	ContratoDTO salvar (ContratoDTO dto);
 
-
+	
+	
 	List<ContratoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroControle);
 
 	void inativar(Long id);
@@ -20,4 +21,10 @@ public interface ContratoService {
 	void reajustar(Long id, @Valid ReajusteParametrosDTO dto);
 
     void rescindir(Long id, @Valid RescisaoCadastroDTO dto);
+
+    void excluir(Long id);
+
+	List<ContratoDTO> listarVigentes();
+
+	List<ContratoDTO> listarVencidos();
 }

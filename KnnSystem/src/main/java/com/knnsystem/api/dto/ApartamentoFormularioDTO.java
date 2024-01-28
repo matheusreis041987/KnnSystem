@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.br.CPF;
 
 public record ApartamentoFormularioDTO(
 		@NotNull(message = "número do apartamento deve ser preenchido")
-		int numeroDoApartamento,
+		Integer numeroDoApartamento,
 		@NotBlank(message = "bloco deve ser preenchido")
 		String bloco,
 		@NotBlank(message = "nome do proprietário deve ser preenchido")
@@ -35,9 +35,9 @@ public record ApartamentoFormularioDTO(
 		@Email(message = "e-mail do morador inválido")
 		String emailDoMorador,
 		@NotNull(message = "metragem do imóvel deve ser preenchida")
-		int metragemDoImovel,
+		Integer metragemDoImovel,
 
-		int id) {
+		Long id) {
 
 	public ApartamentoFormularioDTO(Apartamento apartamento){
 		this(apartamento.getNumApt(), apartamento.getBlocoApt(),

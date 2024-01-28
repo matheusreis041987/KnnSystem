@@ -19,7 +19,7 @@ public class Fornecedor {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Getter
 	@Setter
-	private int idFornecedor;
+	private Long idFornecedor;
 	
 	@Column(name = "num_contr")
 	@Getter

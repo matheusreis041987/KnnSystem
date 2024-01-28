@@ -5,13 +5,12 @@ import com.knnsystem.api.model.entity.StatusGeral;
 import jakarta.validation.constraints.NotBlank;
 
 public record DomicilioBancarioDTO (
-		@NotBlank
 		String agencia,
-		@NotBlank
+
 		String contaCorrente,
-		@NotBlank
+
 		String banco,
-		@NotBlank
+
 		String pix
 ) {
     public DomicilioBancarioDTO(DomicilioBancario domicilioBancario) {

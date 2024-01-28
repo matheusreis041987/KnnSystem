@@ -18,7 +18,9 @@ public class TratadorErros {
         );
     }
 
-    @ExceptionHandler({EntidadeCadastradaException.class})
+    @ExceptionHandler(
+            {EntidadeCadastradaException.class,
+            ErroComunicacaoComBancoException.class})
     public ResponseEntity trataErro409(Exception exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 new ErroSoComMensagemValidacao(exception.getMessage())

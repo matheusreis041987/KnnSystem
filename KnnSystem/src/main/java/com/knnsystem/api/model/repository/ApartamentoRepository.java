@@ -7,7 +7,7 @@ import com.knnsystem.api.model.entity.Apartamento;
 import java.util.List;
 import java.util.Optional;
 
-public interface ApartamentoRepository extends JpaRepository<Apartamento, Integer> {
+public interface ApartamentoRepository extends JpaRepository<Apartamento, Long> {
 
     Optional<Apartamento> findByNumAptAndBlocoApt(Integer numApt, String blocoApt);
 
