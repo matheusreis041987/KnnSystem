@@ -16,6 +16,6 @@ public interface ContratoRepository extends JpaRepository<Contrato, Long> {
 
     List<Contrato> findAllByFornecedor(Fornecedor fornecedor);
 
-    List<Contrato> findAllByStatusContratoAndGreaterThanEqualVigenciaFinal(StatusContrato statusContrato, LocalDate vigenciaFinal);
+    List<Contrato> findAllByStatusContrato(StatusContrato statusContrato);
 
 }

@@ -36,6 +36,8 @@ class RelatoriosControllerTest {
 
     private final String ENDPOINT_RELATORIO_APARTAMENTOS = "/relatorio/api/apartamentos";
 
+    private final String ENDPOINT_RELATORIO_CONTRATOS_VIGENTES = "/relatorio/api/contratos-vigentes";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -176,6 +178,23 @@ class RelatoriosControllerTest {
                 )
                 // Assert
                 .andExpect(status().isForbidden())
+        ;
+    }
+
+    @DisplayName("testa relatório de contratos vigentes sem resultados retorna erro")
+    @Test
+    @Transactional
+    void deveLancarErroRelatorioDeContratosVigentesSeNaoHouverResultados() throws Exception {
+        // Act
+        this.mockMvc
+                .perform(
+                        get(ENDPOINT_RELATORIO_CONTRATOS_VIGENTES)
+                                .with(user(usuarioSindico))
+                )
+                // Assert
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem",
+                        Matchers.is("Erro -  não há dados para o relatório")))
         ;
     }
 

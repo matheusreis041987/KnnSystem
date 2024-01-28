@@ -5,6 +5,7 @@ import com.knnsystem.api.dto.ReajusteParametrosDTO;
 import com.knnsystem.api.dto.RescisaoCadastroDTO;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
+import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
 import com.knnsystem.api.model.entity.*;
 import com.knnsystem.api.model.repository.*;
@@ -141,10 +142,15 @@ public class ContratoServiceImpl implements ContratoService {
 	@Override
 	public List<ContratoDTO> listarVigentes() {
 		var contratosVigentes = contratoRepository
-				.findAllByStatusContratoAndGreaterThanEqualVigenciaFinal(StatusContrato.ATIVO, LocalDate.now())
+				.findAllByStatusContrato(StatusContrato.ATIVO)
 				.stream()
+				.filter(contrato -> contrato.getVigenciaFinal().isAfter(LocalDate.now()))
 				.map(ContratoDTO::new)
 				.toList();
+
+		if (contratosVigentes.isEmpty()) {
+			throw new RelatorioSemResultadoException("Erro -  não há dados para o relatório");
+		}
 		return contratosVigentes;
 	}
 
