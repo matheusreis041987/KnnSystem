@@ -40,6 +40,8 @@ class ContratoControllerTest {
 
     private Usuario usuarioSecretaria;
 
+    private Usuario usuarioAdministrador;
+
     private final String ENDPOINT_CADASTRO = "/contrato/api/cadastra";
 
     private final String ENDPOINT_CONSULTA = "/contrato/api/consulta";
@@ -49,6 +51,8 @@ class ContratoControllerTest {
     private final String ENDPOINT_REAJUSTA = "/contrato/api/reajusta";
 
     private final String ENDPOINT_RESCINDE = "/contrato/api/rescinde";
+
+    private final String ENDPOINT_EXCLUSAO = "/contrato/api/exclui";
 
     @Autowired
     private MockMvc mockMvc;
@@ -87,6 +91,7 @@ class ContratoControllerTest {
 
 
         this.usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
+        this.usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
     }
 
     @DisplayName("Testa que não pode cadastrar novo contrato sem preencher o formulario completo")
@@ -505,6 +510,71 @@ class ContratoControllerTest {
                 )
                 .andExpect(status().isNoContent());
 
+    }
+
+    @DisplayName("Testa exclusão de regristro que não está na base")
+    @Test
+    @Transactional
+    void deveInformarErroAoTentarExcluirRegistroInexistente() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/123456")
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("Testa exclusão de regristro que está na base por administrador")
+    @Test
+    @Transactional
+    void deveExcluirRegistroInexistenteSeAdministrador() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);
+        contratoRepository.save(contratoA);
+
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/" + contratoA.getIdContrato())
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("Testa exclusão de regristro que está na base por secretaria")
+    @Test
+    @Transactional
+    void deveProibirExcluirRegistroInexistenteSeNaoAdministrador() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        gestorA = gestorRepository.save(gestorA);
+        sindico = sindicoRepository.save(sindico);
+        contratoA.setFornecedor(fornecedorA);
+        contratoA.setGestor(gestorA);
+        contratoA.setSindico(sindico);
+        contratoRepository.save(contratoA);
+
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/" + contratoA.getIdContrato())
+                                .with(user(usuarioSecretaria))
+                )
+                // Assert
+                .andExpect(status().isForbidden());
     }
 
 }

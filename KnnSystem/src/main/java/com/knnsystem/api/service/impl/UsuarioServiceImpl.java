@@ -97,6 +97,16 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public Usuario getUsuarioLogado(){
 		return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
+
+	@Override
+	@Transactional
+	public void excluir(Long id) {
+		var entidadeAExcluir = repository.findById(id);
+		if (entidadeAExcluir.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não existe o registro solicitado");
+		}
+		entidadeAExcluir.ifPresent(repository::delete);
+	}
 }
 
 

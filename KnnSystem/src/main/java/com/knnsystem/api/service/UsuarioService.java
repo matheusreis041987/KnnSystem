@@ -21,4 +21,5 @@ public interface UsuarioService {
 
 	Usuario getUsuarioLogado();
 
+    void excluir(Long id);
 }
