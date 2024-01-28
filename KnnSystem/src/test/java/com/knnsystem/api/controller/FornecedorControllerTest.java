@@ -45,11 +45,15 @@ class FornecedorControllerTest {
 
     private Usuario usuarioSecretaria;
 
+    private Usuario usuarioAdministrador;
+
     private final String ENDPOINT_CADASTRO = "/fornecedor/api/cadastra";
 
     private final String ENDPOINT_CONSULTA = "/fornecedor/api/consulta";
 
     private final String ENDPOINT_INATIVA = "/fornecedor/api/inativa";
+
+    private final String ENDPOINT_EXCLUSAO = "/fornecedor/api/exclui";
 
     @Autowired
     private MockMvc mockMvc;
@@ -78,6 +82,7 @@ class FornecedorControllerTest {
         this.fornecedorB = testDataBuilder.createFornecedorB();
 
         this.usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
+        this.usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
     }
 
     @DisplayName("Testa que não pode cadastrar fornecedor mais de uma vez")
@@ -365,6 +370,57 @@ class FornecedorControllerTest {
                         Matchers.is(fornecedorA.getCnpj())))
         ;
 
+    }
+
+    @DisplayName("Testa exclusão de regristro de fornecedor que não está na base")
+    @Test
+    @Transactional
+    void deveInformarErroAoTentarExcluirRegistroInexistenteDeFornecedor() throws Exception {
+        // Act
+        this.mockMvc.perform(
+            delete(ENDPOINT_EXCLUSAO + "/123456")
+                    .with(user(usuarioAdministrador))
+        )
+            // Assert
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("Testa exclusão de regristro de fornecedor que está na base por administrador")
+    @Test
+    @Transactional
+    void deveExcluirRegistroInexistenteDeFornecedorSeAdministrador() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/" + fornecedorA.getIdFornecedor())
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("Testa exclusão de regristro de fornecedor que está na base por secretaria")
+    @Test
+    @Transactional
+    void deveProibirExcluirRegistroInexistenteDeFornecedorSeNaoAdministrador() throws Exception {
+        // Arrange
+        responsavelA = responsavelRepository.save(responsavelA);
+        fornecedorA.setResponsavel(responsavelA);
+        domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
+        fornecedorA.setDomicilioBancario(domicilioBancarioA);
+        fornecedorA = fornecedorRepository.save(fornecedorA);
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/" + fornecedorA.getIdFornecedor())
+                                .with(user(usuarioSecretaria))
+                )
+                // Assert
+                .andExpect(status().isForbidden());
     }
 
 }

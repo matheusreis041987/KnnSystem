@@ -84,4 +84,14 @@ public class FornecedorServiceImpl implements FornecedorService {
 
         return new FornecedorDTO(fornecedorAInativar);
     }
+
+    @Override
+    @Transactional
+    public void excluir(Long id) {
+        var entidadeAExcluir = fornecedorRepository.findByIdFornecedor(id);
+        if (entidadeAExcluir.isEmpty()) {
+            throw new EntidadeNaoEncontradaException("Não existe o fornecedor solicitado");
+        }
+        entidadeAExcluir.ifPresent(fornecedorRepository::delete);
+    }
 }

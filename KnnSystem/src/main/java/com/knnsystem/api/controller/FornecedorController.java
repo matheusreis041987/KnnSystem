@@ -55,5 +55,11 @@ public class FornecedorController {
 
     }
 
+    @DeleteMapping("/exclui/{id}")
+    public ResponseEntity excluir(@PathVariable Long id){
+        service.excluir(id);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

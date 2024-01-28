@@ -10,4 +10,6 @@ public interface FornecedorService {
     List<FornecedorDTO> listar(String cnpj, String razaoSocial, Long numeroControle);
 
     FornecedorDTO inativar(String cnpj, String razaoSocial, Long numeroControle);
+
+    void excluir(Long id);
 }
