@@ -4,6 +4,7 @@ import com.knnsystem.api.dto.FornecedorDTO;
 import com.knnsystem.api.exceptions.EntidadeCadastradaException;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
+import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
 import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.repository.DomicilioBancarioRepository;
@@ -93,5 +94,20 @@ public class FornecedorServiceImpl implements FornecedorService {
             throw new EntidadeNaoEncontradaException("Não existe o registro solicitado");
         }
         entidadeAExcluir.ifPresent(fornecedorRepository::delete);
+    }
+
+    @Override
+    public List<FornecedorDTO> listarAtivos() {
+        var contratos = fornecedorRepository
+                .findAll()
+                .stream()
+                .filter(fornecedor -> fornecedor.getStatusFornecedor().equals(StatusGeral.ATIVO))
+                .map(FornecedorDTO::new)
+                .toList();
+
+        if (contratos.isEmpty()) {
+            throw new RelatorioSemResultadoException("Erro -  não há dados para o relatório");
+        }
+        return contratos;
     }
 }

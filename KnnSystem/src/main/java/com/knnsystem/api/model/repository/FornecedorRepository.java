@@ -1,5 +1,6 @@
 package com.knnsystem.api.model.repository;
 
+import com.knnsystem.api.model.entity.StatusGeral;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.springframework.data.jpa.repository.JpaRepository;
 
