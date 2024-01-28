@@ -46,8 +46,23 @@ class ContratoTest {
         // Assert
         assertEquals(contrato.getValorMensalAtual(), new BigDecimal("10498.00"));
 
+    }
 
+    @Test
+    @DisplayName("Deve ficar rescindido após rescindir")
+    void testCenarioSituacaoContratoAposRescisao() {
+        // Arrange
+        contrato = new Contrato();
+        contrato.setVigenciaInicial(LocalDate.of(2022, 8, 2));
+        contrato.setVigenciaFinal(LocalDate.of(2024, 12, 31));
 
+        // Act
+        Rescisao rescisao = new Rescisao(contrato);
+        rescisao.setDtRescisao(LocalDate.of(2024, 1, 25));
+        rescisao.setCausador(CausadorRescisao.CONTRATANTE);
+
+        // Assert
+        assertEquals(contrato.getStatusContrato(), StatusContrato.RESCINDIDO);
     }
 
 }

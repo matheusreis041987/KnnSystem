@@ -44,6 +44,8 @@ class ApartamentoControllerTest {
 
     private final String ENDPOINT_INATIVA = "/apartamento/api/inativa";
 
+    private final String ENDPOINT_EXCLUSAO = "/apartamento/api/exclui";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -372,6 +374,51 @@ class ApartamentoControllerTest {
                 // Assert
                 .andExpect(status().isForbidden())
         ;
+    }
+
+    @DisplayName("Testa exclusão de regristro que não está na base")
+    @Test
+    @Transactional
+    void deveInformarErroAoTentarExcluirRegistroInexistente() throws Exception {
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/123456")
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("Testa exclusão de regristro que está na base por administrador")
+    @Test
+    @Transactional
+    void deveExcluirRegistroInexistenteSeAdministrador() throws Exception {
+        // Arrange
+        apartamentoRepository.save(apartamentoA);
+
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/" + apartamentoA.getIdApartamento())
+                                .with(user(usuarioAdministrador))
+                )
+                // Assert
+                .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("Testa exclusão de regristro que está na base por secretaria")
+    @Test
+    @Transactional
+    void deveProibirExcluirRegistroInexistenteSeNaoAdministrador() throws Exception {
+        // Arrange
+        apartamentoRepository.save(apartamentoA);
+
+        // Act
+        this.mockMvc.perform(
+                        delete(ENDPOINT_EXCLUSAO + "/" + apartamentoA.getIdApartamento())
+                                .with(user(usuarioSecretaria))
+                )
+                // Assert
+                .andExpect(status().isForbidden());
     }
 
 }

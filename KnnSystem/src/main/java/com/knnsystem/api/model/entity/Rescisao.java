@@ -2,8 +2,6 @@ package com.knnsystem.api.model.entity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
@@ -49,6 +47,7 @@ public class Rescisao {
 
 	public Rescisao(Contrato contrato){
 		pctMulta = new BigDecimal("30.00");
+		contrato.rescindir();
 		this.contrato = contrato;
 	}
 

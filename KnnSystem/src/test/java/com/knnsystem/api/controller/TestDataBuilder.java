@@ -18,7 +18,7 @@ public class TestDataBuilder {
         // Ativo
         // Arrange
         Pessoa pessoa = new Pessoa();
-        pessoa.setId(1);
+        pessoa.setId(1L);
         // https://www.4devs.com.br/gerador_de_cpf
         pessoa.setCpf("56214649070");
         pessoa.setNome("Nome da Pessoa");
@@ -41,7 +41,7 @@ public class TestDataBuilder {
         // Inativo
         // Arrange
         Pessoa pessoa = new Pessoa();
-        pessoa.setId(2);
+        pessoa.setId(2L);
         // https://www.4devs.com.br/gerador_de_cpf
         pessoa.setCpf("77309636040");
         pessoa.setNome("Nome da Pessoa 2");
@@ -61,7 +61,7 @@ public class TestDataBuilder {
         // Ativo
         // Arrange
         Pessoa pessoa = new Pessoa();
-        pessoa.setId(1);
+        pessoa.setId(1L);
         // https://www.4devs.com.br/gerador_de_cpf
         pessoa.setCpf("40586756086");
         pessoa.setNome("Novo usuário");
@@ -82,7 +82,7 @@ public class TestDataBuilder {
         // Ativo
         // Arrange
         Pessoa pessoa = new Pessoa();
-        pessoa.setId(1);
+        pessoa.setId(1L);
         // https://www.4devs.com.br/gerador_de_cpf
         pessoa.setCpf("44890168087");
         pessoa.setNome("Administrador");
@@ -101,7 +101,7 @@ public class TestDataBuilder {
         // Ativo
         // Arrange
         Pessoa pessoa = new Pessoa();
-        pessoa.setId(1);
+        pessoa.setId(1L);
         // https://www.4devs.com.br/gerador_de_cpf
         pessoa.setCpf("94302590084");
         pessoa.setNome("Funcionário da secretaria");
@@ -120,7 +120,7 @@ public class TestDataBuilder {
         // Ativo
         // Arrange
         Pessoa pessoa = new Pessoa();
-        pessoa.setId(1);
+        pessoa.setId(1L);
         // https://www.4devs.com.br/gerador_de_cpf
         pessoa.setCpf("94142552066");
         pessoa.setNome("Sindico");
