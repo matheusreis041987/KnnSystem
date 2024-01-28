@@ -37,5 +37,11 @@ public class RelatoriosController {
         return ResponseEntity.ok(relatorio);
     }
 
+    @GetMapping("/contratos-vencidos")
+    public ResponseEntity<List<ContratoDTO>> listarContratosVencidos(){
+        var relatorio = contratoService.listarVencidos();
+        return ResponseEntity.ok(relatorio);
+    }
+
 
 }

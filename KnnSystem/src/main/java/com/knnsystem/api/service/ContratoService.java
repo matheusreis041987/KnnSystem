@@ -25,4 +25,6 @@ public interface ContratoService {
     void excluir(Long id);
 
 	List<ContratoDTO> listarVigentes();
+
+	List<ContratoDTO> listarVencidos();
 }

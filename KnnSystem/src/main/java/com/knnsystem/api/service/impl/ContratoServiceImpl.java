@@ -140,18 +140,28 @@ public class ContratoServiceImpl implements ContratoService {
 	}
 
 	@Override
+	@Transactional
 	public List<ContratoDTO> listarVigentes() {
-		var contratosVigentes = contratoRepository
-				.findAllByStatusContrato(StatusContrato.ATIVO)
+		return listarContratosPorStatus(StatusContrato.ATIVO);
+	}
+
+	@Override
+	@Transactional
+	public List<ContratoDTO> listarVencidos() {
+		return listarContratosPorStatus(StatusContrato.VENCIDO);
+	}
+
+	private List<ContratoDTO> listarContratosPorStatus(StatusContrato statusContrato) {
+		var contratos = contratoRepository
+				.findAllByStatusContrato(statusContrato)
 				.stream()
-				.filter(contrato -> contrato.getVigenciaFinal().isAfter(LocalDate.now()))
 				.map(ContratoDTO::new)
 				.toList();
 
-		if (contratosVigentes.isEmpty()) {
+		if (contratos.isEmpty()) {
 			throw new RelatorioSemResultadoException("Erro -  não há dados para o relatório");
 		}
-		return contratosVigentes;
+		return contratos;
 	}
 
 	private Contrato obtemContratoPorId(Long id){
