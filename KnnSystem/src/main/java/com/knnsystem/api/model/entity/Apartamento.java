@@ -16,7 +16,7 @@ public class Apartamento {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idApartamento;
+	private Long idApartamento;
 	
 	@OneToOne
 	@JoinColumn(name = "fk_morador")

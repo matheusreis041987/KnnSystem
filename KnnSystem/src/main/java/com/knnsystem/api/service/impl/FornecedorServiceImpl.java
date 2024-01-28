@@ -88,7 +88,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     @Override
     @Transactional
     public void excluir(Long id) {
-        var entidadeAExcluir = fornecedorRepository.findByIdFornecedor(id);
+        var entidadeAExcluir = fornecedorRepository.findById(id);
         if (entidadeAExcluir.isEmpty()) {
             throw new EntidadeNaoEncontradaException("Não existe o registro solicitado");
         }

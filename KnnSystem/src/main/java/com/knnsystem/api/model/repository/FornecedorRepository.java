@@ -8,7 +8,7 @@ import com.knnsystem.api.model.entity.Fornecedor;
 import java.util.List;
 import java.util.Optional;
 
-public interface FornecedorRepository extends JpaRepository<Fornecedor, Integer> {
+public interface FornecedorRepository extends JpaRepository<Fornecedor, Long> {
 
     Optional<Fornecedor> findByCnpj(@CNPJ String cnpj);
 
@@ -23,5 +23,4 @@ public interface FornecedorRepository extends JpaRepository<Fornecedor, Integer>
 
     Optional<Fornecedor> findByRazaoSocial(String razaoSocial);
 
-    Optional<Fornecedor> findByIdFornecedor(Long id);
 }

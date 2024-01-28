@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -72,6 +73,7 @@ public class ContratoController {
     }
 
     @DeleteMapping("/exclui/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
     public ResponseEntity excluir(@PathVariable Long id){
         service.excluir(id);
         return ResponseEntity.noContent().build();
