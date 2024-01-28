@@ -6,10 +6,7 @@ import com.knnsystem.api.dto.RescisaoCadastroDTO;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
-import com.knnsystem.api.model.entity.CausadorRescisao;
-import com.knnsystem.api.model.entity.Contrato;
-import com.knnsystem.api.model.entity.Fornecedor;
-import com.knnsystem.api.model.entity.Rescisao;
+import com.knnsystem.api.model.entity.*;
 import com.knnsystem.api.model.repository.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.knnsystem.api.service.ContratoService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -138,6 +136,16 @@ public class ContratoServiceImpl implements ContratoService {
 			throw new EntidadeNaoEncontradaException("Não existe o registro solicitado");
 		}
 		entidadeAExcluir.ifPresent(contratoRepository::delete);
+	}
+
+	@Override
+	public List<ContratoDTO> listarVigentes() {
+		var contratosVigentes = contratoRepository
+				.findAllByStatusContratoAndGreaterThanEqualVigenciaFinal(StatusContrato.ATIVO, LocalDate.now())
+				.stream()
+				.map(ContratoDTO::new)
+				.toList();
+		return contratosVigentes;
 	}
 
 	private Contrato obtemContratoPorId(Long id){

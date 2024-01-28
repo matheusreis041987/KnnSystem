@@ -2,7 +2,9 @@ package com.knnsystem.api.controller;
 
 
 import com.knnsystem.api.dto.ApartamentoFormularioDTO;
+import com.knnsystem.api.dto.ContratoDTO;
 import com.knnsystem.api.service.ApartamentoService;
+import com.knnsystem.api.service.ContratoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,9 +22,18 @@ public class RelatoriosController {
     @Autowired
     private ApartamentoService apartamentoService;
 
+    @Autowired
+    private ContratoService contratoService;
+
     @GetMapping("/apartamentos")
     public ResponseEntity<List<ApartamentoFormularioDTO>> listaApartamentos() {
         var relatorio = apartamentoService.listar();
+        return ResponseEntity.ok(relatorio);
+    }
+
+    @GetMapping("/contratos-vigentes")
+    public ResponseEntity<List<ContratoDTO>> listarContratosVigentes(){
+        var relatorio = contratoService.listarVigentes();
         return ResponseEntity.ok(relatorio);
     }
 
