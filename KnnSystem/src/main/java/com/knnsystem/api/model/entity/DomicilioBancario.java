@@ -32,7 +32,7 @@ public class DomicilioBancario {
 	@Enumerated(EnumType.STRING)
 	private StatusGeral statusDomicilio;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "fk_id_fornecedor", referencedColumnName = "id")
 	private Fornecedor fornecedor;
 

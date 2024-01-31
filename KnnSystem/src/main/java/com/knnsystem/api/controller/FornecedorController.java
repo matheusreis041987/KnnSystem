@@ -35,7 +35,7 @@ public class FornecedorController {
     public ResponseEntity<List<FornecedorDTO>> listar(
             @RequestParam(value = "cnpj", required = false) @CNPJ String cnpj,
             @RequestParam(value = "razaoSocial", required = false) String razaoSocial,
-            @RequestParam(value = "numeroControle", required = false) Long numeroControle
+            @RequestParam(value = "numeroControle", required = false) String numeroControle
     ){
         List<FornecedorDTO> fornecedores = service.listar(cnpj, razaoSocial, numeroControle);
         if (fornecedores.isEmpty()) {
@@ -49,7 +49,7 @@ public class FornecedorController {
     public ResponseEntity<FornecedorDTO> inativar(
             @RequestParam(value = "cnpj", required = false) @CNPJ String cnpj,
             @RequestParam(value = "razaoSocial", required = false) String razaoSocial,
-            @RequestParam(value = "numeroControle", required = false) Long numeroControle
+            @RequestParam(value = "numeroControle", required = false) String numeroControle
     ){
         FornecedorDTO fornecedor = service.inativar(cnpj, razaoSocial, numeroControle);
         return ResponseEntity.ok(fornecedor);

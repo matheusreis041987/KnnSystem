@@ -48,19 +48,23 @@ public class FornecedorServiceImpl implements FornecedorService {
         var fornecedor = dto.toModel(true);
 
 
-        // salva entidades relacionadas primeiro
-        responsavelRepository.save(fornecedor.getResponsavel());
-        domicilioBancarioRepository.save(fornecedor.getDomicilioBancario());
+        // salva o responsável
+        var responsavelSalvo = responsavelRepository.save(fornecedor.getResponsavel());
 
         // salva o fornecedor
         var fornecedorSalvo = fornecedorRepository.save(fornecedor);
+
+        // salva o domicílio bancário após
+        var domicilioASalvar = dto.domicilioBancario().toModel(true);
+        domicilioASalvar.setFornecedor(fornecedorSalvo);
+        domicilioBancarioRepository.save(domicilioASalvar);
 
         return new FornecedorDTO(fornecedorSalvo);
     }
 
     @Override
     @Transactional
-    public List<FornecedorDTO> listar(String cnpj, String razaoSocial, Long numeroControle) {
+    public List<FornecedorDTO> listar(String cnpj, String razaoSocial, String numeroControle) {
         return fornecedorRepository
                 .findByCnpjOrRazaoSocialOrNumControle(cnpj, razaoSocial, numeroControle)
                 .stream()
@@ -70,7 +74,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 
     @Override
     @Transactional
-    public FornecedorDTO inativar(String cnpj, String razaoSocial, Long numeroControle) {
+    public FornecedorDTO inativar(String cnpj, String razaoSocial, String numeroControle) {
         var fornecedor = fornecedorRepository.findByCnpjAndRazaoSocialAndNumControle(
           cnpj, razaoSocial, numeroControle
         );
