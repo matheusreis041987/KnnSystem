@@ -92,8 +92,9 @@ public class FaturaServiceImpl implements FaturaService  {
 			pagamento.setTemAprovacao(true);
 			pagamento.setStatusPagamento(StatusPagamento.AGUARDANDO_APROVACAO);
 			fatura.setStatusPagamento(StatusPagamento.AGUARDANDO_APROVACAO);
+			var pagamentoSalvo = pagamentoRepository.save(pagamento);
+			fatura.setPagamento(pagamentoSalvo);
 			faturaRepository.save(fatura);
-			pagamentoRepository.save(pagamento);
 			return new ResultadoPagamentoDTO(
 					StatusPagamento.AGUARDANDO_APROVACAO
 			);
@@ -101,8 +102,10 @@ public class FaturaServiceImpl implements FaturaService  {
 		pagamento.setTemAprovacao(false);
 		pagamento.setStatusPagamento(StatusPagamento.ENVIADO_PARA_PAGAMENTO);
 		fatura.setStatusPagamento(StatusPagamento.ENVIADO_PARA_PAGAMENTO);
+		var pagamentoSalvo = pagamentoRepository.save(pagamento);
+		fatura.setPagamento(pagamentoSalvo);
 		faturaRepository.save(fatura);
-		pagamentoRepository.save(pagamento);
+
 
 
 		return apiInsituicaoFinanceiraService

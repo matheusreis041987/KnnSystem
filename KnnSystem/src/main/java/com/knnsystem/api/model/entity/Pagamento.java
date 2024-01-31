@@ -12,8 +12,6 @@ import org.hibernate.annotations.DiscriminatorFormula;
 @Table(name = "pagamento", schema = "sch_financeiro" )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorFormula("Case when contrato.fornecedor.domicilio_bancario.pix is not null then 'PagamentoPix' else 'PagamentoDeposito' end")
-@SecondaryTable(name = "sch_financeiro_contratos", schema = "sch_financeiro")
-@SecondaryTable(name = "sch_pessoas_usuario", schema = "sch_pessoas")
 @Getter
 @Setter
 public abstract class Pagamento {
@@ -23,8 +21,8 @@ public abstract class Pagamento {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idPagamento;
 
-	@OneToOne
-	@JoinColumn(name = "fk_contrato", table = "sch_financeiro.contratos", referencedColumnName = "id")
+	@OneToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "fk_contrato", referencedColumnName = "id")
 	private Contrato contrato;
 
 	@Column(name = "data_hora")
@@ -46,12 +44,12 @@ public abstract class Pagamento {
 	@Enumerated(EnumType.STRING)
 	private StatusPagamento statusPagamento;
 
-	@Transient
+	@Column(name = "valor_total")
 	private BigDecimal valorTotal;
-	
 
-	@OneToOne
-	@JoinColumn(name = "fk_usuario", table = "sch_pessoas.usuario", referencedColumnName = "id")
+
+	@OneToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "fk_usuario", referencedColumnName = "id")
 	private Usuario usuario;
 
 	public final void efetuarPagamento() {

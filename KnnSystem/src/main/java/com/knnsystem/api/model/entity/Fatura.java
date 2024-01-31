@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "fatura", schema = "sch_financeiro")
-@SecondaryTable(name = "pagamento", schema = "sch_financeiro")
 @Getter
 @Setter
 public class Fatura {
@@ -32,8 +31,8 @@ public class Fatura {
 	@Enumerated(EnumType.STRING)
 	private StatusPagamento statusPagamento;
 	
-	@OneToOne
-	@JoinColumn(name = "fk_pagamento", table = "pagamento", referencedColumnName = "id")
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "fk_pagamento", referencedColumnName = "id")
 	private Pagamento pagamento;
 
 

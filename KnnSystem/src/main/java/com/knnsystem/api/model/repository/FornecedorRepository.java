@@ -1,6 +1,6 @@
 package com.knnsystem.api.model.repository;
 
-import com.knnsystem.api.model.entity.StatusGeral;
+
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,13 +14,13 @@ public interface FornecedorRepository extends JpaRepository<Fornecedor, Long> {
     Optional<Fornecedor> findByCnpj(@CNPJ String cnpj);
 
     List<Fornecedor> findByCnpjOrRazaoSocialOrNumControle(
-            @CNPJ String cnpj, String razaoSocial, Long numControle);
+            @CNPJ String cnpj, String razaoSocial, String numControle);
 
     Optional<Fornecedor> findByCnpjAndRazaoSocialAndNumControle(
-            @CNPJ String cnpj, String razaoSocial, Long numControle
+            @CNPJ String cnpj, String razaoSocial, String numControle
     );
 
-    Optional<Fornecedor> findByNumControle(Long numControle);
+    Optional<Fornecedor> findByNumControle(String numControle);
 
     Optional<Fornecedor> findByRazaoSocial(String razaoSocial);
 
