@@ -112,25 +112,21 @@ class RelatoriosControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",
                         hasSize(1)))
-                .andExpect(jsonPath("$[0].numeroDoApartamento",
+                .andExpect(jsonPath("$[0].morador.numeroDoApartamento",
                         Matchers.is(apartamento.getNumApt())))
-                .andExpect(jsonPath("$[0].bloco",
+                .andExpect(jsonPath("$[0].morador.blocoDoApartamento",
                         Matchers.is(apartamento.getBlocoApt())))
-                .andExpect(jsonPath("$[0].nomeDoProprietario",
+                .andExpect(jsonPath("$[0].proprietario.nome",
                         Matchers.is(proprietario.getNome())))
-                .andExpect(jsonPath("$[0].nomeDoMorador",
+                .andExpect(jsonPath("$[0].morador.nome",
                         Matchers.is(morador.getNome())))
-                .andExpect(jsonPath("$[0].telefoneDoProprietario",
-                        Matchers.is(proprietario.getTelefones().stream().findFirst().toString())))
-                .andExpect(jsonPath("$[0].telefoneDoMorador",
-                        Matchers.is(morador.getTelefones().stream().findFirst().toString())))
-                .andExpect(jsonPath("$[0].cpfDoProprietario",
+                .andExpect(jsonPath("$[0].proprietario.cpf",
                         Matchers.is(proprietario.getCpf())))
-                .andExpect(jsonPath("$[0].cpfDoMorador",
+                .andExpect(jsonPath("$[0].morador.cpf",
                         Matchers.is(morador.getCpf())))
-                .andExpect(jsonPath("$[0].emailDoProprietario",
+                .andExpect(jsonPath("$[0].proprietario.email",
                         Matchers.is(proprietario.getEmail())))
-                .andExpect(jsonPath("$[0].emailDoMorador",
+                .andExpect(jsonPath("$[0].morador.email",
                         Matchers.is(morador.getEmail())))
                 .andExpect(jsonPath("$[0].metragemDoImovel",
                         Matchers.is(apartamento.getMetragem())))

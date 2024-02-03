@@ -62,15 +62,15 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 
 		if (repository
 				.findByNumAptAndBlocoApt(
-						dto.numeroDoApartamento(),
-						dto.bloco()).isPresent()){
+						dto.moradorDTO().numeroDoApartamento(),
+						dto.moradorDTO().blocoDoApartamento()).isPresent()){
 			throw new EntidadeCadastradaException("Já há um apartamento cadastrado para os dados informados");
 		}
 
 		var apartamento = dto.toModel(true);
 
-		var proprietario = proprietarioRepository.findByCpf(dto.cpfDoProprietario());
-		var morador = moradorRepository.findByCpf(dto.cpfDoMorador());
+		var proprietario = proprietarioRepository.findByCpf(dto.proprietarioDTO().cpf());
+		var morador = moradorRepository.findByCpf(dto.moradorDTO().cpf());
 
 		if (proprietario.isEmpty()) {
 			throw new EntidadeNaoEncontradaException("Não há cadastro para o proprietário informado");

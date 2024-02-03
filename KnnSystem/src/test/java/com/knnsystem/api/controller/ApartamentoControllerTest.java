@@ -99,18 +99,19 @@ class ApartamentoControllerTest {
                                 .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
-                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
-                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
-                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
-                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
-                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
-                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
+                                        "{\"metragemDoImovel\": " + apartamentoA.getMetragem() + ", " +
+                                                "\"morador\": {" +
+                                                "\"numeroDoApartamento\": " + apartamentoA.getMorador().getNumApt() + ", " +
+                                                "\"blocoDoApartamento\": \"" + apartamentoA.getMorador().getBloco() + "\", " +
+                                                "\"telefone\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst().toString() + "\", " +
+                                                "\"nome\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"cpf\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"email\": \"" + apartamentoA.getMorador().getEmail() + "\"}, " +
+                                                "\"proprietario\": {" +
+                                                "\"telefone\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst().toString() + "\", " +
+                                                "\"nome\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"cpf\": \"" + apartamentoA.getProprietario().getCpf() + "\", "
+                                                + "\"email\": \"" + apartamentoA.getProprietario().getEmail() + "\"}} "
                                 )
                 )
                 // Assert
@@ -130,22 +131,25 @@ class ApartamentoControllerTest {
                                 .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
-                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
-                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
-                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
-                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
-                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
-                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
-                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
+                                        "{\"metragemDoImovel\": " + apartamentoA.getMetragem() + ", " +
+                                                "\"morador\": {" +
+                                                "\"numeroDoApartamento\": " + apartamentoA.getMorador().getNumApt() + ", " +
+                                                "\"blocoDoApartamento\": \"" + apartamentoA.getMorador().getBloco() + "\", " +
+                                                "\"nome\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"cpf\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"email\": \"" + apartamentoA.getMorador().getEmail() + "\"}, " +
+                                                "\"proprietario\": {" +
+                                                "\"telefone\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst().toString() + "\", " +
+                                                "\"nome\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"cpf\": \"" + apartamentoA.getProprietario().getCpf() + "\", "
+                                                + "\"email\": \"" + apartamentoA.getProprietario().getEmail() + "\"}} "
+
                                 )
                 )
                 // Assert
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.mensagem",
-                        Matchers.is("telefone do morador deve ser preenchido")))
+                        Matchers.is("telefone do morador é obrigatório")))
 
         ;
     }
@@ -161,17 +165,20 @@ class ApartamentoControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
 
-                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
-                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
-                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"123456789101\", " +
-                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
-                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
-                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
-                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
-                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
+                                        "{\"metragemDoImovel\": " + apartamentoA.getMetragem() + ", " +
+                                                "\"morador\": {" +
+                                                "\"numeroDoApartamento\": " + apartamentoA.getMorador().getNumApt() + ", " +
+                                                "\"blocoDoApartamento\": \"" + apartamentoA.getMorador().getBloco() + "\", " +
+                                                "\"telefone\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst().toString() + "\", " +
+                                                "\"nome\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"cpf\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"email\": \"" + apartamentoA.getMorador().getEmail() + "\"}, " +
+                                                "\"proprietario\": {" +
+                                                "\"telefone\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst().toString() + "\", " +
+                                                "\"nome\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"cpf\": \"123456789101\", " +
+                                                "\"email\": \"" + apartamentoA.getProprietario().getEmail() + "\"}} "
+
                                 )
                 )
                 // Assert
@@ -191,18 +198,19 @@ class ApartamentoControllerTest {
                                 .with(user(usuarioAdministrador))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
-                                        "{\"numeroDoApartamento\": " + apartamentoA.getNumApt() + ", " +
-                                                "\"bloco\": \"" + apartamentoA.getBlocoApt() + "\", " +
-                                                "\"nomeDoProprietario\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoProprietario\": \"" + apartamentoA.getProprietario().getCpf() + "\", " +
-                                                "\"emailDoProprietario\": \"" + apartamentoA.getProprietario().getEmail() + "\", " +
-                                                "\"nomeDoMorador\": \"" + apartamentoA.getMorador().getNome() + "\", " +
-                                                "\"telefoneDoMorador\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst() + "\", " +
-                                                "\"cpfDoMorador\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
-                                                "\"emailDoMorador\": \"" + apartamentoA.getMorador().getEmail() + "\", " +
-                                                "\"telefoneDoProprietario\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst() + "\", " +
-                                                "\"metragemDoImovel\": " + apartamentoA.getMetragem() + "}"
+                                        "{\"metragemDoImovel\": " + apartamentoA.getMetragem() + ", " +
+                                                "\"morador\": {" +
+                                                "\"numeroDoApartamento\": " + apartamentoA.getMorador().getNumApt() + ", " +
+                                                "\"blocoDoApartamento\": \"" + apartamentoA.getMorador().getBloco() + "\", " +
+                                                "\"telefone\": \"" + apartamentoA.getMorador().getTelefones().stream().findFirst().toString() + "\", " +
+                                                "\"nome\": \"" + apartamentoA.getMorador().getNome() + "\", " +
+                                                "\"cpf\": \"" + apartamentoA.getMorador().getCpf() + "\", " +
+                                                "\"email\": \"" + apartamentoA.getMorador().getEmail() + "\"}, " +
+                                                "\"proprietario\": {" +
+                                                "\"telefone\": \"" + apartamentoA.getProprietario().getTelefones().stream().findFirst().toString() + "\", " +
+                                                "\"nome\": \"" + apartamentoA.getProprietario().getNome() + "\", " +
+                                                "\"cpf\": \"" + apartamentoA.getProprietario().getCpf() + "\", "
+                                                + "\"email\": \"" + apartamentoA.getProprietario().getEmail() + "\"}} "
                                 )
                 )
                 // Assert
@@ -310,9 +318,9 @@ class ApartamentoControllerTest {
                                 .param("bloco", apartamentoA.getBlocoApt())
                                 .with(user(usuarioAdministrador)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.numeroDoApartamento",
+                .andExpect(jsonPath("$.morador.numeroDoApartamento",
                         Matchers.is(apartamentoA.getNumApt())))
-                .andExpect(jsonPath("$.bloco",
+                .andExpect(jsonPath("$.morador.blocoDoApartamento",
                         Matchers.is(apartamentoA.getBlocoApt())))
         ;
 

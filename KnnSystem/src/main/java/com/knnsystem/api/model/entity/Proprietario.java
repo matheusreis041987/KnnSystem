@@ -17,6 +17,6 @@ import lombok.Setter;
 public class Proprietario extends Pessoa {
 
 	@Column(name = "num_rgi")
-	private int registroImovel;
+	private Integer registroImovel;
 
 }
