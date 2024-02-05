@@ -2,6 +2,7 @@ package com.knnsystem.api.controller;
 
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.UsuarioRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,7 +82,12 @@ class AutenticacaoControllerTest {
                         )
         )
         // Assert
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome",
+                        Matchers.is(usuarioAtivo.getNome())))
+                .andExpect(jsonPath("$.perfil",
+                        Matchers.is("Sindico")))
+        ;
     }
 
     @DisplayName("Testa que não consegue logar com senha incorreta")
