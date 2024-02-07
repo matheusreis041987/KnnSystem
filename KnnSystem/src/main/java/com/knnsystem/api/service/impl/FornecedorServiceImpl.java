@@ -6,6 +6,8 @@ import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
+import com.knnsystem.api.model.entity.DomicilioBancario;
+import com.knnsystem.api.model.entity.Fornecedor;
 import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.repository.DomicilioBancarioRepository;
 import com.knnsystem.api.model.repository.FornecedorRepository;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -65,11 +68,30 @@ public class FornecedorServiceImpl implements FornecedorService {
     @Override
     @Transactional
     public List<FornecedorDTO> listar(String cnpj, String razaoSocial, String numeroControle) {
-        return fornecedorRepository
-                .findByCnpjOrRazaoSocialOrNumControle(cnpj, razaoSocial, numeroControle)
-                .stream()
-                .map(FornecedorDTO::new)
-                .toList();
+        List<Fornecedor> fornecedores;
+        if (cnpj == null && razaoSocial == null && numeroControle == null) {
+            fornecedores = fornecedorRepository.findAll();
+        } else  {
+            fornecedores = fornecedorRepository
+                    .findByCnpjOrRazaoSocialOrNumControle(cnpj, razaoSocial, numeroControle);
+        }
+
+        List<FornecedorDTO> fornecedorDTOS = new ArrayList<>();
+        for (Fornecedor fornecedor: fornecedores){
+            var domicilioBancarioOptional = domicilioBancarioRepository.findByFornecedor(fornecedor);
+            DomicilioBancario domicilioBancario;
+            if (domicilioBancarioOptional.isEmpty()){
+                domicilioBancario = new DomicilioBancario();
+            } else {
+                domicilioBancario = domicilioBancarioOptional.get();
+            }
+
+            fornecedor.setDomicilioBancario(domicilioBancario);
+
+            fornecedorDTOS.add(new FornecedorDTO(fornecedor));
+
+        }
+        return fornecedorDTOS;
     }
 
     @Override
