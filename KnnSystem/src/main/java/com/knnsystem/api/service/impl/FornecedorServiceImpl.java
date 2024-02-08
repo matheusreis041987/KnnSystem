@@ -124,16 +124,32 @@ public class FornecedorServiceImpl implements FornecedorService {
 
     @Override
     public List<FornecedorDTO> listarAtivos() {
-        var contratos = fornecedorRepository
+        List<Fornecedor> fornecedores = fornecedorRepository
                 .findAll()
                 .stream()
                 .filter(fornecedor -> fornecedor.getStatusFornecedor().equals(StatusGeral.ATIVO))
-                .map(FornecedorDTO::new)
                 .toList();
 
-        if (contratos.isEmpty()) {
+        if (fornecedores.isEmpty()) {
             throw new RelatorioSemResultadoException("Erro -  não há dados para o relatório");
         }
-        return contratos;
+
+        List<FornecedorDTO> fornecedorDTOS = new ArrayList<>();
+        for (Fornecedor fornecedor: fornecedores){
+            var domicilioBancarioOptional = domicilioBancarioRepository.findByFornecedor(fornecedor);
+            DomicilioBancario domicilioBancario;
+            if (domicilioBancarioOptional.isEmpty()){
+                domicilioBancario = new DomicilioBancario();
+            } else {
+                domicilioBancario = domicilioBancarioOptional.get();
+            }
+
+            fornecedor.setDomicilioBancario(domicilioBancario);
+
+            fornecedorDTOS.add(new FornecedorDTO(fornecedor));
+
+        }
+
+        return fornecedorDTOS;
     }
 }
