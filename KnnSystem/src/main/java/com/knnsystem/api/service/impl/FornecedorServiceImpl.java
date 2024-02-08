@@ -98,7 +98,9 @@ public class FornecedorServiceImpl implements FornecedorService {
     @Transactional
     public void inativar(Long id) {
         var fornecedor = fornecedorRepository.findById(id);
-        fornecedor.orElseThrow().setStatusFornecedor(StatusGeral.INATIVO);
+        fornecedor
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Não existe fornecedor para os dados pesquisados"))
+                .setStatusFornecedor(StatusGeral.INATIVO);
     }
 
     @Override
