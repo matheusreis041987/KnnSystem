@@ -294,9 +294,7 @@ class ApartamentoControllerTest {
 
         // Act
         this.mockMvc.perform(
-                        put(ENDPOINT_INATIVA)
-                                .param("numero", Integer.toString(apartamentoA.getNumApt()))
-                                .param("bloco", apartamentoA.getBlocoApt())
+                        put(ENDPOINT_INATIVA + "/10000")
                                 .with(user(usuarioAdministrador)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",
@@ -313,16 +311,9 @@ class ApartamentoControllerTest {
 
         // Act
         this.mockMvc.perform(
-                        put(ENDPOINT_INATIVA)
-                                .param("numero", Integer.toString(apartamentoA.getNumApt()))
-                                .param("bloco", apartamentoA.getBlocoApt())
+                        put(ENDPOINT_INATIVA + "/" + apartamentoA.getIdApartamento())
                                 .with(user(usuarioAdministrador)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.morador.numeroDoApartamento",
-                        Matchers.is(apartamentoA.getNumApt())))
-                .andExpect(jsonPath("$.morador.blocoDoApartamento",
-                        Matchers.is(apartamentoA.getBlocoApt())))
-        ;
+                .andExpect(status().isNoContent());
 
     }
 
