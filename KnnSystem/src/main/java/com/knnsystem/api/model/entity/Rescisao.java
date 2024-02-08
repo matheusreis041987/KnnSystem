@@ -33,12 +33,16 @@ public class Rescisao {
 	
 	@Column(name = "dt_pgto")
 	@Setter
+	private LocalDate dtPgto;
+
+	@Column(name = "dt_rescisao")
+	@Setter
 	private LocalDate dtRescisao;
 
 	@Column(name = "pct_multa")
 	private BigDecimal pctMulta;
 
-	@OneToOne
+	@OneToOne(mappedBy = "rescisao")
 	private Contrato contrato;
 
 	public Rescisao(){
