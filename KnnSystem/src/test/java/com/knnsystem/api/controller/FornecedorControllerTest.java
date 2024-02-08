@@ -335,10 +335,7 @@ class FornecedorControllerTest {
 
         // Act
         this.mockMvc.perform(
-                        put(ENDPOINT_INATIVA)
-                                .param("cnpj", fornecedorA.getCnpj())
-                                .param("razaoSocial", fornecedorA.getRazaoSocial())
-                                .param("numeroControle", fornecedorA.getNumControle().toString())
+                        put(ENDPOINT_INATIVA + "/1000")
                                 .with(user(usuarioSecretaria)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem",
@@ -356,19 +353,12 @@ class FornecedorControllerTest {
         domicilioBancarioA = domicilioBancarioRepository.save(domicilioBancarioA);
         fornecedorA.setDomicilioBancario(domicilioBancarioA);
         fornecedorA = fornecedorRepository.save(fornecedorA);
+
         // Act
         this.mockMvc.perform(
-                        put(ENDPOINT_INATIVA)
-                                .param("cnpj", fornecedorA.getCnpj())
-                                .param("razaoSocial", fornecedorA.getRazaoSocial())
-                                .param("numeroControle", fornecedorA.getNumControle().toString())
+                        put(ENDPOINT_INATIVA + "/" + fornecedorA.getIdFornecedor())
                                 .with(user(usuarioSecretaria)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.razaoSocial",
-                        Matchers.is(fornecedorA.getRazaoSocial())))
-                .andExpect(jsonPath("$.cnpj",
-                        Matchers.is(fornecedorA.getCnpj())))
-        ;
+                .andExpect(status().isNoContent());
 
     }
 
