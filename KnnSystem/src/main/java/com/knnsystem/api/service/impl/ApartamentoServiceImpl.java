@@ -90,18 +90,11 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 
 	@Override
 	@Transactional
-	public ApartamentoFormularioDTO inativar(Integer numero, String bloco) {
-		var apartamentoAInativar = repository.findByNumAptAndBlocoApt(numero, bloco);
-
-		if (apartamentoAInativar.isEmpty()) {
-			throw new EntidadeNaoEncontradaException("Não há um apartamento cadastrado para os dados informados");
-		}
-
-		var apartamento = apartamentoAInativar.get();
-		apartamento.setStatusApt(StatusGeral.INATIVO);
-		repository.save(apartamento);
-
-		return new ApartamentoFormularioDTO(apartamento);
+	public void inativar(Long id) {
+		var apartamento = repository.findById(id);
+		apartamento
+				.orElseThrow(() -> new EntidadeNaoEncontradaException("Não há um apartamento cadastrado para os dados informados"))
+				.setStatusApt(StatusGeral.INATIVO);
 	}
 
 	@Override
