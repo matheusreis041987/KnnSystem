@@ -96,20 +96,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 
     @Override
     @Transactional
-    public FornecedorDTO inativar(String cnpj, String razaoSocial, String numeroControle) {
-        var fornecedor = fornecedorRepository.findByCnpjAndRazaoSocialAndNumControle(
-          cnpj, razaoSocial, numeroControle
-        );
-
-        if (fornecedor.isEmpty()) {
-            throw new EntidadeNaoEncontradaException("Não existe fornecedor para os dados pesquisados");
-        }
-
-        var fornecedorAInativar = fornecedor.get();
-        fornecedorAInativar.setStatusFornecedor(StatusGeral.INATIVO);
-        fornecedorRepository.save(fornecedorAInativar);
-
-        return new FornecedorDTO(fornecedorAInativar);
+    public void inativar(Long id) {
+        var fornecedor = fornecedorRepository.findById(id);
+        fornecedor.orElseThrow().setStatusFornecedor(StatusGeral.INATIVO);
     }
 
     @Override

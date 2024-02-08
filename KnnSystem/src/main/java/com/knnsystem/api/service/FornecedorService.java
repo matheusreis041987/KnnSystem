@@ -9,7 +9,7 @@ public interface FornecedorService {
 
     List<FornecedorDTO> listar(String cnpj, String razaoSocial, String numeroControle);
 
-    FornecedorDTO inativar(String cnpj, String razaoSocial, String numeroControle);
+    void inativar(Long id);
 
     void excluir(Long id);
 
