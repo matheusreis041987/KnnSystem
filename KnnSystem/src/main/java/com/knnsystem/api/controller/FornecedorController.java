@@ -54,6 +54,16 @@ public class FornecedorController {
 
     }
 
+    @PutMapping("/atualiza/{id}")
+    public ResponseEntity<FornecedorDTO> atualizar(
+            @PathVariable Long id,
+            @RequestBody @Valid FornecedorDTO dto
+    ){
+        var dtoAtualizado = service.atualizar(id, dto);
+        return ResponseEntity.ok(dtoAtualizado);
+
+    }
+
     @DeleteMapping("/exclui/{id}")
     @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
     public ResponseEntity excluir(@PathVariable Long id){

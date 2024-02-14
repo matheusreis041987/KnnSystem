@@ -14,4 +14,6 @@ public interface FornecedorService {
     void excluir(Long id);
 
     List<FornecedorDTO> listarAtivos();
+
+    FornecedorDTO atualizar(Long id, FornecedorDTO dto);
 }
