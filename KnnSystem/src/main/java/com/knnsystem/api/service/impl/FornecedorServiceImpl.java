@@ -6,6 +6,8 @@ import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
 import com.knnsystem.api.infrastructure.api.documental.ApiDocumentoFacade;
+import com.knnsystem.api.model.entity.DomicilioBancario;
+import com.knnsystem.api.model.entity.Fornecedor;
 import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.repository.DomicilioBancarioRepository;
 import com.knnsystem.api.model.repository.FornecedorRepository;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,42 +51,56 @@ public class FornecedorServiceImpl implements FornecedorService {
         var fornecedor = dto.toModel(true);
 
 
-        // salva entidades relacionadas primeiro
-        responsavelRepository.save(fornecedor.getResponsavel());
-        domicilioBancarioRepository.save(fornecedor.getDomicilioBancario());
+        // salva o responsável
+        var responsavelSalvo = responsavelRepository.save(fornecedor.getResponsavel());
 
         // salva o fornecedor
         var fornecedorSalvo = fornecedorRepository.save(fornecedor);
+
+        // salva o domicílio bancário após
+        var domicilioASalvar = dto.domicilioBancario().toModel(true);
+        domicilioASalvar.setFornecedor(fornecedorSalvo);
+        domicilioBancarioRepository.save(domicilioASalvar);
 
         return new FornecedorDTO(fornecedorSalvo);
     }
 
     @Override
     @Transactional
-    public List<FornecedorDTO> listar(String cnpj, String razaoSocial, Long numeroControle) {
-        return fornecedorRepository
-                .findByCnpjOrRazaoSocialOrNumControle(cnpj, razaoSocial, numeroControle)
-                .stream()
-                .map(FornecedorDTO::new)
-                .toList();
+    public List<FornecedorDTO> listar(String cnpj, String razaoSocial, String numeroControle) {
+        List<Fornecedor> fornecedores;
+        if (cnpj == null && razaoSocial == null && numeroControle == null) {
+            fornecedores = fornecedorRepository.findAll();
+        } else  {
+            fornecedores = fornecedorRepository
+                    .findByCnpjOrRazaoSocialOrNumControle(cnpj, razaoSocial, numeroControle);
+        }
+
+        List<FornecedorDTO> fornecedorDTOS = new ArrayList<>();
+        for (Fornecedor fornecedor: fornecedores){
+            var domicilioBancarioOptional = domicilioBancarioRepository.findByFornecedor(fornecedor);
+            DomicilioBancario domicilioBancario;
+            if (domicilioBancarioOptional.isEmpty()){
+                domicilioBancario = new DomicilioBancario();
+            } else {
+                domicilioBancario = domicilioBancarioOptional.get();
+            }
+
+            fornecedor.setDomicilioBancario(domicilioBancario);
+
+            fornecedorDTOS.add(new FornecedorDTO(fornecedor));
+
+        }
+        return fornecedorDTOS;
     }
 
     @Override
     @Transactional
-    public FornecedorDTO inativar(String cnpj, String razaoSocial, Long numeroControle) {
-        var fornecedor = fornecedorRepository.findByCnpjAndRazaoSocialAndNumControle(
-          cnpj, razaoSocial, numeroControle
-        );
-
-        if (fornecedor.isEmpty()) {
-            throw new EntidadeNaoEncontradaException("Não existe fornecedor para os dados pesquisados");
-        }
-
-        var fornecedorAInativar = fornecedor.get();
-        fornecedorAInativar.setStatusFornecedor(StatusGeral.INATIVO);
-        fornecedorRepository.save(fornecedorAInativar);
-
-        return new FornecedorDTO(fornecedorAInativar);
+    public void inativar(Long id) {
+        var fornecedor = fornecedorRepository.findById(id);
+        fornecedor
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Não existe fornecedor para os dados pesquisados"))
+                .setStatusFornecedor(StatusGeral.INATIVO);
     }
 
     @Override
@@ -98,16 +115,49 @@ public class FornecedorServiceImpl implements FornecedorService {
 
     @Override
     public List<FornecedorDTO> listarAtivos() {
-        var contratos = fornecedorRepository
+        List<Fornecedor> fornecedores = fornecedorRepository
                 .findAll()
                 .stream()
                 .filter(fornecedor -> fornecedor.getStatusFornecedor().equals(StatusGeral.ATIVO))
-                .map(FornecedorDTO::new)
                 .toList();
 
-        if (contratos.isEmpty()) {
+        if (fornecedores.isEmpty()) {
             throw new RelatorioSemResultadoException("Erro -  não há dados para o relatório");
         }
-        return contratos;
+
+        List<FornecedorDTO> fornecedorDTOS = new ArrayList<>();
+        for (Fornecedor fornecedor: fornecedores){
+            var domicilioBancarioOptional = domicilioBancarioRepository.findByFornecedor(fornecedor);
+            DomicilioBancario domicilioBancario;
+            if (domicilioBancarioOptional.isEmpty()){
+                domicilioBancario = new DomicilioBancario();
+            } else {
+                domicilioBancario = domicilioBancarioOptional.get();
+            }
+
+            fornecedor.setDomicilioBancario(domicilioBancario);
+
+            fornecedorDTOS.add(new FornecedorDTO(fornecedor));
+
+        }
+
+        return fornecedorDTOS;
+    }
+
+    @Override
+    public FornecedorDTO atualizar(Long id, FornecedorDTO dto) {
+        var fornecedorOptional = fornecedorRepository.findById(id);
+        if (fornecedorOptional.isEmpty()) {
+            throw new EntidadeNaoEncontradaException("Fornecedor não encontrado");
+        }
+        var fornecedor = fornecedorOptional.get();
+        fornecedor.setRazaoSocial(dto.razaoSocial());
+        fornecedor.setCnpj(dto.cnpj());
+        fornecedor.setDomicilioBancario(dto.domicilioBancario().toModel(false));
+        fornecedor.setResponsavel(dto.responsavel().toModel());
+        fornecedor.setEnderecoCompleto(dto.enderecoCompleto());
+        fornecedor.setNaturezaServico(dto.naturezaDoServico());
+        fornecedor.setEmailCorporativo(dto.emailCorporativo());
+        return new FornecedorDTO(fornecedor);
     }
 }

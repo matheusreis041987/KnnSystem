@@ -7,11 +7,13 @@ import java.util.List;
 public interface FornecedorService {
     FornecedorDTO salvar(FornecedorDTO dto);
 
-    List<FornecedorDTO> listar(String cnpj, String razaoSocial, Long numeroControle);
+    List<FornecedorDTO> listar(String cnpj, String razaoSocial, String numeroControle);
 
-    FornecedorDTO inativar(String cnpj, String razaoSocial, Long numeroControle);
+    void inativar(Long id);
 
     void excluir(Long id);
 
     List<FornecedorDTO> listarAtivos();
+
+    FornecedorDTO atualizar(Long id, FornecedorDTO dto);
 }

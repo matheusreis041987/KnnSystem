@@ -121,6 +121,7 @@ public class ContratoServiceImpl implements ContratoService {
 		CausadorRescisao causador = dto.criaCausador();
 		Rescisao rescisao = new Rescisao(contrato);
 		rescisao.setDtRescisao(dto.dataRescisao());
+		rescisao.setDtPgto(dto.dataRescisao());
 		rescisao.setCausador(causador);
 
 		rescisao.calcularRescisao();

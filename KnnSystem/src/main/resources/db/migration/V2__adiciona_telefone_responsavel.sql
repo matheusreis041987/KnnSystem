@@ -1,2 +1,2 @@
 alter table sch_contratos.responsavel
-add column telefone character varying(15);
+add column IF NOT EXISTS  telefone character varying(15);

@@ -7,6 +7,8 @@ import com.knnsystem.api.exceptions.EntidadeCadastradaException;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
 import com.knnsystem.api.model.entity.StatusGeral;
+import com.knnsystem.api.model.repository.MoradorRepository;
+import com.knnsystem.api.model.repository.ProprietarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,12 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 
 	@Autowired
 	private ApartamentoRepository repository;
+
+	@Autowired
+	private ProprietarioRepository proprietarioRepository;
+
+	@Autowired
+	private MoradorRepository moradorRepository;
 
 	@Override
 	@Transactional
@@ -54,13 +62,26 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 
 		if (repository
 				.findByNumAptAndBlocoApt(
-						dto.numeroDoApartamento(),
-						dto.bloco()).isPresent()){
+						dto.moradorDTO().numeroDoApartamento(),
+						dto.moradorDTO().blocoDoApartamento()).isPresent()){
 			throw new EntidadeCadastradaException("Já há um apartamento cadastrado para os dados informados");
 		}
 
 		var apartamento = dto.toModel(true);
 
+		var proprietario = proprietarioRepository.findByCpf(dto.proprietarioDTO().cpf());
+		var morador = moradorRepository.findByCpf(dto.moradorDTO().cpf());
+
+		if (proprietario.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não há cadastro para o proprietário informado");
+		}
+
+		if (morador.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não hác cadastro para o morador informado");
+		}
+
+		apartamento.setMorador(morador.get());
+		apartamento.setProprietario(proprietario.get());
 		var apartamentoSalvo = repository.save(apartamento);
 
 		return new ApartamentoFormularioDTO(apartamentoSalvo);
@@ -69,18 +90,11 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 
 	@Override
 	@Transactional
-	public ApartamentoFormularioDTO inativar(Integer numero, String bloco) {
-		var apartamentoAInativar = repository.findByNumAptAndBlocoApt(numero, bloco);
-
-		if (apartamentoAInativar.isEmpty()) {
-			throw new EntidadeNaoEncontradaException("Não há um apartamento cadastrado para os dados informados");
-		}
-
-		var apartamento = apartamentoAInativar.get();
-		apartamento.setStatusApt(StatusGeral.INATIVO);
-		repository.save(apartamento);
-
-		return new ApartamentoFormularioDTO(apartamento);
+	public void inativar(Long id) {
+		var apartamento = repository.findById(id);
+		apartamento
+				.orElseThrow(() -> new EntidadeNaoEncontradaException("Não há um apartamento cadastrado para os dados informados"))
+				.setStatusApt(StatusGeral.INATIVO);
 	}
 
 	@Override
