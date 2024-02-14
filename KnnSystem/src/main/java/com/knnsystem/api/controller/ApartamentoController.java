@@ -42,13 +42,12 @@ public class ApartamentoController {
         return ResponseEntity.ok(apartamentos);
     }
 
-    @PutMapping("/inativa")
+    @PutMapping("/inativa/{id}")
     public ResponseEntity<ApartamentoFormularioDTO> inativar(
-            @RequestParam(value = "numero", required = false) Integer numero,
-            @RequestParam(value = "bloco", required = false) String bloco
+            @PathVariable Long id
     ){
-        ApartamentoFormularioDTO dto = apartamentoService.inativar(numero, bloco);
-        return ResponseEntity.ok(dto);
+        apartamentoService.inativar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/exclui/{id}")

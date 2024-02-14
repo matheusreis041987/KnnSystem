@@ -1,29 +1,49 @@
 package com.knnsystem.api.dto;
 
-import com.knnsystem.api.model.entity.Pessoa;
 
-public class ProprietarioDTO {
-	
-	private int registroImovel;
+import com.knnsystem.api.model.entity.Proprietario;
+import com.knnsystem.api.model.entity.StatusGeral;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.br.CPF;
 
-	private Pessoa id_pessoa;
+public record ProprietarioDTO (
 
-	public int getRegistroImovel() {
-		return registroImovel;
+		Long id,
+
+		Integer registroImovel,
+
+		@NotBlank(message = "nome do proprietário deve ser preenchido")
+		String nome,
+		@NotBlank(message = "telefone do proprietário deve ser preenchido")
+		String telefone,
+		@NotBlank(message = "CPF do proprietário deve ser preenchido")
+		@CPF(message = "CPF do proprietário inválido")
+		String cpf,
+		@NotBlank(message = "e-mail do proprietário deve ser preenchido")
+		@Email(message = "e-mail do proprietário inválido")
+		String email
+) {
+
+
+	public ProprietarioDTO(Proprietario proprietario) {
+		this (
+				proprietario.getId(), proprietario.getRegistroImovel(),
+				proprietario.getNome(), proprietario.getTelefones().stream().findFirst().toString(),
+				proprietario.getCpf(), proprietario.getEmail()
+		);
 	}
 
-	public void setRegistroImovel(int registroImovel) {
-		this.registroImovel = registroImovel;
-	}
+	public Proprietario toModel(boolean isInclusao) {
+		Proprietario proprietario = new Proprietario();
+		proprietario.setCpf(cpf());
+		proprietario.setEmail(email());
+		proprietario.setNome(nome());
+		proprietario.setRegistroImovel(registroImovel());
 
-	public Pessoa getId_pessoa() {
-		return id_pessoa;
+		if (isInclusao) {
+			proprietario.setStatus(StatusGeral.ATIVO);
+		}
+		return proprietario;
 	}
-
-	public void setId_pessoa(Pessoa id_pessoa) {
-		this.id_pessoa = id_pessoa;
-	}
-	
-	
-
 }

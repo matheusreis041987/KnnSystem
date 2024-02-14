@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +51,7 @@ public class AutenticacaoController {
             ){
         var token = getToken(dto.cpf(), dto.senha());
 
-        return ResponseEntity.ok(new TokenLoginDTO(token));
+        return ResponseEntity.ok(token);
 
     }
 
@@ -60,17 +61,15 @@ public class AutenticacaoController {
     ){
         var token = getToken(dto.cpf(), dto.senhaProvisoria());
 
-        if (token != null) {
-            var usuario = repository.findByCpf(dto.cpf());
+        var usuario = repository.findByCpf(dto.cpf());
 
-            if (usuario.isPresent()){
-                usuario.get().setSenha(passwordEncoder.encode(dto.novaSenha()));
-                repository.save(usuario.get());
-            }
-
+        if (usuario.isPresent()){
+            usuario.get().setSenha(passwordEncoder.encode(dto.novaSenha()));
+            repository.save(usuario.get());
         }
 
-        return ResponseEntity.ok(new TokenLoginDTO(token));
+
+        return ResponseEntity.ok(token);
 
     }
 
@@ -93,7 +92,7 @@ public class AutenticacaoController {
         return ResponseEntity.ok().build();
     }
 
-    private String getToken(String cpf, String senha) {
+    private TokenLoginDTO getToken(String cpf, String senha) {
 
         var usuarioOptional = repository
                 .findByCpf(cpf);
@@ -108,7 +107,16 @@ public class AutenticacaoController {
 
         var auth = authenticationManager.authenticate(usuarioSenha);
 
-        return tokenService.geraToken((Usuario) auth.getPrincipal());
+        var usuario = usuarioOptional.get();
+        var perfilCapitalizado = StringUtils.capitalize(
+          usuario.getPerfil().toString().toLowerCase()
+        );
+
+        return new TokenLoginDTO(
+                usuario.getNome(),
+                perfilCapitalizado,
+                tokenService.geraToken((Usuario) auth.getPrincipal())
+        );
     }
 
 

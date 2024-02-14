@@ -6,11 +6,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+
 import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 @Table(name = "fornecedor", schema = "sch_contratos")
-@SecondaryTable(name = "responsavel", schema = "sch_contratos")
 @EqualsAndHashCode
 public class Fornecedor {
 	
@@ -23,7 +23,7 @@ public class Fornecedor {
 	
 	@Column(name = "num_contr")
 	@Getter
-	private Long numControle;
+	private String numControle;
 	
 	@Column(name = "razao_social")
 	@Getter
@@ -35,22 +35,12 @@ public class Fornecedor {
 	@Setter
 	private String cnpj;
 
-	@Transient
+	@OneToOne
 	@Getter
+	@Setter
+	@JoinColumn(name = "fk_cpf_responsavel", referencedColumnName = "cpf")
 	private Responsavel responsavel;
 
-	@Column(name = "fk_cpf_responsavel")
-	@Getter
-	private String cpfResponsavel;
-	
-	@Column(name = "nome", table = "responsavel")
-	@Getter
-	private String nomeResponsavel;
-	
-	@Column(name = "email", table = "responsavel")
-	@Getter
-	private String emailResponsavel;
-	
 	@Column(name = "email_corporativo")
 	@Getter
 	@Setter
@@ -72,17 +62,10 @@ public class Fornecedor {
 	@Setter
 	private StatusGeral StatusFornecedor;
 
-	@OneToOne
+	@Transient
 	@Getter
 	@Setter
 	private DomicilioBancario domicilioBancario;
-
-	public void setResponsavel(Responsavel responsavel) {
-		this.responsavel = responsavel;
-		this.cpfResponsavel = responsavel.getCpf();
-		this.nomeResponsavel = responsavel.getNome();
-		this.emailResponsavel = responsavel.getEmail();
-	}
 
 	public Fornecedor() {
 		geraNumeroDeControle();
@@ -90,9 +73,10 @@ public class Fornecedor {
 
 	private void geraNumeroDeControle(){
 		// Número de controle gerado pelo sistema
-		this.numControle = ThreadLocalRandom
+		this.numControle = Long.toString(ThreadLocalRandom
 				.current()
-				.nextLong(1000000000L, 9999999999L);
+				.nextLong(1000000000L, 9999999999L));
+
 	}
 
 

@@ -40,4 +40,13 @@ public class MoradorController {
         }
         return ResponseEntity.ok(moradores);
     }
+
+    @PutMapping("/atualiza/{id}")
+    public ResponseEntity<MoradorDTO> atualizar(
+            @PathVariable Long id,
+            @RequestBody @Valid MoradorDTO dto
+    ){
+        var dtoAtualizado = service.atualizar(id, dto);
+        return ResponseEntity.ok(dtoAtualizado);
+    }
 }

@@ -18,7 +18,7 @@ public record ContratoDTO(
 		String numeroContrato,
 
 		@NotNull(message = "Número de controle do fornecedor é obrigatório")
-		Long numeroControleFornecedor,
+		String numeroControleFornecedor,
 
 		@NotNull(message = "Vigência inicial é obrigatória")
 		LocalDate vigenciaInicial,

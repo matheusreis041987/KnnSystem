@@ -6,8 +6,10 @@ import com.knnsystem.api.dto.UsuarioResumoDTO;
 import com.knnsystem.api.exceptions.EntidadeCadastradaException;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.model.entity.Cargo;
+import com.knnsystem.api.model.entity.Sindico;
 import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.entity.Usuario;
+import com.knnsystem.api.model.repository.SindicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +28,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private SindicoRepository sindicoRepository;
+
 	@Override
 	@Transactional
 	public UsuarioResumoDTO salvar(UsuarioCadastroDTO dto) {
@@ -35,6 +40,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 		}
 
 		var usuario = dto.toModel(passwordEncoder);
+
+		if (usuario.getCargo().equals(Cargo.SINDICO)) {
+			var sindico = new Sindico();
+			sindico.setEmail(usuario.getEmail());
+			sindico.setCpf(usuario.getCpf());
+			sindico.setNome(usuario.getNome());
+
+			sindicoRepository.save(sindico);
+		}
 
 		var usuarioSalvo = repository.save(usuario);
 

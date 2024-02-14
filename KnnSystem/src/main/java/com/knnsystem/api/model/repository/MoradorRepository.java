@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import com.knnsystem.api.model.entity.Morador;
 
-public interface MoradorRepository extends JpaRepository<Morador, Integer>  {
+public interface MoradorRepository extends JpaRepository<Morador, Long>  {
 
     Optional<Morador> findByCpf(String cpf);
 

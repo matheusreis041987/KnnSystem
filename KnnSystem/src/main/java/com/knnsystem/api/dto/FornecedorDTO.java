@@ -1,6 +1,7 @@
 package com.knnsystem.api.dto;
 
 import com.knnsystem.api.model.entity.Fornecedor;
+import com.knnsystem.api.model.entity.StatusGeral;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,7 +36,7 @@ public record FornecedorDTO (
 		@Email(message = "e-mail inválido")
 		String emailCorporativo,
 
-		Long numeroControle
+		String numeroControle
 
 
 ) {
@@ -63,6 +64,10 @@ public record FornecedorDTO (
 		fornecedor.setDomicilioBancario(domicilioBancario().toModel(isInclusao));
 		fornecedor.setRazaoSocial(razaoSocial());
 		fornecedor.setEnderecoCompleto(enderecoCompleto());
+
+		if (isInclusao) {
+			fornecedor.setStatusFornecedor(StatusGeral.ATIVO);
+		}
 
 		return fornecedor;
 
