@@ -143,4 +143,21 @@ public class FornecedorServiceImpl implements FornecedorService {
 
         return fornecedorDTOS;
     }
+
+    @Override
+    public FornecedorDTO atualizar(Long id, FornecedorDTO dto) {
+        var fornecedorOptional = fornecedorRepository.findById(id);
+        if (fornecedorOptional.isEmpty()) {
+            throw new EntidadeNaoEncontradaException("Fornecedor não encontrado");
+        }
+        var fornecedor = fornecedorOptional.get();
+        fornecedor.setRazaoSocial(dto.razaoSocial());
+        fornecedor.setCnpj(dto.cnpj());
+        fornecedor.setDomicilioBancario(dto.domicilioBancario().toModel(false));
+        fornecedor.setResponsavel(dto.responsavel().toModel());
+        fornecedor.setEnderecoCompleto(dto.enderecoCompleto());
+        fornecedor.setNaturezaServico(dto.naturezaDoServico());
+        fornecedor.setEmailCorporativo(dto.emailCorporativo());
+        return new FornecedorDTO(fornecedor);
+    }
 }
