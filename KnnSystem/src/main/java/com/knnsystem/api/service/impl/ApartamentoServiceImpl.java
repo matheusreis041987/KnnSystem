@@ -51,6 +51,9 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 	@Override
 	@Transactional
 	public List<ApartamentoFormularioDTO> listar(Integer numero, String bloco) {
+		if (numero == null && bloco == null) {
+			return repository.findAll().stream().map(ApartamentoFormularioDTO::new).toList();
+		}
 		return repository
 				.findByNumAptOrBlocoApt(numero, bloco)
 				.stream()
