@@ -3,6 +3,7 @@ package com.knnsystem.api.dto;
 
 import com.knnsystem.api.model.entity.Proprietario;
 import com.knnsystem.api.model.entity.StatusGeral;
+import com.knnsystem.api.model.entity.Telefone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.br.CPF;
@@ -28,8 +29,10 @@ public record ProprietarioDTO (
 
 	public ProprietarioDTO(Proprietario proprietario) {
 		this (
-				proprietario.getId(), proprietario.getRegistroImovel(),
-				proprietario.getNome(), proprietario.getTelefones().stream().findFirst().toString(),
+				proprietario.getId(),
+				proprietario.getRegistroImovel(),
+				proprietario.getNome(),
+				proprietario.getTelefonePrincipal() != null ? proprietario.getTelefonePrincipal().toString() : "",
 				proprietario.getCpf(), proprietario.getEmail()
 		);
 	}
@@ -40,6 +43,9 @@ public record ProprietarioDTO (
 		proprietario.setEmail(email());
 		proprietario.setNome(nome());
 		proprietario.setRegistroImovel(registroImovel());
+		Telefone telefone = new Telefone();
+		telefone.setNumero(telefone());
+		proprietario.adicionaTelefone(telefone);
 
 		if (isInclusao) {
 			proprietario.setStatus(StatusGeral.ATIVO);

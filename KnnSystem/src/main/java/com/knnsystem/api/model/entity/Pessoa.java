@@ -48,6 +48,10 @@ public class Pessoa {
 
 	}
 
+	public Telefone getTelefonePrincipal() {
+		return this.telefones.stream().findFirst().orElse(null);
+	}
+
 	public void adicionaTelefone(Telefone telefone){
 		telefones.add(telefone);
 	}

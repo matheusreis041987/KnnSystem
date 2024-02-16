@@ -3,6 +3,7 @@ package com.knnsystem.api.controller;
 import com.knnsystem.api.model.entity.Morador;
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.MoradorRepository;
+import com.knnsystem.api.model.repository.TelefoneRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,13 +45,16 @@ class MoradorControllerTest {
     private MoradorRepository moradorRepository;
 
     @Autowired
+    private TelefoneRepository telefoneRepository;
+
+    @Autowired
     private TestDataBuilder testDataBuilder;
 
     @BeforeEach
     void setUp(){
         usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
-        moradorA = testDataBuilder.getMoradorA();
-        moradorB = testDataBuilder.getMoradorB();
+        moradorA = testDataBuilder.createMoradorA();
+        moradorB = testDataBuilder.createMoradorB();
     }
 
     @AfterEach
@@ -147,7 +151,7 @@ class MoradorControllerTest {
                                         "{\"nome\": \"" + moradorA.getNome() + "\", " +
                                                 "\"cpf\": \"" + moradorA.getCpf() + "\", " +
                                                 "\"email\": \"" + moradorA.getEmail() + "\", " +
-                                                "\"telefone\": \"" + moradorA.getTelefones().stream().findFirst() + "\", " +
+                                                "\"telefone\": \"" + moradorA.getTelefonePrincipal() + "\", " +
                                                 "\"numeroDoApartamento\": " + moradorA.getNumApt() + ", " +
                                                 "\"blocoDoApartamento\": \"" + moradorA.getBloco() + "\"}"
                                 )
