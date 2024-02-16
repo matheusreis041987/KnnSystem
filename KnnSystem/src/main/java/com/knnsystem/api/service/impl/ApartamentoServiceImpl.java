@@ -6,6 +6,8 @@ import java.util.List;
 import com.knnsystem.api.exceptions.EntidadeCadastradaException;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
+import com.knnsystem.api.model.entity.Morador;
+import com.knnsystem.api.model.entity.Proprietario;
 import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.repository.MoradorRepository;
 import com.knnsystem.api.model.repository.ProprietarioRepository;
@@ -49,6 +51,9 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 	@Override
 	@Transactional
 	public List<ApartamentoFormularioDTO> listar(Integer numero, String bloco) {
+		if (numero == null && bloco == null) {
+			return repository.findAll().stream().map(ApartamentoFormularioDTO::new).toList();
+		}
 		return repository
 				.findByNumAptOrBlocoApt(numero, bloco)
 				.stream()
@@ -72,16 +77,25 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 		var proprietario = proprietarioRepository.findByCpf(dto.proprietarioDTO().cpf());
 		var morador = moradorRepository.findByCpf(dto.moradorDTO().cpf());
 
+		Proprietario proprietarioModel;
+		Morador moradorModel;
+
 		if (proprietario.isEmpty()) {
-			throw new EntidadeNaoEncontradaException("Não há cadastro para o proprietário informado");
+			proprietarioModel = dto.proprietarioDTO().toModel(true);
+			proprietarioRepository.save(proprietarioModel);
+		} else {
+			proprietarioModel = proprietario.get();
 		}
 
 		if (morador.isEmpty()) {
-			throw new EntidadeNaoEncontradaException("Não hác cadastro para o morador informado");
+			moradorModel = dto.moradorDTO().toModel(true);
+			moradorRepository.save(moradorModel);
+		} else {
+			moradorModel = morador.get();
 		}
 
-		apartamento.setMorador(morador.get());
-		apartamento.setProprietario(proprietario.get());
+		apartamento.setMorador(moradorModel);
+		apartamento.setProprietario(proprietarioModel);
 		var apartamentoSalvo = repository.save(apartamento);
 
 		return new ApartamentoFormularioDTO(apartamentoSalvo);
