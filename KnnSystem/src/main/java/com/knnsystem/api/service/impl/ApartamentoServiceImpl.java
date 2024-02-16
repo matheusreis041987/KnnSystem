@@ -11,6 +11,7 @@ import com.knnsystem.api.model.entity.Proprietario;
 import com.knnsystem.api.model.entity.StatusGeral;
 import com.knnsystem.api.model.repository.MoradorRepository;
 import com.knnsystem.api.model.repository.ProprietarioRepository;
+import com.knnsystem.api.model.repository.TelefoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,9 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 
 	@Autowired
 	private MoradorRepository moradorRepository;
+
+	@Autowired
+	private TelefoneRepository telefoneRepository;
 
 	@Override
 	@Transactional
@@ -83,6 +87,7 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 		if (proprietario.isEmpty()) {
 			proprietarioModel = dto.proprietarioDTO().toModel(true);
 			proprietarioRepository.save(proprietarioModel);
+			telefoneRepository.save(proprietarioModel.getTelefonePrincipal());
 		} else {
 			proprietarioModel = proprietario.get();
 		}
@@ -90,6 +95,7 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 		if (morador.isEmpty()) {
 			moradorModel = dto.moradorDTO().toModel(true);
 			moradorRepository.save(moradorModel);
+			telefoneRepository.save(moradorModel.getTelefonePrincipal());
 		} else {
 			moradorModel = morador.get();
 		}

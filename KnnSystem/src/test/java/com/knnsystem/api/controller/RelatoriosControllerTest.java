@@ -94,9 +94,9 @@ class RelatoriosControllerTest {
     @Transactional
     void deveRetornarUnicoApartamentoSeForUnico() throws Exception {
         // Arrange
-        var morador = testDataBuilder.getMoradorA();
-        var proprietario = testDataBuilder.getProprietarioA();
-        var apartamento = testDataBuilder.getApartamentoAtivo(morador, proprietario);
+        var morador = testDataBuilder.createMoradorA();
+        var proprietario = testDataBuilder.createProprietarioA();
+        var apartamento = testDataBuilder.createApartamentoAtivo(morador, proprietario);
 
         moradorRepository.save(morador);
         proprietarioRepository.save(proprietario);
@@ -138,17 +138,17 @@ class RelatoriosControllerTest {
     @Transactional
     void deveRetornarMaisApartamentosSeHouver() throws Exception {
         // Arrange
-        var morador = testDataBuilder.getMoradorA();
-        var proprietario = testDataBuilder.getProprietarioA();
+        var morador = testDataBuilder.createMoradorA();
+        var proprietario = testDataBuilder.createProprietarioA();
         moradorRepository.save(morador);
         proprietarioRepository.save(proprietario);
 
-        var apartamento = testDataBuilder.getApartamentoAtivo(morador, proprietario);
+        var apartamento = testDataBuilder.createApartamentoAtivo(morador, proprietario);
         apartamentoRepository.save(apartamento);
 
-        morador = testDataBuilder.getMoradorB();
-        proprietario = testDataBuilder.getProprietarioB();
-        apartamento = testDataBuilder.getApartamentoAtivo(morador, proprietario);
+        morador = testDataBuilder.createMoradorB();
+        proprietario = testDataBuilder.createProprietarioB();
+        apartamento = testDataBuilder.createApartamentoAtivo(morador, proprietario);
 
         moradorRepository.save(morador);
         proprietarioRepository.save(proprietario);
