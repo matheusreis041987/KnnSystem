@@ -38,7 +38,7 @@ public record MoradorDTO (
 				morador.getNome(),
 				morador.getCpf(),
 				morador.getEmail(),
-				morador.getTelefonePrincipal().toString(),
+				morador.getTelefonePrincipal() != null ? morador.getTelefonePrincipal().toString() : "",
 				morador.getNumApt(),
 				morador.getBloco()
 				);

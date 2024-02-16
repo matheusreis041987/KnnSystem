@@ -29,8 +29,10 @@ public record ProprietarioDTO (
 
 	public ProprietarioDTO(Proprietario proprietario) {
 		this (
-				proprietario.getId(), proprietario.getRegistroImovel(),
-				proprietario.getNome(), proprietario.getTelefonePrincipal().toString(),
+				proprietario.getId(),
+				proprietario.getRegistroImovel(),
+				proprietario.getNome(),
+				proprietario.getTelefonePrincipal() != null ? proprietario.getTelefonePrincipal().toString() : "",
 				proprietario.getCpf(), proprietario.getEmail()
 		);
 	}

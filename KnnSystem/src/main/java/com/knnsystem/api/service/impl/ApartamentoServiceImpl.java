@@ -87,7 +87,9 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 		if (proprietario.isEmpty()) {
 			proprietarioModel = dto.proprietarioDTO().toModel(true);
 			proprietarioRepository.save(proprietarioModel);
-			telefoneRepository.save(proprietarioModel.getTelefonePrincipal());
+			var telefone = proprietarioModel.getTelefonePrincipal();
+			telefone.setPessoa(proprietarioModel);
+			telefoneRepository.save(telefone);
 		} else {
 			proprietarioModel = proprietario.get();
 		}
@@ -95,7 +97,9 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 		if (morador.isEmpty()) {
 			moradorModel = dto.moradorDTO().toModel(true);
 			moradorRepository.save(moradorModel);
-			telefoneRepository.save(moradorModel.getTelefonePrincipal());
+			var telefone = moradorModel.getTelefonePrincipal();
+			telefone.setPessoa(moradorModel);
+			telefoneRepository.save(telefone);
 		} else {
 			moradorModel = morador.get();
 		}
