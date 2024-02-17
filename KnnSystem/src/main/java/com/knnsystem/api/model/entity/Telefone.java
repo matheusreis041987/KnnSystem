@@ -28,4 +28,19 @@ public class Telefone {
     public String toString() {
         return this.numero;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Telefone telefone = (Telefone) o;
+
+        return numero.equals(telefone.numero);
+    }
+
+    @Override
+    public int hashCode() {
+        return numero.hashCode();
+    }
 }
