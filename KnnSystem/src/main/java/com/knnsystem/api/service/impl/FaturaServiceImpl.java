@@ -9,16 +9,13 @@ import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
 import com.knnsystem.api.exceptions.RegraNegocioException;
 import com.knnsystem.api.infrastructure.api.financeiro.ApiInsituicaoFinanceiraService;
 import com.knnsystem.api.model.entity.*;
-import com.knnsystem.api.model.repository.ContratoRepository;
-import com.knnsystem.api.model.repository.FornecedorRepository;
-import com.knnsystem.api.model.repository.PagamentoRepository;
+import com.knnsystem.api.model.repository.*;
 import com.knnsystem.api.service.UsuarioService;
 import com.knnsystem.api.utils.CalculadoraDiasUteis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import com.knnsystem.api.model.repository.FaturaRepository;
 import com.knnsystem.api.service.FaturaService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +23,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -41,7 +40,10 @@ public class FaturaServiceImpl implements FaturaService  {
 	private ContratoRepository contratoRepository;
 
 	@Autowired
-	private PagamentoRepository pagamentoRepository;
+	private PagamentoRepository<PagamentoPix> pagamentoPixRepository;
+
+	@Autowired
+	private PagamentoRepository<PagamentoDeposito> pagamentoDepositoRepository;
 
 	@Autowired
 	private FaturaRepository faturaRepository;
@@ -53,7 +55,8 @@ public class FaturaServiceImpl implements FaturaService  {
 	private UsuarioService usuarioService;
 	@Autowired
 	private FornecedorRepository fornecedorRepository;
-
+	@Autowired
+	private DomicilioBancarioRepository domicilioBancarioRepository;
 
 	@Override
 	@Transactional
@@ -92,7 +95,7 @@ public class FaturaServiceImpl implements FaturaService  {
 			pagamento.setTemAprovacao(true);
 			pagamento.setStatusPagamento(StatusPagamento.AGUARDANDO_APROVACAO);
 			fatura.setStatusPagamento(StatusPagamento.AGUARDANDO_APROVACAO);
-			var pagamentoSalvo = pagamentoRepository.save(pagamento);
+			Pagamento pagamentoSalvo = salvaPagamento(pagamento, dto);
 			fatura.setPagamento(pagamentoSalvo);
 			faturaRepository.save(fatura);
 			return new ResultadoPagamentoDTO(
@@ -102,11 +105,9 @@ public class FaturaServiceImpl implements FaturaService  {
 		pagamento.setTemAprovacao(false);
 		pagamento.setStatusPagamento(StatusPagamento.ENVIADO_PARA_PAGAMENTO);
 		fatura.setStatusPagamento(StatusPagamento.ENVIADO_PARA_PAGAMENTO);
-		var pagamentoSalvo = pagamentoRepository.save(pagamento);
+		Pagamento pagamentoSalvo = salvaPagamento(pagamento, dto);
 		fatura.setPagamento(pagamentoSalvo);
 		faturaRepository.save(fatura);
-
-
 
 		return apiInsituicaoFinanceiraService
 				.efetuarPagamento(dadosParaInstituicaoFinanceira);
@@ -116,8 +117,12 @@ public class FaturaServiceImpl implements FaturaService  {
 	@Transactional
 	public List<FaturaResultadoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroContrato, Long numeroFatura) {
 
-		// TODO: Solução mais escalável que a atual
+		// retornar todos pagamentos se não for informado critério de pesquisa
+		if (cnpjFornecedor == null && razaoSocial == null && numeroContrato == null && numeroFatura == null) {
+			return listaTodosPagamentos();
+		}
 
+		// TODO: Solução mais escalável que a atual
 		List<Fornecedor> fornecedores = fornecedorRepository.findByCnpjOrRazaoSocialOrNumControle(cnpjFornecedor, razaoSocial, null);
 		Optional<Fatura> faturaOptional = faturaRepository.findByNumero(numeroFatura);
 		Optional<Contrato> contratoOptional = contratoRepository.findByNumContrato(numeroContrato);
@@ -138,9 +143,15 @@ public class FaturaServiceImpl implements FaturaService  {
 
 		for (Fornecedor fornecedor: fornecedores){
 			var contratos = contratoRepository.findAllByFornecedor(fornecedor);
+			var domicilioBancarioOptional = domicilioBancarioRepository.findByFornecedor(fornecedor);
+			if (domicilioBancarioOptional.isEmpty()) {
+				return resultado;
+			}
+			var domicilioBancario = domicilioBancarioOptional.get();
+			fornecedor.setDomicilioBancario(domicilioBancario);
             contratoOptional.ifPresent(contratos::add);
 			for (Contrato contrato: contratos){
-				var pagamentos = pagamentoRepository.findAllByContrato(contrato);
+				var pagamentos = encontraPagamentos(contrato, domicilioBancario);
 				for (Pagamento pagamento: pagamentos) {
 					faturaOptional = faturaRepository.findByPagamento(pagamento);
 					faturaOptional.ifPresent(fatura -> resultado.add(
@@ -162,6 +173,8 @@ public class FaturaServiceImpl implements FaturaService  {
 
 		return resultado;
 	}
+
+
 
 	@Override
 	@Transactional
@@ -227,5 +240,50 @@ public class FaturaServiceImpl implements FaturaService  {
 			throw new EntidadeNaoEncontradaException("Fatura não encontrada");
 		}
 		return faturaOptional.get();
+	}
+
+	private Pagamento salvaPagamento(Pagamento pagamento, FaturaCadastroDTO dto) {
+		if (PagamentoFactory.isPagamentoPix(dto.domicilioBancario())) {
+			return pagamentoPixRepository.save((PagamentoPix) pagamento);
+		}
+		return pagamentoDepositoRepository.save((PagamentoDeposito) pagamento);
+	}
+
+	private List<Pagamento> encontraPagamentos(Contrato contrato, DomicilioBancario domicilioBancario) {
+		if (PagamentoFactory.isPagamentoPix(domicilioBancario)) {
+			return pagamentoPixRepository.findAllByContrato(contrato);
+		}
+		return pagamentoDepositoRepository.findAllByContrato(contrato);
+	}
+
+	private List<FaturaResultadoDTO> listaTodosPagamentos() {
+		// TODO: Solução mais escalável que a atual
+		List<FaturaResultadoDTO> resultado = new ArrayList<>();
+		List<Pagamento> pagamentos = new ArrayList<>();
+		pagamentos = Stream.concat(pagamentos.stream(), pagamentoPixRepository.findAll().stream())
+				.collect(Collectors.toList());
+		pagamentos = Stream.concat(pagamentos.stream(), pagamentoDepositoRepository.findAll().stream())
+				.collect(Collectors.toList());
+		var fornecedores = fornecedorRepository.findAll();
+		var contratos = contratoRepository.findAll();
+		for (Contrato contrato: contratos) {
+			for (Fornecedor fornecedor: fornecedores) {
+				for (Pagamento pagamento: pagamentos) {
+					var faturaOptional = faturaRepository.findByPagamento(pagamento);
+					faturaOptional.ifPresent(fatura -> resultado.add(
+							new FaturaResultadoDTO(
+									contrato.getNumContrato(),
+									fatura.getNumero(),
+									fornecedor.getCnpj(),
+									fornecedor.getRazaoSocial(),
+									fatura.getValor(),
+									fatura.getVencimento()
+							)
+					));
+
+				}
+			}
+		}
+		return resultado;
 	}
 }
