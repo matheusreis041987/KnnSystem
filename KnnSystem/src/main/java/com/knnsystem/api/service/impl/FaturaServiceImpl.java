@@ -23,6 +23,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -115,8 +117,12 @@ public class FaturaServiceImpl implements FaturaService  {
 	@Transactional
 	public List<FaturaResultadoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroContrato, Long numeroFatura) {
 
-		// TODO: Solução mais escalável que a atual
+		// retornar todos pagamentos se não for informado critério de pesquisa
+		if (cnpjFornecedor == null && razaoSocial == null && numeroContrato == null && numeroFatura == null) {
+			return listaTodosPagamentos();
+		}
 
+		// TODO: Solução mais escalável que a atual
 		List<Fornecedor> fornecedores = fornecedorRepository.findByCnpjOrRazaoSocialOrNumControle(cnpjFornecedor, razaoSocial, null);
 		Optional<Fatura> faturaOptional = faturaRepository.findByNumero(numeroFatura);
 		Optional<Contrato> contratoOptional = contratoRepository.findByNumContrato(numeroContrato);
@@ -167,6 +173,8 @@ public class FaturaServiceImpl implements FaturaService  {
 
 		return resultado;
 	}
+
+
 
 	@Override
 	@Transactional
@@ -246,5 +254,36 @@ public class FaturaServiceImpl implements FaturaService  {
 			return pagamentoPixRepository.findAllByContrato(contrato);
 		}
 		return pagamentoDepositoRepository.findAllByContrato(contrato);
+	}
+
+	private List<FaturaResultadoDTO> listaTodosPagamentos() {
+		// TODO: Solução mais escalável que a atual
+		List<FaturaResultadoDTO> resultado = new ArrayList<>();
+		List<Pagamento> pagamentos = new ArrayList<>();
+		pagamentos = Stream.concat(pagamentos.stream(), pagamentoPixRepository.findAll().stream())
+				.collect(Collectors.toList());
+		pagamentos = Stream.concat(pagamentos.stream(), pagamentoDepositoRepository.findAll().stream())
+				.collect(Collectors.toList());
+		var fornecedores = fornecedorRepository.findAll();
+		var contratos = contratoRepository.findAll();
+		for (Contrato contrato: contratos) {
+			for (Fornecedor fornecedor: fornecedores) {
+				for (Pagamento pagamento: pagamentos) {
+					var faturaOptional = faturaRepository.findByPagamento(pagamento);
+					faturaOptional.ifPresent(fatura -> resultado.add(
+							new FaturaResultadoDTO(
+									contrato.getNumContrato(),
+									fatura.getNumero(),
+									fornecedor.getCnpj(),
+									fornecedor.getRazaoSocial(),
+									fatura.getValor(),
+									fatura.getVencimento()
+							)
+					));
+
+				}
+			}
+		}
+		return resultado;
 	}
 }
