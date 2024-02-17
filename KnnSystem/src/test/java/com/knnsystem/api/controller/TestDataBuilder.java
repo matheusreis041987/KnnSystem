@@ -26,6 +26,7 @@ public class TestDataBuilder {
         pessoa.setStatus(StatusGeral.ATIVO);
         Telefone telefone = new Telefone();
         telefone.setNumero("21987654321");
+        telefone.setPessoa(pessoa);
         pessoa.adicionaTelefone(telefone);
 
         Usuario usuarioAtivo = new Usuario(pessoa);
@@ -47,6 +48,9 @@ public class TestDataBuilder {
         pessoa.setNome("Nome da Pessoa 2");
         pessoa.setEmail("emaildapessoa2@knnsytem.com");
         pessoa.setStatus(StatusGeral.INATIVO);
+        Telefone telefone = new Telefone();
+        telefone.setNumero("21987654322");
+        pessoa.adicionaTelefone(telefone);
 
         Usuario usuarioInativo = new Usuario(pessoa);
         usuarioInativo.setCargo(Cargo.FUNCIONARIO);

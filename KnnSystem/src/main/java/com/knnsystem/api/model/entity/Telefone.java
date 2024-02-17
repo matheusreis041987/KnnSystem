@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.message.ObjectArrayMessage;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "telefone", schema = "sch_pessoas" )
@@ -41,6 +44,6 @@ public class Telefone {
 
     @Override
     public int hashCode() {
-        return numero.hashCode();
+        return numero == null ? Objects.hash(0) : numero.hashCode();
     }
 }
