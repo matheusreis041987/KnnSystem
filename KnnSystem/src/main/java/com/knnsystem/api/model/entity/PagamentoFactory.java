@@ -7,7 +7,7 @@ public class PagamentoFactory {
     * Se consumidor informar pix, o pagamento será por ele
     * */
     public static Pagamento createPagamento(DomicilioBancarioDTO dto) {
-        return dto.pix() == null ? new PagamentoPix() : new PagamentoDeposito();
+        return dto.pix() != null ? new PagamentoPix() : new PagamentoDeposito();
     }
 
     public static boolean isPagamentoPix(DomicilioBancarioDTO dto) {
