@@ -153,11 +153,27 @@ public class FornecedorServiceImpl implements FornecedorService {
         var fornecedor = fornecedorOptional.get();
         fornecedor.setRazaoSocial(dto.razaoSocial());
         fornecedor.setCnpj(dto.cnpj());
-        fornecedor.setDomicilioBancario(dto.domicilioBancario().toModel(false));
+        var domicilioBancarioOptional = domicilioBancarioRepository.findByFornecedor(fornecedor);
+        if (domicilioBancarioOptional.isPresent()) {
+            var domicilioBancario = domicilioBancarioOptional.get();
+            domicilioBancario.setAgencia(dto.domicilioBancario().agencia());
+            domicilioBancario.setBanco(dto.domicilioBancario().banco());
+            domicilioBancario.setContaCorrente(dto.domicilioBancario().contaCorrente());
+            domicilioBancario.setPix(dto.domicilioBancario().pix());
+            fornecedor.setDomicilioBancario(domicilioBancario);
+        } else {
+            var domicilioBancario = dto.domicilioBancario().toModel(true);
+            fornecedor.setDomicilioBancario(dto.domicilioBancario().toModel(true));
+            domicilioBancario.setFornecedor(fornecedor);
+            domicilioBancarioRepository.save(domicilioBancario);
+
+        }
         fornecedor.setResponsavel(dto.responsavel().toModel());
         fornecedor.setEnderecoCompleto(dto.enderecoCompleto());
         fornecedor.setNaturezaServico(dto.naturezaDoServico());
         fornecedor.setEmailCorporativo(dto.emailCorporativo());
+        domicilioBancarioRepository.flush();
+        fornecedorRepository.flush();
         return new FornecedorDTO(fornecedor);
     }
 }
