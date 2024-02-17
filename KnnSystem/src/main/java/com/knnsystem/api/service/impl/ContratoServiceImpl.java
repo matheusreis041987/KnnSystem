@@ -152,6 +152,23 @@ public class ContratoServiceImpl implements ContratoService {
 		return listarContratosPorStatus(StatusContrato.VENCIDO);
 	}
 
+	@Override
+	public ContratoDTO atualizar(Long id, ContratoDTO dto) {
+		var contratoOptional = contratoRepository.findById(id);
+		if (contratoOptional.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não há um contrato cadastrado para os dados informados");
+		}
+		var contrato = contratoOptional.get();
+		contrato.setVigenciaInicial(dto.vigenciaInicial());
+		contrato.setVigenciaFinal(dto.vigenciaFinal());
+		contrato.setValorMensalAtual(dto.valorMensalAtual());
+		contrato.setObjetoContratual(dto.objetoContratual());
+
+		contratoRepository.flush();
+
+		return new ContratoDTO(contrato);
+	}
+
 	private List<ContratoDTO> listarContratosPorStatus(StatusContrato statusContrato) {
 		var contratos = contratoRepository
 				.findAllByStatusContrato(statusContrato)

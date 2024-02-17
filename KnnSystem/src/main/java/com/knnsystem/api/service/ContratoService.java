@@ -27,4 +27,6 @@ public interface ContratoService {
 	List<ContratoDTO> listarVigentes();
 
 	List<ContratoDTO> listarVencidos();
+
+    ContratoDTO atualizar(Long id, ContratoDTO dto);
 }
