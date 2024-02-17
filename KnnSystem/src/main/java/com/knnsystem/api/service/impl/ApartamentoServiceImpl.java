@@ -9,6 +9,7 @@ import com.knnsystem.api.exceptions.RelatorioSemResultadoException;
 import com.knnsystem.api.model.entity.Morador;
 import com.knnsystem.api.model.entity.Proprietario;
 import com.knnsystem.api.model.entity.StatusGeral;
+import com.knnsystem.api.model.entity.Telefone;
 import com.knnsystem.api.model.repository.MoradorRepository;
 import com.knnsystem.api.model.repository.ProprietarioRepository;
 import com.knnsystem.api.model.repository.TelefoneRepository;
@@ -129,5 +130,69 @@ public class ApartamentoServiceImpl implements ApartamentoService {
 			throw new EntidadeNaoEncontradaException("Não existe o registro solicitado");
 		}
 		entidadeAExcluir.ifPresent(repository::delete);
+	}
+
+	@Override
+	public ApartamentoFormularioDTO atualizar(Long id, ApartamentoFormularioDTO dto) {
+		// Verifica se id é válido
+		var apartamentoOptional = repository.findById(id);
+		if (apartamentoOptional.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não há um apartamento cadastrado para os dados informados");
+		}
+		var apartamento = apartamentoOptional.get();
+
+		// Altera proprietário
+		var proprietario = apartamento.getProprietario();
+		proprietario.setNome(dto.proprietarioDTO().nome());
+		proprietario.setEmail(dto.proprietarioDTO().email());
+		proprietario.setCpf(dto.proprietarioDTO().cpf());
+		proprietario.setRegistroImovel(dto.proprietarioDTO().registroImovel());
+		Telefone telefoneProprietario = proprietario.getTelefonePrincipal();
+		if (dto.proprietarioDTO().telefone() != null) {
+			if (telefoneProprietario != null) {
+				telefoneProprietario.setNumero(dto.proprietarioDTO().telefone());
+			} else {
+				Telefone telefone = new Telefone();
+				telefone.setNumero(dto.proprietarioDTO().telefone());
+				telefone.setPessoa(proprietario);
+				proprietario.adicionaTelefone(telefone);
+				telefoneRepository.save(telefone);
+			}
+		}
+
+
+		// Altera morador
+		var morador = apartamento.getMorador();
+		morador.setNome(dto.moradorDTO().nome());
+		morador.setEmail(dto.moradorDTO().email());
+		morador.setCpf(dto.moradorDTO().cpf());
+		morador.setBloco(dto.moradorDTO().blocoDoApartamento());
+		morador.setNumApt(dto.moradorDTO().numeroDoApartamento());
+		Telefone telefoneMorador = morador.getTelefonePrincipal();
+		if (dto.moradorDTO().telefone() != null) {
+			if (telefoneMorador != null) {
+				telefoneMorador.setNumero(dto.proprietarioDTO().telefone());
+			} else {
+				Telefone telefone = new Telefone();
+				telefone.setNumero(dto.moradorDTO().telefone());
+				telefone.setPessoa(morador);
+				morador.adicionaTelefone(telefone);
+				telefoneRepository.save(telefone);
+			}
+		}
+
+		// Altera apartamento
+		apartamento.setMetragem(dto.metragemDoImovel());
+		apartamento.setNumApt(dto.moradorDTO().numeroDoApartamento());
+		apartamento.setBlocoApt(dto.moradorDTO().blocoDoApartamento());
+
+		// Atualiza entidades no BD
+		moradorRepository.flush();
+		proprietarioRepository.flush();
+		telefoneRepository.flush();
+		repository.flush();
+
+
+		return new ApartamentoFormularioDTO(apartamento);
 	}
 }

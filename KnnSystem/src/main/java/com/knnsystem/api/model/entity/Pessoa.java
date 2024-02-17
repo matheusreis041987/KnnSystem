@@ -37,9 +37,10 @@ public class Pessoa {
 	private Usuario usuario;
 
 	@OneToMany(mappedBy = "pessoa")
-	private Set<Telefone> telefones = new HashSet<>();
+	private Set<Telefone> telefones;
 
 	public Pessoa(){
+		this.telefones = new HashSet<>();
 		this.status = StatusGeral.ATIVO;
 	}
 

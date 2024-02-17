@@ -19,7 +19,7 @@ public record UsuarioConsultaDTO(
         @Email
         String email,
 
-        Telefone telefone,
+        String telefone,
 
         LocalDate dataNascimento,
 
@@ -31,7 +31,7 @@ public record UsuarioConsultaDTO(
         public UsuarioConsultaDTO(Usuario usuario) {
                 this(usuario.getNome(), usuario.getCpf(),
                         usuario.getEmail(),
-                        usuario.getPessoa().getTelefones().stream().findFirst().orElse(null),
+                        usuario.getPessoa().getTelefonePrincipal().toString(),
                         usuario.getDataNascimento(), usuario.getCargo(),
                         usuario.getPessoa().getStatus());
         }

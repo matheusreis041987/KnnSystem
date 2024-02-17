@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.message.ObjectArrayMessage;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "telefone", schema = "sch_pessoas" )
@@ -27,5 +30,20 @@ public class Telefone {
     @Override
     public String toString() {
         return this.numero;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Telefone telefone = (Telefone) o;
+
+        return numero.equals(telefone.numero);
+    }
+
+    @Override
+    public int hashCode() {
+        return numero == null ? Objects.hash(0) : numero.hashCode();
     }
 }
