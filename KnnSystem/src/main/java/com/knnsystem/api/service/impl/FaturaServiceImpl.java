@@ -74,11 +74,17 @@ public class FaturaServiceImpl implements FaturaService  {
 			throw new EntidadeNaoEncontradaException("Não há contrato para o número informado");
 		}
 
+		// carrega dados de domicílio bancário do fornecedor
+		var contrato = contratoOptional.get();
+		var fornecedor = contrato.getFornecedor();
+		var domicilioBancario = domicilioBancarioRepository.findByFornecedor(fornecedor);
+        domicilioBancario.ifPresent(fornecedor::setDomicilioBancario);
+
 		// salva fatura e pagamento
 		Pagamento pagamento = PagamentoFactory.createPagamento(
 				dto.domicilioBancario());
 		pagamento.setDataPagamento(dto.dataPagamento());
-		pagamento.setContrato(contratoOptional.get());
+		pagamento.setContrato(contrato);
 		pagamento.setUsuario(usuarioService.getUsuarioLogado());
 		pagamento.setValorPagamento(dto.valor());
 		pagamento.setPercJuros(dto.percentualJuros());
