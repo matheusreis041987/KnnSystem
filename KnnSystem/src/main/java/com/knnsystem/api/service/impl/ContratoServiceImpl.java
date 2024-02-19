@@ -74,6 +74,10 @@ public class ContratoServiceImpl implements ContratoService {
 	@Override
 	@Transactional
 	public List<ContratoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroContrato) {
+		if (cnpjFornecedor == null && razaoSocial == null && numeroContrato == null) {
+			return listarTodosContratos();
+		}
+
 		List<Fornecedor> fornecedores = new ArrayList<>();
 		if (cnpjFornecedor != null){
 			var fornecedorOptional = fornecedorRepository.findByCnpj(cnpjFornecedor);
@@ -98,6 +102,10 @@ public class ContratoServiceImpl implements ContratoService {
 		}
 
 		return contratos.stream().map(ContratoDTO::new).toList();
+	}
+
+	private List<ContratoDTO> listarTodosContratos() {
+		return contratoRepository.findAll().stream().map(ContratoDTO::new).toList();
 	}
 
 	@Override

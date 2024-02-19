@@ -276,17 +276,19 @@ public class FaturaServiceImpl implements FaturaService  {
 			for (Fornecedor fornecedor: fornecedores) {
 				for (Pagamento pagamento: pagamentos) {
 					var faturaOptional = faturaRepository.findByPagamento(pagamento);
-					faturaOptional.ifPresent(fatura -> resultado.add(
-							new FaturaResultadoDTO(
-									contrato.getNumContrato(),
-									fatura.getNumero(),
-									fornecedor.getCnpj(),
-									fornecedor.getRazaoSocial(),
-									fatura.getValor(),
-									fatura.getVencimento()
-							)
-					));
-
+					if (pagamento.getContrato().equals(contrato) &&
+							contrato.getFornecedor().equals(fornecedor)) {
+						faturaOptional.ifPresent(fatura -> resultado.add(
+								new FaturaResultadoDTO(
+										contrato.getNumContrato(),
+										fatura.getNumero(),
+										fornecedor.getCnpj(),
+										fornecedor.getRazaoSocial(),
+										fatura.getValor(),
+										fatura.getVencimento()
+								)
+						));
+					}
 				}
 			}
 		}
