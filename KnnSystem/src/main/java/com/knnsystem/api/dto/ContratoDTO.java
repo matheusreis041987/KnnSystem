@@ -43,7 +43,9 @@ public record ContratoDTO(
 		String emailSindico,
 
 		@NotNull(message = "percentual de multa é obrigatório")
-		BigDecimal percentualMulta
+		BigDecimal percentualMulta,
+
+		String status
 ) {
 
 	public ContratoDTO(Contrato contratoSalvo) {
@@ -58,7 +60,8 @@ public record ContratoDTO(
 				contratoSalvo.getObjetoContratual(),
 				new GestorDTO(contratoSalvo.getGestor()),
 				contratoSalvo.getSindico().getEmail(),
-				contratoSalvo.getPercMulta()
+				contratoSalvo.getPercMulta(),
+				contratoSalvo.getStatusContrato().toString()
 		);
 	}
 

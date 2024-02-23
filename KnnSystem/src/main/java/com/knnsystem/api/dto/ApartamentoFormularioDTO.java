@@ -26,14 +26,18 @@ public record ApartamentoFormularioDTO(
 		@NotNull(message = "metragem do imóvel deve ser preenchida")
 		Integer metragemDoImovel,
 
-		Long id) {
+		Long id,
+
+		String status
+		) {
 
 	public ApartamentoFormularioDTO(Apartamento apartamento){
 		this(
 				new MoradorDTO(apartamento.getMorador()),
 				new ProprietarioDTO(apartamento.getProprietario()),
 				apartamento.getMetragem(),
-				apartamento.getIdApartamento()
+				apartamento.getIdApartamento(),
+				apartamento.getStatusApt().toString()
 		);
 
 	}

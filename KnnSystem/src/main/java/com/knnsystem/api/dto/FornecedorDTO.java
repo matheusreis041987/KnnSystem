@@ -36,7 +36,9 @@ public record FornecedorDTO (
 		@Email(message = "e-mail inválido")
 		String emailCorporativo,
 
-		String numeroControle
+		String numeroControle,
+
+		String status
 
 
 ) {
@@ -51,7 +53,8 @@ public record FornecedorDTO (
 				fornecedor.getEnderecoCompleto(),
 				fornecedor.getNaturezaServico(),
 				fornecedor.getEmailCorporativo(),
-				fornecedor.getNumControle()
+				fornecedor.getNumControle(),
+				fornecedor.getStatusFornecedor().toString()
 		);
 	}
 
