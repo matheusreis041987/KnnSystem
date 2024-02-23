@@ -29,7 +29,9 @@ public record MoradorDTO (
 		Integer numeroDoApartamento,
 
 		@NotBlank(message = "bloco do apartamento do morador é obrigatório")
-		String blocoDoApartamento
+		String blocoDoApartamento,
+
+		String status
 		){
 
 	public MoradorDTO(Morador morador) {
@@ -40,7 +42,8 @@ public record MoradorDTO (
 				morador.getEmail(),
 				morador.getTelefonePrincipal() != null ? morador.getTelefonePrincipal().toString() : "",
 				morador.getNumApt(),
-				morador.getBloco()
+				morador.getBloco(),
+				morador.getStatus().toString()
 				);
 	}
 
