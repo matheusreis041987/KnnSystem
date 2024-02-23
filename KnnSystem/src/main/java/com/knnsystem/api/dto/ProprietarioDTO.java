@@ -23,7 +23,9 @@ public record ProprietarioDTO (
 		String cpf,
 		@NotBlank(message = "e-mail do proprietário deve ser preenchido")
 		@Email(message = "e-mail do proprietário inválido")
-		String email
+		String email,
+
+		String status
 ) {
 
 
@@ -33,7 +35,8 @@ public record ProprietarioDTO (
 				proprietario.getRegistroImovel(),
 				proprietario.getNome(),
 				proprietario.getTelefonePrincipal() != null ? proprietario.getTelefonePrincipal().toString() : "",
-				proprietario.getCpf(), proprietario.getEmail()
+				proprietario.getCpf(), proprietario.getEmail(),
+				proprietario.getStatus().toString()
 		);
 	}
 
