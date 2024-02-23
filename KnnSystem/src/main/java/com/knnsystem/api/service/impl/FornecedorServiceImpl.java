@@ -169,12 +169,21 @@ public class FornecedorServiceImpl implements FornecedorService {
             domicilioBancarioRepository.save(domicilioBancario);
 
         }
-        fornecedor.setResponsavel(dto.responsavel().toModel());
+        var responsavelOptional = responsavelRepository.findById(dto.responsavel().cpf());
+        if (responsavelOptional.isPresent()){
+            var responsavel = responsavelOptional.get();
+            responsavel.setNome(dto.responsavel().nome());
+            responsavel.setTelefone(dto.responsavel().telefone());
+            responsavel.setEmail(dto.responsavel().email());
+            responsavel.setCpf(dto.responsavel().cpf());
+            fornecedor.setResponsavel(responsavel);
+        }
         fornecedor.setEnderecoCompleto(dto.enderecoCompleto());
         fornecedor.setNaturezaServico(dto.naturezaDoServico());
         fornecedor.setEmailCorporativo(dto.emailCorporativo());
         domicilioBancarioRepository.flush();
         fornecedorRepository.flush();
+        responsavelRepository.flush();
         return new FornecedorDTO(fornecedor);
     }
 
