@@ -54,6 +54,15 @@ public class FornecedorController {
 
     }
 
+    @PutMapping("/ativa/{id}")
+    public ResponseEntity<FornecedorDTO> ativar(
+            @PathVariable Long id
+    ){
+        service.ativar(id);
+        return ResponseEntity.noContent().build();
+
+    }
+
     @PutMapping("/atualiza/{id}")
     public ResponseEntity<FornecedorDTO> atualizar(
             @PathVariable Long id,

@@ -145,6 +145,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     }
 
     @Override
+    @Transactional
     public FornecedorDTO atualizar(Long id, FornecedorDTO dto) {
         var fornecedorOptional = fornecedorRepository.findById(id);
         if (fornecedorOptional.isEmpty()) {
@@ -175,5 +176,14 @@ public class FornecedorServiceImpl implements FornecedorService {
         domicilioBancarioRepository.flush();
         fornecedorRepository.flush();
         return new FornecedorDTO(fornecedor);
+    }
+
+    @Override
+    @Transactional
+    public void ativar(Long id) {
+        var fornecedor = fornecedorRepository.findById(id);
+        fornecedor
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Não existe fornecedor para os dados pesquisados"))
+                .setStatusFornecedor(StatusGeral.ATIVO);
     }
 }
