@@ -143,7 +143,8 @@ public class FaturaServiceImpl implements FaturaService  {
 					fatura.getPagamento().getContrato().getFornecedor().getCnpj(),
 					fatura.getPagamento().getContrato().getFornecedor().getRazaoSocial(),
 					fatura.getValor(),
-					fatura.getVencimento()
+					fatura.getVencimento(),
+					fatura.getStatusPagamento().toString()
 					));
 		}
 
@@ -167,7 +168,8 @@ public class FaturaServiceImpl implements FaturaService  {
                                     fornecedor.getCnpj(),
                                     fornecedor.getRazaoSocial(),
                                     fatura.getValor(),
-                                    fatura.getVencimento()
+                                    fatura.getVencimento(),
+									fatura.getStatusPagamento().toString()
                             )
                     ));
 
@@ -285,7 +287,8 @@ public class FaturaServiceImpl implements FaturaService  {
 										fornecedor.getCnpj(),
 										fornecedor.getRazaoSocial(),
 										fatura.getValor(),
-										fatura.getVencimento()
+										fatura.getVencimento(),
+										fatura.getStatusPagamento().toString()
 								)
 						));
 					}

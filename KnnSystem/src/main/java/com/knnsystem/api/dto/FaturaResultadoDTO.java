@@ -17,6 +17,8 @@ public record FaturaResultadoDTO(
 
         BigDecimal valor,
 
-        LocalDate competencia
+        LocalDate competencia,
+
+        String status
 ) {
 }
