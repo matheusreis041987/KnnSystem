@@ -5,11 +5,9 @@ import com.knnsystem.api.dto.UsuarioConsultaDTO;
 import com.knnsystem.api.dto.UsuarioResumoDTO;
 import com.knnsystem.api.exceptions.EntidadeCadastradaException;
 import com.knnsystem.api.exceptions.EntidadeNaoEncontradaException;
-import com.knnsystem.api.model.entity.Cargo;
-import com.knnsystem.api.model.entity.Sindico;
-import com.knnsystem.api.model.entity.StatusGeral;
-import com.knnsystem.api.model.entity.Usuario;
+import com.knnsystem.api.model.entity.*;
 import com.knnsystem.api.model.repository.SindicoRepository;
+import com.knnsystem.api.model.repository.TelefoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +28,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Autowired
 	private SindicoRepository sindicoRepository;
+
+	@Autowired
+	private TelefoneRepository telefoneRepository;
 
 	@Override
 	@Transactional
@@ -58,15 +59,32 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	@Transactional
 	public UsuarioResumoDTO editar(String cpf, UsuarioCadastroDTO dto) {
-		if (repository.findByCpf(dto.cpf()).isEmpty()) {
+		var usuarioAEditarOptional = repository.findByCpf(cpf);
+		if (usuarioAEditarOptional.isEmpty()) {
 			throw new EntidadeNaoEncontradaException("CPF inválido");
 		}
-		var usuarioAEditar = dto.toModel(passwordEncoder);
+		var usuarioAEditar = usuarioAEditarOptional.get();
 		usuarioAEditar.setNome(dto.nome());
 		usuarioAEditar.setCpf(dto.cpf());
 		usuarioAEditar.setEmail(dto.email());
 		usuarioAEditar.setDataNascimento(dto.dataNascimento());
 		usuarioAEditar.setCargo(Cargo.valueOf(dto.cargo()));
+
+		Telefone telefone = usuarioAEditar.getPessoa().getTelefonePrincipal();
+		if (dto.telefone() != null) {
+			if (telefone != null) {
+				telefone.setNumero(dto.telefone());
+			} else {
+				telefone = new Telefone();
+				telefone.setNumero(dto.telefone());
+				telefone.setPessoa(usuarioAEditar.getPessoa());
+				usuarioAEditar.getPessoa().adicionaTelefone(telefone);
+				telefoneRepository.save(telefone);
+			}
+		}
+
+		repository.flush();
+		telefoneRepository.flush();
 
 		return null;
 	}
@@ -74,6 +92,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	@Transactional
 	public UsuarioConsultaDTO consultarPorCPF(String cpf) {
+
 		return new UsuarioConsultaDTO(consultarUsuarioPorCPF(cpf));
 	}
 

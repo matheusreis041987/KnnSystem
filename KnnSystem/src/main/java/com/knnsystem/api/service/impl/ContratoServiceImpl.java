@@ -74,6 +74,10 @@ public class ContratoServiceImpl implements ContratoService {
 	@Override
 	@Transactional
 	public List<ContratoDTO> listar(String cnpjFornecedor, String razaoSocial, String numeroContrato) {
+		if (cnpjFornecedor == null && razaoSocial == null && numeroContrato == null) {
+			return listarTodosContratos();
+		}
+
 		List<Fornecedor> fornecedores = new ArrayList<>();
 		if (cnpjFornecedor != null){
 			var fornecedorOptional = fornecedorRepository.findByCnpj(cnpjFornecedor);
@@ -98,6 +102,10 @@ public class ContratoServiceImpl implements ContratoService {
 		}
 
 		return contratos.stream().map(ContratoDTO::new).toList();
+	}
+
+	private List<ContratoDTO> listarTodosContratos() {
+		return contratoRepository.findAll().stream().map(ContratoDTO::new).toList();
 	}
 
 	@Override
@@ -150,6 +158,23 @@ public class ContratoServiceImpl implements ContratoService {
 	@Transactional
 	public List<ContratoDTO> listarVencidos() {
 		return listarContratosPorStatus(StatusContrato.VENCIDO);
+	}
+
+	@Override
+	public ContratoDTO atualizar(Long id, ContratoDTO dto) {
+		var contratoOptional = contratoRepository.findById(id);
+		if (contratoOptional.isEmpty()) {
+			throw new EntidadeNaoEncontradaException("Não há um contrato cadastrado para os dados informados");
+		}
+		var contrato = contratoOptional.get();
+		contrato.setVigenciaInicial(dto.vigenciaInicial());
+		contrato.setVigenciaFinal(dto.vigenciaFinal());
+		contrato.setValorMensalAtual(dto.valorMensalAtual());
+		contrato.setObjetoContratual(dto.objetoContratual());
+
+		contratoRepository.flush();
+
+		return new ContratoDTO(contrato);
 	}
 
 	private List<ContratoDTO> listarContratosPorStatus(StatusContrato statusContrato) {
