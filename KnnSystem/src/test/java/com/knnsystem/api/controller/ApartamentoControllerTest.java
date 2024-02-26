@@ -64,18 +64,18 @@ class ApartamentoControllerTest {
     @BeforeEach
     void setUp(){
         // Primeiro Apartamento
-        var morador = testDataBuilder.getMoradorA();
-        var proprietario = testDataBuilder.getProprietarioA();
+        var morador = testDataBuilder.createMoradorA();
+        var proprietario = testDataBuilder.createProprietarioA();
         morador = moradorRepository.save(morador);
         proprietario = proprietarioRepository.save(proprietario);
-        apartamentoA = testDataBuilder.getApartamentoAtivo(morador, proprietario);
+        apartamentoA = testDataBuilder.createApartamentoAtivo(morador, proprietario);
 
         // Segundo Apartamento
-        morador = testDataBuilder.getMoradorB();
-        proprietario = testDataBuilder.getProprietarioB();
+        morador = testDataBuilder.createMoradorB();
+        proprietario = testDataBuilder.createProprietarioB();
         morador = moradorRepository.save(morador);
         proprietario = proprietarioRepository.save(proprietario);
-        apartamentoB = testDataBuilder.getApartamentoAtivo(morador, proprietario);
+        apartamentoB = testDataBuilder.createApartamentoAtivo(morador, proprietario);
 
         usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
         usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();

@@ -56,4 +56,13 @@ public class ApartamentoController {
         apartamentoService.excluir(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/atualiza/{id}")
+    public ResponseEntity<ApartamentoFormularioDTO> atualizar(
+            @PathVariable Long id,
+            @RequestBody @Valid ApartamentoFormularioDTO dto
+    ){
+        var dtoAtualizado = apartamentoService.atualizar(id, dto);
+        return ResponseEntity.ok(dtoAtualizado);
+    }
 }

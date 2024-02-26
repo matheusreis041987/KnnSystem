@@ -15,4 +15,6 @@ public interface ApartamentoService {
 	void inativar(Long id);
 
     void excluir(Long id);
+
+	ApartamentoFormularioDTO atualizar(Long id, ApartamentoFormularioDTO dto);
 }

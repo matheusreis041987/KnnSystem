@@ -7,7 +7,7 @@ import com.knnsystem.api.model.entity.Pagamento;
 
 import java.util.List;
 
-public interface PagamentoRepository extends JpaRepository<Pagamento, Integer> {
+public interface PagamentoRepository<T extends Pagamento> extends JpaRepository<T, Integer> {
 
     List<Pagamento> findAllByContrato(Contrato contrato);
 }

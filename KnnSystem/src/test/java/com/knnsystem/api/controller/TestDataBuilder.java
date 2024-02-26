@@ -26,6 +26,7 @@ public class TestDataBuilder {
         pessoa.setStatus(StatusGeral.ATIVO);
         Telefone telefone = new Telefone();
         telefone.setNumero("21987654321");
+        telefone.setPessoa(pessoa);
         pessoa.adicionaTelefone(telefone);
 
         Usuario usuarioAtivo = new Usuario(pessoa);
@@ -47,6 +48,9 @@ public class TestDataBuilder {
         pessoa.setNome("Nome da Pessoa 2");
         pessoa.setEmail("emaildapessoa2@knnsytem.com");
         pessoa.setStatus(StatusGeral.INATIVO);
+        Telefone telefone = new Telefone();
+        telefone.setNumero("21987654322");
+        pessoa.adicionaTelefone(telefone);
 
         Usuario usuarioInativo = new Usuario(pessoa);
         usuarioInativo.setCargo(Cargo.FUNCIONARIO);
@@ -135,7 +139,7 @@ public class TestDataBuilder {
         return usuarioAtivo;
     }
 
-    public Apartamento getApartamentoAtivo( Morador morador, Proprietario proprietario){
+    public Apartamento createApartamentoAtivo(Morador morador, Proprietario proprietario){
         Apartamento apartamento = new Apartamento();
         apartamento.setMorador(morador);
         apartamento.setProprietario(proprietario);
@@ -146,45 +150,57 @@ public class TestDataBuilder {
         return apartamento;
     }
 
-    public Morador getMoradorA(){
+    public Morador createMoradorA(){
         Morador morador = new Morador();
         morador.setCpf("50729301060");
         morador.setNome("Morador do apartamento A");
         morador.setEmail("emaildomoradordoa@knnsystem.com.br");
         morador.setBloco("Bloco X");
         morador.setNumApt(101);
+        Telefone telefone = new Telefone();
+        telefone.setNumero("71123456789");
+        morador.adicionaTelefone(telefone);
 
         return morador;
     }
 
-    public Proprietario getProprietarioA(){
+    public Proprietario createProprietarioA(){
         Proprietario proprietario = new Proprietario();
         proprietario.setCpf("04578520030");
         proprietario.setNome("Proprietário do apartamento A");
         proprietario.setEmail("emaildoproprietariodoa@knnsystem.com.br");
         proprietario.setRegistroImovel(123);
+        Telefone telefone = new Telefone();
+        telefone.setNumero("71987654321");
+        proprietario.adicionaTelefone(telefone);
 
         return proprietario;
 
     }
 
-    public Morador getMoradorB(){
+    public Morador createMoradorB(){
         Morador morador = new Morador();
         morador.setCpf("51105530094");
         morador.setNome("Morador do apartamento B");
         morador.setEmail("emaildomoradordoa@knnsystem.com.br");
         morador.setBloco("Bloco Y");
         morador.setNumApt(102);
+        Telefone telefone = new Telefone();
+        telefone.setNumero("91123456789");
+        morador.adicionaTelefone(telefone);
 
         return morador;
     }
 
-    public Proprietario getProprietarioB(){
+    public Proprietario createProprietarioB(){
         Proprietario proprietario = new Proprietario();
         proprietario.setCpf("30429734093");
         proprietario.setNome("Proprietário do apartamento B");
         proprietario.setEmail("emaildoproprietariodob@knnsystem.com.br");
         proprietario.setRegistroImovel(456);
+        Telefone telefone = new Telefone();
+        telefone.setNumero("71987654321");
+        proprietario.adicionaTelefone(telefone);
 
         return proprietario;
 

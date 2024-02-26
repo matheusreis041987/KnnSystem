@@ -69,11 +69,25 @@ public class MoradorServiceImpl implements MoradorService {
 		morador.setCpf(dto.cpf());
 		morador.setNome(dto.nome());
 		morador.setEmail(dto.email());
-		Telefone telefone = new Telefone();
-		telefone.setNumero(dto.telefone());
+		Telefone telefone = morador.getTelefonePrincipal();
+		if (dto.telefone() != null) {
+			if (telefone != null) {
+				telefone.setNumero(dto.telefone());
+			} else {
+				telefone = new Telefone();
+				telefone.setNumero(dto.telefone());
+				telefone.setPessoa(morador);
+				morador.adicionaTelefone(telefone);
+				telefoneRepository.save(telefone);
+			}
+		}
 		morador.adicionaTelefone(telefone);
 		morador.setNumApt(dto.numeroDoApartamento());
 		morador.setBloco(dto.blocoDoApartamento());
+
+		repository.flush();
+		telefoneRepository.flush();
+
 		return new MoradorDTO(morador);
 	}
 }

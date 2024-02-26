@@ -145,6 +145,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     }
 
     @Override
+    @Transactional
     public FornecedorDTO atualizar(Long id, FornecedorDTO dto) {
         var fornecedorOptional = fornecedorRepository.findById(id);
         if (fornecedorOptional.isEmpty()) {
@@ -153,11 +154,45 @@ public class FornecedorServiceImpl implements FornecedorService {
         var fornecedor = fornecedorOptional.get();
         fornecedor.setRazaoSocial(dto.razaoSocial());
         fornecedor.setCnpj(dto.cnpj());
-        fornecedor.setDomicilioBancario(dto.domicilioBancario().toModel(false));
-        fornecedor.setResponsavel(dto.responsavel().toModel());
+        var domicilioBancarioOptional = domicilioBancarioRepository.findByFornecedor(fornecedor);
+        if (domicilioBancarioOptional.isPresent()) {
+            var domicilioBancario = domicilioBancarioOptional.get();
+            domicilioBancario.setAgencia(dto.domicilioBancario().agencia());
+            domicilioBancario.setBanco(dto.domicilioBancario().banco());
+            domicilioBancario.setContaCorrente(dto.domicilioBancario().contaCorrente());
+            domicilioBancario.setPix(dto.domicilioBancario().pix());
+            fornecedor.setDomicilioBancario(domicilioBancario);
+        } else {
+            var domicilioBancario = dto.domicilioBancario().toModel(true);
+            fornecedor.setDomicilioBancario(dto.domicilioBancario().toModel(true));
+            domicilioBancario.setFornecedor(fornecedor);
+            domicilioBancarioRepository.save(domicilioBancario);
+
+        }
+        var responsavelOptional = responsavelRepository.findById(dto.responsavel().cpf());
+        if (responsavelOptional.isPresent()){
+            var responsavel = responsavelOptional.get();
+            responsavel.setNome(dto.responsavel().nome());
+            responsavel.setTelefone(dto.responsavel().telefone());
+            responsavel.setEmail(dto.responsavel().email());
+            responsavel.setCpf(dto.responsavel().cpf());
+            fornecedor.setResponsavel(responsavel);
+        }
         fornecedor.setEnderecoCompleto(dto.enderecoCompleto());
         fornecedor.setNaturezaServico(dto.naturezaDoServico());
         fornecedor.setEmailCorporativo(dto.emailCorporativo());
+        domicilioBancarioRepository.flush();
+        fornecedorRepository.flush();
+        responsavelRepository.flush();
         return new FornecedorDTO(fornecedor);
+    }
+
+    @Override
+    @Transactional
+    public void ativar(Long id) {
+        var fornecedor = fornecedorRepository.findById(id);
+        fornecedor
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Não existe fornecedor para os dados pesquisados"))
+                .setStatusFornecedor(StatusGeral.ATIVO);
     }
 }

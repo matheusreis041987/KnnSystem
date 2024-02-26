@@ -3,6 +3,7 @@ package com.knnsystem.api.controller;
 
 import com.knnsystem.api.model.entity.Usuario;
 import com.knnsystem.api.model.repository.PessoaRepository;
+import com.knnsystem.api.model.repository.TelefoneRepository;
 import com.knnsystem.api.model.repository.UsuarioRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
@@ -66,6 +67,7 @@ class UsuarioControllerTest {
     void setUp(){
         usuarioAtivo = testDataBuilder.createUsuarioAtivo();
         usuarioRepository.save(usuarioAtivo);
+
 
         usuarioAdministrador = testDataBuilder.createUsuarioAdministrador();
         usuarioSecretaria = testDataBuilder.createUsuarioSecretaria();
@@ -261,7 +263,7 @@ class UsuarioControllerTest {
                                         "{\"cpf\": \"" + usuarioAtivo.getCpf() + "\", " +
                                                 "\"nome\": \"" + usuarioAtivo.getNome() + "\", " +
                                                 "\"email\": \"" + usuarioAtivo.getEmail() + "\", " +
-                                                "\"telefone\": \"" + usuarioAtivo.getPessoa().getTelefones().stream().findFirst().get() + "\", " +
+                                                "\"telefone\": \"" + usuarioAtivo.getPessoa().getTelefonePrincipal().toString()+ "\", " +
                                                 "\"dataNascimento\": \"" + usuarioAtivo.getDataNascimento() + "\", " +
                                                 "\"cargo\": \"" + usuarioAtivo.getCargo() + "\", " +
                                                 "\"senha\": \"1234567\"}"

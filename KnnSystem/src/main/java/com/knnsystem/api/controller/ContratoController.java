@@ -79,5 +79,13 @@ public class ContratoController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/atualiza/{id}")
+    public ResponseEntity atualizar(
+            @PathVariable Long id,
+            @RequestBody @Valid ContratoDTO dto
+    ){
+        var dtoAtualizado = service.atualizar(id, dto);
+        return ResponseEntity.ok(dtoAtualizado);
+    }
 
 }

@@ -11,7 +11,7 @@ import org.hibernate.annotations.DiscriminatorFormula;
 @Entity
 @Table(name = "pagamento", schema = "sch_financeiro" )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorFormula("Case when contrato.fornecedor.domicilio_bancario.pix is not null then 'PagamentoPix' else 'PagamentoDeposito' end")
+@DiscriminatorFormula("Case when chave_pix is not null then 'PagamentoPix' else 'PagamentoDeposito' end")
 @Getter
 @Setter
 public abstract class Pagamento {
@@ -52,6 +52,13 @@ public abstract class Pagamento {
 	@JoinColumn(name = "fk_usuario", referencedColumnName = "id")
 	private Usuario usuario;
 
+	@Column(name = "chave_pix")
+	private String pix;
+
+	public void setContrato(Contrato contrato) {
+		this.contrato = contrato;
+		this.pix = contrato.getFornecedor().getDomicilioBancario().getPix();
+	}
 	public final void efetuarPagamento() {
 		this.valorJuros = this.getValorPagamento().multiply(
 			percJuros.multiply(new BigDecimal("0.01"))

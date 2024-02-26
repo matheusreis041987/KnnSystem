@@ -16,4 +16,6 @@ public interface FornecedorService {
     List<FornecedorDTO> listarAtivos();
 
     FornecedorDTO atualizar(Long id, FornecedorDTO dto);
+
+    void ativar(Long id);
 }

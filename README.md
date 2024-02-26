@@ -39,3 +39,4 @@ Deve-se também configurar as variáveis de ambiente abaixo na IDE:
 * Utilizou-se a funcionalidade do [Github Actions](https://docs.github.com/pt/actions) para execução automatizada de testes unitários e de integração para capturar antecipadamente eventuais problemas com o código;
 * Utilizou-se o padrão [Test Data Builder](https://robsoncastilho.com.br/2020/03/27/test-data-builders-voce-esta-usando-corretamente/) para criação da *massa* de testes de integração/unidade;
 * Utilizou-se [Spring Security](https://docs.spring.io/spring-security/reference/index.html) para segurança e controle de acesso, além de [JWT](https://github.com/auth0/java-jwt) para autorização e autenticação; 
+* No Eclipse, é preciso instalar o Lombok previamente, para reconhecimento de suas anotações (no IntelliJ, não há essa necessidade). Alguns tutoriais úteis são: https://cursos.alura.com.br/forum/topico-instalando-o-lombok-no-eclipse-256231 e https://www.baeldung.com/lombok-ide;
