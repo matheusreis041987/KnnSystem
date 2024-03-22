@@ -2,13 +2,11 @@ package com.knnsystem.api.dto;
 
 import com.knnsystem.api.model.entity.Cargo;
 import com.knnsystem.api.model.entity.StatusGeral;
-import com.knnsystem.api.model.entity.Telefone;
 import com.knnsystem.api.model.entity.Usuario;
 import jakarta.validation.constraints.Email;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 public record UsuarioConsultaDTO(
         String nome,
@@ -25,7 +23,9 @@ public record UsuarioConsultaDTO(
 
         Cargo cargo,
 
-        StatusGeral status
+        StatusGeral status,
+
+        Long id
 
 ) {
         public UsuarioConsultaDTO(Usuario usuario) {
@@ -33,6 +33,7 @@ public record UsuarioConsultaDTO(
                         usuario.getEmail(),
                         usuario.getPessoa().getTelefonePrincipal().toString(),
                         usuario.getDataNascimento(), usuario.getCargo(),
-                        usuario.getPessoa().getStatus());
+                        usuario.getPessoa().getStatus(),
+                        usuario.getId());
         }
 }

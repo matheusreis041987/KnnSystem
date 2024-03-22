@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/usuario/api")
 @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
@@ -35,6 +37,12 @@ public class UsuarioController {
             @PathVariable @CPF String cpf
     ){
         var dto = service.consultarPorCPF(cpf);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/consulta")
+    public ResponseEntity<List<UsuarioConsultaDTO>> consulta(){
+        var dto = service.listar();
         return ResponseEntity.ok(dto);
     }
 
