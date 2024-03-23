@@ -26,4 +26,5 @@ public interface UsuarioService {
     void excluir(Long id);
 
     List<UsuarioConsultaDTO> listar();
+	List<UsuarioConsultaDTO> listar(String cpf);
 }

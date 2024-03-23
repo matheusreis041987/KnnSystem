@@ -151,6 +151,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 				.map(UsuarioConsultaDTO::new)
 				.toList();
 	}
+
+	@Override
+	public List<UsuarioConsultaDTO> listar(String cpf) {
+		if (cpf == null) {
+			return listar();
+		}
+		return List.of(consultarPorCPF(cpf));
+	}
 }
 
 
