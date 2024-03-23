@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.knnsystem.api.model.repository.UsuarioRepository;
 import com.knnsystem.api.service.UsuarioService;
 
+import java.util.List;
+
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
@@ -139,6 +141,23 @@ public class UsuarioServiceImpl implements UsuarioService {
 			throw new EntidadeNaoEncontradaException("Não existe o registro solicitado");
 		}
 		entidadeAExcluir.ifPresent(repository::delete);
+	}
+
+	@Override
+	public List<UsuarioConsultaDTO> listar() {
+		return repository
+				.findAll()
+				.stream()
+				.map(UsuarioConsultaDTO::new)
+				.toList();
+	}
+
+	@Override
+	public List<UsuarioConsultaDTO> listar(String cpf) {
+		if (cpf == null) {
+			return listar();
+		}
+		return List.of(consultarPorCPF(cpf));
 	}
 }
 

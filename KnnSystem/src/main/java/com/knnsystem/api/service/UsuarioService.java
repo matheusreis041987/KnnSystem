@@ -7,6 +7,8 @@ import com.knnsystem.api.dto.UsuarioResumoDTO;
 import com.knnsystem.api.model.entity.Usuario;
 import org.hibernate.validator.constraints.br.CPF;
 
+import java.util.List;
+
 public interface UsuarioService {
 
 	UsuarioResumoDTO salvar (UsuarioCadastroDTO dto);
@@ -22,4 +24,8 @@ public interface UsuarioService {
 	Usuario getUsuarioLogado();
 
     void excluir(Long id);
+
+    List<UsuarioConsultaDTO> listar();
+
+	List<UsuarioConsultaDTO> listar(String cpf);
 }
