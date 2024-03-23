@@ -50,7 +50,9 @@ public class Pessoa {
 	}
 
 	public Telefone getTelefonePrincipal() {
-		return this.telefones.stream().findFirst().orElse(null);
+		var telefoneSemNumero = new Telefone();
+		telefoneSemNumero.setNumero("");
+		return this.telefones.stream().findFirst().orElse(telefoneSemNumero);
 	}
 
 	public void adicionaTelefone(Telefone telefone){
