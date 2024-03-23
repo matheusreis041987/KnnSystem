@@ -41,8 +41,10 @@ public class UsuarioController {
     }
 
     @GetMapping("/consulta")
-    public ResponseEntity<List<UsuarioConsultaDTO>> consulta(){
-        var dto = service.listar();
+    public ResponseEntity<List<UsuarioConsultaDTO>> listar(
+            @RequestParam(value = "cpf", required = false) @CPF String cpf
+    ){
+        var dto = service.listar(cpf);
         return ResponseEntity.ok(dto);
     }
 
